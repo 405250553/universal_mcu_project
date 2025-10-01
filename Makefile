@@ -26,8 +26,8 @@ else
     CFLAGS_DEBUG = -O2
 endif
 
-# list 不需要 TARGET
-ifeq ($(MAKECMDGOALS),list)
+# list, clean 不需要 TARGET
+ifneq (,$(filter $(MAKECMDGOALS),list clean))
   SKIP_TARGET_CHECK := 1
 endif
 
