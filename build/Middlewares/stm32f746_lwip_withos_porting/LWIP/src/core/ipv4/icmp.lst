@@ -1,0 +1,527 @@
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"icmp.c"
+  16              		.text
+  17              		.section	.rodata
+  18              		.align	2
+  19              	.LC0:
+  20 0000 4D696464 		.ascii	"Middlewares/stm32f746_lwip_withos_porting/LWIP/src/"
+  20      6C657761 
+  20      7265732F 
+  20      73746D33 
+  20      32663734 
+  21 0033 636F7265 		.ascii	"core/ipv4/icmp.c\000"
+  21      2F697076 
+  21      342F6963 
+  21      6D702E63 
+  21      00
+  22              		.align	2
+  23              	.LC1:
+  24 0044 69636D70 		.ascii	"icmp_input: moving r->payload to icmp header failed"
+  24      5F696E70 
+  24      75743A20 
+  24      6D6F7669 
+  24      6E672072 
+  25 0077 0A00     		.ascii	"\012\000"
+  26 0079 000000   		.align	2
+  27              	.LC2:
+  28 007c 41737365 		.ascii	"Assertion \"%s\" failed at line %d in %s\012\000"
+  28      7274696F 
+  28      6E202225 
+  28      73222066 
+  28      61696C65 
+  29              		.align	2
+  30              	.LC3:
+  31 00a4 69636D70 		.ascii	"icmp_input: restoring original p->payload failed\012"
+  31      5F696E70 
+  31      75743A20 
+  31      72657374 
+  31      6F72696E 
+  32 00d5 00       		.ascii	"\000"
+  33              		.section	.text.icmp_input,"ax",%progbits
+  34              		.align	1
+  35              		.global	icmp_input
+  36              		.syntax unified
+  37              		.thumb
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 2
+
+
+  38              		.thumb_func
+  40              	icmp_input:
+  41              		@ args = 0, pretend = 0, frame = 40
+  42              		@ frame_needed = 1, uses_anonymous_args = 0
+  43 0000 80B5     		push	{r7, lr}
+  44 0002 8EB0     		sub	sp, sp, #56
+  45 0004 04AF     		add	r7, sp, #16
+  46 0006 7860     		str	r0, [r7, #4]
+  47 0008 3960     		str	r1, [r7]
+  48 000a 794B     		ldr	r3, .L31
+  49 000c 9B68     		ldr	r3, [r3, #8]
+  50 000e 7B62     		str	r3, [r7, #36]
+  51 0010 7B6A     		ldr	r3, [r7, #36]
+  52 0012 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  53 0014 03F00F03 		and	r3, r3, #15
+  54 0018 DBB2     		uxtb	r3, r3
+  55 001a 9B00     		lsls	r3, r3, #2
+  56 001c DBB2     		uxtb	r3, r3
+  57 001e 7B84     		strh	r3, [r7, #34]	@ movhi
+  58 0020 7B8C     		ldrh	r3, [r7, #34]
+  59 0022 132B     		cmp	r3, #19
+  60 0024 40F2CD80 		bls	.L22
+  61 0028 7B68     		ldr	r3, [r7, #4]
+  62 002a 5B89     		ldrh	r3, [r3, #10]
+  63 002c 032B     		cmp	r3, #3
+  64 002e 40F2CA80 		bls	.L23
+  65 0032 7B68     		ldr	r3, [r7, #4]
+  66 0034 5B68     		ldr	r3, [r3, #4]
+  67 0036 1B78     		ldrb	r3, [r3]
+  68 0038 87F82130 		strb	r3, [r7, #33]
+  69 003c 97F82130 		ldrb	r3, [r7, #33]	@ zero_extendqisi2
+  70 0040 002B     		cmp	r3, #0
+  71 0042 00F0B780 		beq	.L24
+  72 0046 082B     		cmp	r3, #8
+  73 0048 40F0B780 		bne	.L8
+  74 004c 694B     		ldr	r3, .L31+4
+  75 004e FB61     		str	r3, [r7, #28]
+  76 0050 674B     		ldr	r3, .L31
+  77 0052 5B69     		ldr	r3, [r3, #20]
+  78 0054 03F0F003 		and	r3, r3, #240
+  79 0058 E02B     		cmp	r3, #224
+  80 005a 00F0BB80 		beq	.L25
+  81 005e 644B     		ldr	r3, .L31
+  82 0060 5B69     		ldr	r3, [r3, #20]
+  83 0062 634A     		ldr	r2, .L31
+  84 0064 1268     		ldr	r2, [r2]
+  85 0066 1146     		mov	r1, r2
+  86 0068 1846     		mov	r0, r3
+  87 006a FFF7FEFF 		bl	ip4_addr_isbroadcast_u32
+  88 006e 0346     		mov	r3, r0
+  89 0070 002B     		cmp	r3, #0
+  90 0072 40F0B180 		bne	.L26
+  91 0076 7B68     		ldr	r3, [r7, #4]
+  92 0078 1B89     		ldrh	r3, [r3, #8]
+  93 007a 072B     		cmp	r3, #7
+  94 007c 40F2A580 		bls	.L27
+  95 0080 7B8C     		ldrh	r3, [r7, #34]
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 3
+
+
+  96 0082 0E33     		adds	r3, r3, #14
+  97 0084 1946     		mov	r1, r3
+  98 0086 7868     		ldr	r0, [r7, #4]
+  99 0088 FFF7FEFF 		bl	pbuf_add_header
+ 100 008c 0346     		mov	r3, r0
+ 101 008e 002B     		cmp	r3, #0
+ 102 0090 4BD0     		beq	.L13
+ 103 0092 7B68     		ldr	r3, [r7, #4]
+ 104 0094 1A89     		ldrh	r2, [r3, #8]
+ 105 0096 7B8C     		ldrh	r3, [r7, #34]	@ movhi
+ 106 0098 1344     		add	r3, r3, r2
+ 107 009a 7B83     		strh	r3, [r7, #26]	@ movhi
+ 108 009c 7B68     		ldr	r3, [r7, #4]
+ 109 009e 1B89     		ldrh	r3, [r3, #8]
+ 110 00a0 7A8B     		ldrh	r2, [r7, #26]
+ 111 00a2 9A42     		cmp	r2, r3
+ 112 00a4 C0F09A80 		bcc	.L28
+ 113 00a8 7B8B     		ldrh	r3, [r7, #26]
+ 114 00aa 4FF42072 		mov	r2, #640
+ 115 00ae 1946     		mov	r1, r3
+ 116 00b0 0E20     		movs	r0, #14
+ 117 00b2 FFF7FEFF 		bl	pbuf_alloc
+ 118 00b6 7861     		str	r0, [r7, #20]
+ 119 00b8 7B69     		ldr	r3, [r7, #20]
+ 120 00ba 002B     		cmp	r3, #0
+ 121 00bc 00F09080 		beq	.L29
+ 122 00c0 7B69     		ldr	r3, [r7, #20]
+ 123 00c2 5B89     		ldrh	r3, [r3, #10]
+ 124 00c4 1A46     		mov	r2, r3
+ 125 00c6 7B8C     		ldrh	r3, [r7, #34]
+ 126 00c8 0833     		adds	r3, r3, #8
+ 127 00ca 9A42     		cmp	r2, r3
+ 128 00cc 03D2     		bcs	.L16
+ 129 00ce 7869     		ldr	r0, [r7, #20]
+ 130 00d0 FFF7FEFF 		bl	pbuf_free
+ 131 00d4 85E0     		b	.L10
+ 132              	.L16:
+ 133 00d6 7B69     		ldr	r3, [r7, #20]
+ 134 00d8 5B68     		ldr	r3, [r3, #4]
+ 135 00da 7A8C     		ldrh	r2, [r7, #34]
+ 136 00dc 796A     		ldr	r1, [r7, #36]
+ 137 00de 1846     		mov	r0, r3
+ 138 00e0 FFF7FEFF 		bl	memcpy
+ 139 00e4 7B8C     		ldrh	r3, [r7, #34]
+ 140 00e6 1946     		mov	r1, r3
+ 141 00e8 7869     		ldr	r0, [r7, #20]
+ 142 00ea FFF7FEFF 		bl	pbuf_remove_header
+ 143 00ee 0346     		mov	r3, r0
+ 144 00f0 002B     		cmp	r3, #0
+ 145 00f2 09D0     		beq	.L17
+ 146 00f4 404B     		ldr	r3, .L31+8
+ 147 00f6 B622     		movs	r2, #182
+ 148 00f8 4049     		ldr	r1, .L31+12
+ 149 00fa 4148     		ldr	r0, .L31+16
+ 150 00fc FFF7FEFF 		bl	printf
+ 151 0100 7869     		ldr	r0, [r7, #20]
+ 152 0102 FFF7FEFF 		bl	pbuf_free
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 4
+
+
+ 153 0106 6CE0     		b	.L10
+ 154              	.L17:
+ 155 0108 7968     		ldr	r1, [r7, #4]
+ 156 010a 7869     		ldr	r0, [r7, #20]
+ 157 010c FFF7FEFF 		bl	pbuf_copy
+ 158 0110 0346     		mov	r3, r0
+ 159 0112 002B     		cmp	r3, #0
+ 160 0114 03D0     		beq	.L18
+ 161 0116 7869     		ldr	r0, [r7, #20]
+ 162 0118 FFF7FEFF 		bl	pbuf_free
+ 163 011c 61E0     		b	.L10
+ 164              	.L18:
+ 165 011e 7868     		ldr	r0, [r7, #4]
+ 166 0120 FFF7FEFF 		bl	pbuf_free
+ 167 0124 7B69     		ldr	r3, [r7, #20]
+ 168 0126 7B60     		str	r3, [r7, #4]
+ 169 0128 0FE0     		b	.L19
+ 170              	.L13:
+ 171 012a 7B8C     		ldrh	r3, [r7, #34]
+ 172 012c 0E33     		adds	r3, r3, #14
+ 173 012e 1946     		mov	r1, r3
+ 174 0130 7868     		ldr	r0, [r7, #4]
+ 175 0132 FFF7FEFF 		bl	pbuf_remove_header
+ 176 0136 0346     		mov	r3, r0
+ 177 0138 002B     		cmp	r3, #0
+ 178 013a 06D0     		beq	.L19
+ 179 013c 2E4B     		ldr	r3, .L31+8
+ 180 013e C722     		movs	r2, #199
+ 181 0140 3049     		ldr	r1, .L31+20
+ 182 0142 2F48     		ldr	r0, .L31+16
+ 183 0144 FFF7FEFF 		bl	printf
+ 184 0148 4BE0     		b	.L10
+ 185              	.L19:
+ 186 014a 7B68     		ldr	r3, [r7, #4]
+ 187 014c 5B68     		ldr	r3, [r3, #4]
+ 188 014e 3B61     		str	r3, [r7, #16]
+ 189 0150 7B8C     		ldrh	r3, [r7, #34]
+ 190 0152 1946     		mov	r1, r3
+ 191 0154 7868     		ldr	r0, [r7, #4]
+ 192 0156 FFF7FEFF 		bl	pbuf_add_header
+ 193 015a 0346     		mov	r3, r0
+ 194 015c 002B     		cmp	r3, #0
+ 195 015e 2BD1     		bne	.L30
+ 196 0160 7B68     		ldr	r3, [r7, #4]
+ 197 0162 5B68     		ldr	r3, [r3, #4]
+ 198 0164 FB60     		str	r3, [r7, #12]
+ 199 0166 FB69     		ldr	r3, [r7, #28]
+ 200 0168 1A68     		ldr	r2, [r3]
+ 201 016a FB68     		ldr	r3, [r7, #12]
+ 202 016c DA60     		str	r2, [r3, #12]	@ unaligned
+ 203 016e 204B     		ldr	r3, .L31
+ 204 0170 1A69     		ldr	r2, [r3, #16]
+ 205 0172 FB68     		ldr	r3, [r7, #12]
+ 206 0174 1A61     		str	r2, [r3, #16]	@ unaligned
+ 207 0176 3B69     		ldr	r3, [r7, #16]
+ 208 0178 0022     		movs	r2, #0
+ 209 017a 1A70     		strb	r2, [r3]
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 5
+
+
+ 210 017c 3B69     		ldr	r3, [r7, #16]
+ 211 017e 0022     		movs	r2, #0
+ 212 0180 9A70     		strb	r2, [r3, #2]
+ 213 0182 0022     		movs	r2, #0
+ 214 0184 DA70     		strb	r2, [r3, #3]
+ 215 0186 FB68     		ldr	r3, [r7, #12]
+ 216 0188 FF22     		movs	r2, #255
+ 217 018a 1A72     		strb	r2, [r3, #8]
+ 218 018c FB68     		ldr	r3, [r7, #12]
+ 219 018e 0022     		movs	r2, #0
+ 220 0190 9A72     		strb	r2, [r3, #10]
+ 221 0192 0022     		movs	r2, #0
+ 222 0194 DA72     		strb	r2, [r3, #11]
+ 223 0196 3B68     		ldr	r3, [r7]
+ 224 0198 0293     		str	r3, [sp, #8]
+ 225 019a 0123     		movs	r3, #1
+ 226 019c 0193     		str	r3, [sp, #4]
+ 227 019e 0023     		movs	r3, #0
+ 228 01a0 0093     		str	r3, [sp]
+ 229 01a2 FF23     		movs	r3, #255
+ 230 01a4 0022     		movs	r2, #0
+ 231 01a6 F969     		ldr	r1, [r7, #28]
+ 232 01a8 7868     		ldr	r0, [r7, #4]
+ 233 01aa FFF7FEFF 		bl	ip4_output_if
+ 234 01ae 0346     		mov	r3, r0
+ 235 01b0 FB72     		strb	r3, [r7, #11]
+ 236 01b2 01E0     		b	.L30
+ 237              	.L24:
+ 238 01b4 00BF     		nop
+ 239 01b6 00E0     		b	.L8
+ 240              	.L30:
+ 241 01b8 00BF     		nop
+ 242              	.L8:
+ 243 01ba 7868     		ldr	r0, [r7, #4]
+ 244 01bc FFF7FEFF 		bl	pbuf_free
+ 245 01c0 13E0     		b	.L1
+ 246              	.L22:
+ 247 01c2 00BF     		nop
+ 248 01c4 02E0     		b	.L3
+ 249              	.L23:
+ 250 01c6 00BF     		nop
+ 251 01c8 00E0     		b	.L3
+ 252              	.L27:
+ 253 01ca 00BF     		nop
+ 254              	.L3:
+ 255 01cc 7868     		ldr	r0, [r7, #4]
+ 256 01ce FFF7FEFF 		bl	pbuf_free
+ 257 01d2 0AE0     		b	.L1
+ 258              	.L25:
+ 259 01d4 00BF     		nop
+ 260 01d6 04E0     		b	.L10
+ 261              	.L26:
+ 262 01d8 00BF     		nop
+ 263 01da 02E0     		b	.L10
+ 264              	.L28:
+ 265 01dc 00BF     		nop
+ 266 01de 00E0     		b	.L10
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 6
+
+
+ 267              	.L29:
+ 268 01e0 00BF     		nop
+ 269              	.L10:
+ 270 01e2 7868     		ldr	r0, [r7, #4]
+ 271 01e4 FFF7FEFF 		bl	pbuf_free
+ 272 01e8 00BF     		nop
+ 273              	.L1:
+ 274 01ea 2837     		adds	r7, r7, #40
+ 275 01ec BD46     		mov	sp, r7
+ 276              		@ sp needed
+ 277 01ee 80BD     		pop	{r7, pc}
+ 278              	.L32:
+ 279              		.align	2
+ 280              	.L31:
+ 281 01f0 00000000 		.word	ip_data
+ 282 01f4 14000000 		.word	ip_data+20
+ 283 01f8 00000000 		.word	.LC0
+ 284 01fc 44000000 		.word	.LC1
+ 285 0200 7C000000 		.word	.LC2
+ 286 0204 A4000000 		.word	.LC3
+ 288              		.section	.text.icmp_dest_unreach,"ax",%progbits
+ 289              		.align	1
+ 290              		.global	icmp_dest_unreach
+ 291              		.syntax unified
+ 292              		.thumb
+ 293              		.thumb_func
+ 295              	icmp_dest_unreach:
+ 296              		@ args = 0, pretend = 0, frame = 8
+ 297              		@ frame_needed = 1, uses_anonymous_args = 0
+ 298 0000 80B5     		push	{r7, lr}
+ 299 0002 82B0     		sub	sp, sp, #8
+ 300 0004 00AF     		add	r7, sp, #0
+ 301 0006 7860     		str	r0, [r7, #4]
+ 302 0008 0B46     		mov	r3, r1
+ 303 000a FB70     		strb	r3, [r7, #3]
+ 304 000c FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 305 000e 1A46     		mov	r2, r3
+ 306 0010 0321     		movs	r1, #3
+ 307 0012 7868     		ldr	r0, [r7, #4]
+ 308 0014 FFF7FEFF 		bl	icmp_send_response
+ 309 0018 00BF     		nop
+ 310 001a 0837     		adds	r7, r7, #8
+ 311 001c BD46     		mov	sp, r7
+ 312              		@ sp needed
+ 313 001e 80BD     		pop	{r7, pc}
+ 315              		.section	.text.icmp_time_exceeded,"ax",%progbits
+ 316              		.align	1
+ 317              		.global	icmp_time_exceeded
+ 318              		.syntax unified
+ 319              		.thumb
+ 320              		.thumb_func
+ 322              	icmp_time_exceeded:
+ 323              		@ args = 0, pretend = 0, frame = 8
+ 324              		@ frame_needed = 1, uses_anonymous_args = 0
+ 325 0000 80B5     		push	{r7, lr}
+ 326 0002 82B0     		sub	sp, sp, #8
+ 327 0004 00AF     		add	r7, sp, #0
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 7
+
+
+ 328 0006 7860     		str	r0, [r7, #4]
+ 329 0008 0B46     		mov	r3, r1
+ 330 000a FB70     		strb	r3, [r7, #3]
+ 331 000c FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 332 000e 1A46     		mov	r2, r3
+ 333 0010 0B21     		movs	r1, #11
+ 334 0012 7868     		ldr	r0, [r7, #4]
+ 335 0014 FFF7FEFF 		bl	icmp_send_response
+ 336 0018 00BF     		nop
+ 337 001a 0837     		adds	r7, r7, #8
+ 338 001c BD46     		mov	sp, r7
+ 339              		@ sp needed
+ 340 001e 80BD     		pop	{r7, pc}
+ 342              		.section	.rodata
+ 343 00d6 0000     		.align	2
+ 344              	.LC4:
+ 345 00d8 63686563 		.ascii	"check that first pbuf can hold icmp message\000"
+ 345      6B207468 
+ 345      61742066 
+ 345      69727374 
+ 345      20706275 
+ 346              		.section	.text.icmp_send_response,"ax",%progbits
+ 347              		.align	1
+ 348              		.syntax unified
+ 349              		.thumb
+ 350              		.thumb_func
+ 352              	icmp_send_response:
+ 353              		@ args = 0, pretend = 0, frame = 32
+ 354              		@ frame_needed = 1, uses_anonymous_args = 0
+ 355 0000 80B5     		push	{r7, lr}
+ 356 0002 8CB0     		sub	sp, sp, #48
+ 357 0004 04AF     		add	r7, sp, #16
+ 358 0006 7860     		str	r0, [r7, #4]
+ 359 0008 0B46     		mov	r3, r1
+ 360 000a FB70     		strb	r3, [r7, #3]
+ 361 000c 1346     		mov	r3, r2
+ 362 000e BB70     		strb	r3, [r7, #2]
+ 363 0010 4FF42072 		mov	r2, #640
+ 364 0014 2421     		movs	r1, #36
+ 365 0016 2220     		movs	r0, #34
+ 366 0018 FFF7FEFF 		bl	pbuf_alloc
+ 367 001c F861     		str	r0, [r7, #28]
+ 368 001e FB69     		ldr	r3, [r7, #28]
+ 369 0020 002B     		cmp	r3, #0
+ 370 0022 4CD0     		beq	.L40
+ 371 0024 FB69     		ldr	r3, [r7, #28]
+ 372 0026 5B89     		ldrh	r3, [r3, #10]
+ 373 0028 232B     		cmp	r3, #35
+ 374 002a 06D8     		bhi	.L38
+ 375 002c 264B     		ldr	r3, .L41
+ 376 002e 4FF4B472 		mov	r2, #360
+ 377 0032 2649     		ldr	r1, .L41+4
+ 378 0034 2648     		ldr	r0, .L41+8
+ 379 0036 FFF7FEFF 		bl	printf
+ 380              	.L38:
+ 381 003a 7B68     		ldr	r3, [r7, #4]
+ 382 003c 5B68     		ldr	r3, [r3, #4]
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 8
+
+
+ 383 003e BB61     		str	r3, [r7, #24]
+ 384 0040 FB69     		ldr	r3, [r7, #28]
+ 385 0042 5B68     		ldr	r3, [r3, #4]
+ 386 0044 7B61     		str	r3, [r7, #20]
+ 387 0046 7B69     		ldr	r3, [r7, #20]
+ 388 0048 FA78     		ldrb	r2, [r7, #3]
+ 389 004a 1A70     		strb	r2, [r3]
+ 390 004c 7B69     		ldr	r3, [r7, #20]
+ 391 004e BA78     		ldrb	r2, [r7, #2]
+ 392 0050 5A70     		strb	r2, [r3, #1]
+ 393 0052 7B69     		ldr	r3, [r7, #20]
+ 394 0054 0022     		movs	r2, #0
+ 395 0056 1A71     		strb	r2, [r3, #4]
+ 396 0058 0022     		movs	r2, #0
+ 397 005a 5A71     		strb	r2, [r3, #5]
+ 398 005c 7B69     		ldr	r3, [r7, #20]
+ 399 005e 0022     		movs	r2, #0
+ 400 0060 9A71     		strb	r2, [r3, #6]
+ 401 0062 0022     		movs	r2, #0
+ 402 0064 DA71     		strb	r2, [r3, #7]
+ 403 0066 FB69     		ldr	r3, [r7, #28]
+ 404 0068 5B68     		ldr	r3, [r3, #4]
+ 405 006a 03F10800 		add	r0, r3, #8
+ 406 006e 7B68     		ldr	r3, [r7, #4]
+ 407 0070 5B68     		ldr	r3, [r3, #4]
+ 408 0072 1C22     		movs	r2, #28
+ 409 0074 1946     		mov	r1, r3
+ 410 0076 FFF7FEFF 		bl	memcpy
+ 411 007a BB69     		ldr	r3, [r7, #24]
+ 412 007c DB68     		ldr	r3, [r3, #12]	@ unaligned
+ 413 007e FB60     		str	r3, [r7, #12]
+ 414 0080 07F10C03 		add	r3, r7, #12
+ 415 0084 1846     		mov	r0, r3
+ 416 0086 FFF7FEFF 		bl	ip4_route
+ 417 008a 3861     		str	r0, [r7, #16]
+ 418 008c 3B69     		ldr	r3, [r7, #16]
+ 419 008e 002B     		cmp	r3, #0
+ 420 0090 11D0     		beq	.L39
+ 421 0092 7B69     		ldr	r3, [r7, #20]
+ 422 0094 0022     		movs	r2, #0
+ 423 0096 9A70     		strb	r2, [r3, #2]
+ 424 0098 0022     		movs	r2, #0
+ 425 009a DA70     		strb	r2, [r3, #3]
+ 426 009c 07F10C02 		add	r2, r7, #12
+ 427 00a0 3B69     		ldr	r3, [r7, #16]
+ 428 00a2 0293     		str	r3, [sp, #8]
+ 429 00a4 0123     		movs	r3, #1
+ 430 00a6 0193     		str	r3, [sp, #4]
+ 431 00a8 0023     		movs	r3, #0
+ 432 00aa 0093     		str	r3, [sp]
+ 433 00ac FF23     		movs	r3, #255
+ 434 00ae 0021     		movs	r1, #0
+ 435 00b0 F869     		ldr	r0, [r7, #28]
+ 436 00b2 FFF7FEFF 		bl	ip4_output_if
+ 437              	.L39:
+ 438 00b6 F869     		ldr	r0, [r7, #28]
+ 439 00b8 FFF7FEFF 		bl	pbuf_free
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 9
+
+
+ 440 00bc 00E0     		b	.L35
+ 441              	.L40:
+ 442 00be 00BF     		nop
+ 443              	.L35:
+ 444 00c0 2037     		adds	r7, r7, #32
+ 445 00c2 BD46     		mov	sp, r7
+ 446              		@ sp needed
+ 447 00c4 80BD     		pop	{r7, pc}
+ 448              	.L42:
+ 449 00c6 00BF     		.align	2
+ 450              	.L41:
+ 451 00c8 00000000 		.word	.LC0
+ 452 00cc D8000000 		.word	.LC4
+ 453 00d0 7C000000 		.word	.LC2
+ 455              		.ident	"GCC: (GNU) 13.3.0"
+ARM GAS  C:\msys64\tmp\ccNLCFLg.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 icmp.c
+C:\msys64\tmp\ccNLCFLg.s:18     .rodata:00000000 $d
+C:\msys64\tmp\ccNLCFLg.s:34     .text.icmp_input:00000000 $t
+C:\msys64\tmp\ccNLCFLg.s:40     .text.icmp_input:00000000 icmp_input
+C:\msys64\tmp\ccNLCFLg.s:281    .text.icmp_input:000001f0 $d
+C:\msys64\tmp\ccNLCFLg.s:289    .text.icmp_dest_unreach:00000000 $t
+C:\msys64\tmp\ccNLCFLg.s:295    .text.icmp_dest_unreach:00000000 icmp_dest_unreach
+C:\msys64\tmp\ccNLCFLg.s:352    .text.icmp_send_response:00000000 icmp_send_response
+C:\msys64\tmp\ccNLCFLg.s:316    .text.icmp_time_exceeded:00000000 $t
+C:\msys64\tmp\ccNLCFLg.s:322    .text.icmp_time_exceeded:00000000 icmp_time_exceeded
+C:\msys64\tmp\ccNLCFLg.s:347    .text.icmp_send_response:00000000 $t
+C:\msys64\tmp\ccNLCFLg.s:451    .text.icmp_send_response:000000c8 $d
+
+UNDEFINED SYMBOLS
+ip4_addr_isbroadcast_u32
+pbuf_add_header
+pbuf_alloc
+pbuf_free
+memcpy
+pbuf_remove_header
+printf
+pbuf_copy
+ip4_output_if
+ip_data
+ip4_route

@@ -1,0 +1,1332 @@
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"mem.c"
+  16              		.text
+  17              		.section	.bss.ram,"aw",%nobits
+  18              		.align	2
+  21              	ram:
+  22 0000 00000000 		.space	4
+  23              		.section	.bss.ram_end,"aw",%nobits
+  24              		.align	2
+  27              	ram_end:
+  28 0000 00000000 		.space	4
+  29              		.section	.bss.mem_mutex,"aw",%nobits
+  30              		.align	2
+  33              	mem_mutex:
+  34 0000 00000000 		.space	4
+  35              		.section	.bss.lfree,"aw",%nobits
+  36              		.align	2
+  39              	lfree:
+  40 0000 00000000 		.space	4
+  41              		.section	.text.ptr_to_mem,"ax",%progbits
+  42              		.align	1
+  43              		.syntax unified
+  44              		.thumb
+  45              		.thumb_func
+  47              	ptr_to_mem:
+  48              		@ args = 0, pretend = 0, frame = 8
+  49              		@ frame_needed = 1, uses_anonymous_args = 0
+  50              		@ link register save eliminated.
+  51 0000 80B4     		push	{r7}
+  52 0002 83B0     		sub	sp, sp, #12
+  53 0004 00AF     		add	r7, sp, #0
+  54 0006 0346     		mov	r3, r0
+  55 0008 FB80     		strh	r3, [r7, #6]	@ movhi
+  56 000a 054B     		ldr	r3, .L3
+  57 000c 1A68     		ldr	r2, [r3]
+  58 000e FB88     		ldrh	r3, [r7, #6]
+  59 0010 1344     		add	r3, r3, r2
+  60 0012 1846     		mov	r0, r3
+  61 0014 0C37     		adds	r7, r7, #12
+  62 0016 BD46     		mov	sp, r7
+  63              		@ sp needed
+  64 0018 5DF8047B 		ldr	r7, [sp], #4
+  65 001c 7047     		bx	lr
+  66              	.L4:
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 2
+
+
+  67 001e 00BF     		.align	2
+  68              	.L3:
+  69 0020 00000000 		.word	ram
+  71              		.section	.text.mem_to_ptr,"ax",%progbits
+  72              		.align	1
+  73              		.syntax unified
+  74              		.thumb
+  75              		.thumb_func
+  77              	mem_to_ptr:
+  78              		@ args = 0, pretend = 0, frame = 8
+  79              		@ frame_needed = 1, uses_anonymous_args = 0
+  80              		@ link register save eliminated.
+  81 0000 80B4     		push	{r7}
+  82 0002 83B0     		sub	sp, sp, #12
+  83 0004 00AF     		add	r7, sp, #0
+  84 0006 7860     		str	r0, [r7, #4]
+  85 0008 054B     		ldr	r3, .L7
+  86 000a 1B68     		ldr	r3, [r3]
+  87 000c 7A68     		ldr	r2, [r7, #4]
+  88 000e D31A     		subs	r3, r2, r3
+  89 0010 9BB2     		uxth	r3, r3
+  90 0012 1846     		mov	r0, r3
+  91 0014 0C37     		adds	r7, r7, #12
+  92 0016 BD46     		mov	sp, r7
+  93              		@ sp needed
+  94 0018 5DF8047B 		ldr	r7, [sp], #4
+  95 001c 7047     		bx	lr
+  96              	.L8:
+  97 001e 00BF     		.align	2
+  98              	.L7:
+  99 0020 00000000 		.word	ram
+ 101              		.section	.rodata
+ 102              		.align	2
+ 103              	.LC0:
+ 104 0000 4D696464 		.ascii	"Middlewares/stm32f746_lwip_withos_porting/LWIP/src/"
+ 104      6C657761 
+ 104      7265732F 
+ 104      73746D33 
+ 104      32663734 
+ 105 0033 636F7265 		.ascii	"core/mem.c\000"
+ 105      2F6D656D 
+ 105      2E6300
+ 106 003e 0000     		.align	2
+ 107              	.LC1:
+ 108 0040 706C7567 		.ascii	"plug_holes: mem >= ram\000"
+ 108      5F686F6C 
+ 108      65733A20 
+ 108      6D656D20 
+ 108      3E3D2072 
+ 109 0057 00       		.align	2
+ 110              	.LC2:
+ 111 0058 41737365 		.ascii	"Assertion \"%s\" failed at line %d in %s\012\000"
+ 111      7274696F 
+ 111      6E202225 
+ 111      73222066 
+ 111      61696C65 
+ 112              		.align	2
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 3
+
+
+ 113              	.LC3:
+ 114 0080 706C7567 		.ascii	"plug_holes: mem < ram_end\000"
+ 114      5F686F6C 
+ 114      65733A20 
+ 114      6D656D20 
+ 114      3C207261 
+ 115 009a 0000     		.align	2
+ 116              	.LC4:
+ 117 009c 706C7567 		.ascii	"plug_holes: mem->used == 0\000"
+ 117      5F686F6C 
+ 117      65733A20 
+ 117      6D656D2D 
+ 117      3E757365 
+ 118 00b7 00       		.align	2
+ 119              	.LC5:
+ 120 00b8 706C7567 		.ascii	"plug_holes: mem->next <= MEM_SIZE_ALIGNED\000"
+ 120      5F686F6C 
+ 120      65733A20 
+ 120      6D656D2D 
+ 120      3E6E6578 
+ 121              		.section	.text.plug_holes,"ax",%progbits
+ 122              		.align	1
+ 123              		.syntax unified
+ 124              		.thumb
+ 125              		.thumb_func
+ 127              	plug_holes:
+ 128              		@ args = 0, pretend = 0, frame = 16
+ 129              		@ frame_needed = 1, uses_anonymous_args = 0
+ 130 0000 90B5     		push	{r4, r7, lr}
+ 131 0002 85B0     		sub	sp, sp, #20
+ 132 0004 00AF     		add	r7, sp, #0
+ 133 0006 7860     		str	r0, [r7, #4]
+ 134 0008 454B     		ldr	r3, .L19
+ 135 000a 1B68     		ldr	r3, [r3]
+ 136 000c 7A68     		ldr	r2, [r7, #4]
+ 137 000e 9A42     		cmp	r2, r3
+ 138 0010 06D2     		bcs	.L10
+ 139 0012 444B     		ldr	r3, .L19+4
+ 140 0014 40F2DF12 		movw	r2, #479
+ 141 0018 4349     		ldr	r1, .L19+8
+ 142 001a 4448     		ldr	r0, .L19+12
+ 143 001c FFF7FEFF 		bl	printf
+ 144              	.L10:
+ 145 0020 434B     		ldr	r3, .L19+16
+ 146 0022 1B68     		ldr	r3, [r3]
+ 147 0024 7A68     		ldr	r2, [r7, #4]
+ 148 0026 9A42     		cmp	r2, r3
+ 149 0028 06D3     		bcc	.L11
+ 150 002a 3E4B     		ldr	r3, .L19+4
+ 151 002c 4FF4F072 		mov	r2, #480
+ 152 0030 4049     		ldr	r1, .L19+20
+ 153 0032 3E48     		ldr	r0, .L19+12
+ 154 0034 FFF7FEFF 		bl	printf
+ 155              	.L11:
+ 156 0038 7B68     		ldr	r3, [r7, #4]
+ 157 003a 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 158 003c 002B     		cmp	r3, #0
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 4
+
+
+ 159 003e 06D0     		beq	.L12
+ 160 0040 384B     		ldr	r3, .L19+4
+ 161 0042 40F2E112 		movw	r2, #481
+ 162 0046 3C49     		ldr	r1, .L19+24
+ 163 0048 3848     		ldr	r0, .L19+12
+ 164 004a FFF7FEFF 		bl	printf
+ 165              	.L12:
+ 166 004e 7B68     		ldr	r3, [r7, #4]
+ 167 0050 1B88     		ldrh	r3, [r3]
+ 168 0052 B3F5C86F 		cmp	r3, #1600
+ 169 0056 06D9     		bls	.L13
+ 170 0058 324B     		ldr	r3, .L19+4
+ 171 005a 4FF4F272 		mov	r2, #484
+ 172 005e 3749     		ldr	r1, .L19+28
+ 173 0060 3248     		ldr	r0, .L19+12
+ 174 0062 FFF7FEFF 		bl	printf
+ 175              	.L13:
+ 176 0066 7B68     		ldr	r3, [r7, #4]
+ 177 0068 1B88     		ldrh	r3, [r3]
+ 178 006a 1846     		mov	r0, r3
+ 179 006c FFF7FEFF 		bl	ptr_to_mem
+ 180 0070 F860     		str	r0, [r7, #12]
+ 181 0072 7A68     		ldr	r2, [r7, #4]
+ 182 0074 FB68     		ldr	r3, [r7, #12]
+ 183 0076 9A42     		cmp	r2, r3
+ 184 0078 24D0     		beq	.L14
+ 185 007a FB68     		ldr	r3, [r7, #12]
+ 186 007c 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 187 007e 002B     		cmp	r3, #0
+ 188 0080 20D1     		bne	.L14
+ 189 0082 2B4B     		ldr	r3, .L19+16
+ 190 0084 1B68     		ldr	r3, [r3]
+ 191 0086 FA68     		ldr	r2, [r7, #12]
+ 192 0088 9A42     		cmp	r2, r3
+ 193 008a 1BD0     		beq	.L14
+ 194 008c 2C4B     		ldr	r3, .L19+32
+ 195 008e 1B68     		ldr	r3, [r3]
+ 196 0090 FA68     		ldr	r2, [r7, #12]
+ 197 0092 9A42     		cmp	r2, r3
+ 198 0094 02D1     		bne	.L15
+ 199 0096 2A4A     		ldr	r2, .L19+32
+ 200 0098 7B68     		ldr	r3, [r7, #4]
+ 201 009a 1360     		str	r3, [r2]
+ 202              	.L15:
+ 203 009c FB68     		ldr	r3, [r7, #12]
+ 204 009e 1A88     		ldrh	r2, [r3]
+ 205 00a0 7B68     		ldr	r3, [r7, #4]
+ 206 00a2 1A80     		strh	r2, [r3]	@ movhi
+ 207 00a4 FB68     		ldr	r3, [r7, #12]
+ 208 00a6 1B88     		ldrh	r3, [r3]
+ 209 00a8 B3F5C86F 		cmp	r3, #1600
+ 210 00ac 0AD0     		beq	.L14
+ 211 00ae FB68     		ldr	r3, [r7, #12]
+ 212 00b0 1B88     		ldrh	r3, [r3]
+ 213 00b2 1846     		mov	r0, r3
+ 214 00b4 FFF7FEFF 		bl	ptr_to_mem
+ 215 00b8 0446     		mov	r4, r0
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 5
+
+
+ 216 00ba 7868     		ldr	r0, [r7, #4]
+ 217 00bc FFF7FEFF 		bl	mem_to_ptr
+ 218 00c0 0346     		mov	r3, r0
+ 219 00c2 6380     		strh	r3, [r4, #2]	@ movhi
+ 220              	.L14:
+ 221 00c4 7B68     		ldr	r3, [r7, #4]
+ 222 00c6 5B88     		ldrh	r3, [r3, #2]
+ 223 00c8 1846     		mov	r0, r3
+ 224 00ca FFF7FEFF 		bl	ptr_to_mem
+ 225 00ce B860     		str	r0, [r7, #8]
+ 226 00d0 BA68     		ldr	r2, [r7, #8]
+ 227 00d2 7B68     		ldr	r3, [r7, #4]
+ 228 00d4 9A42     		cmp	r2, r3
+ 229 00d6 1FD0     		beq	.L18
+ 230 00d8 BB68     		ldr	r3, [r7, #8]
+ 231 00da 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 232 00dc 002B     		cmp	r3, #0
+ 233 00de 1BD1     		bne	.L18
+ 234 00e0 174B     		ldr	r3, .L19+32
+ 235 00e2 1B68     		ldr	r3, [r3]
+ 236 00e4 7A68     		ldr	r2, [r7, #4]
+ 237 00e6 9A42     		cmp	r2, r3
+ 238 00e8 02D1     		bne	.L17
+ 239 00ea 154A     		ldr	r2, .L19+32
+ 240 00ec BB68     		ldr	r3, [r7, #8]
+ 241 00ee 1360     		str	r3, [r2]
+ 242              	.L17:
+ 243 00f0 7B68     		ldr	r3, [r7, #4]
+ 244 00f2 1A88     		ldrh	r2, [r3]
+ 245 00f4 BB68     		ldr	r3, [r7, #8]
+ 246 00f6 1A80     		strh	r2, [r3]	@ movhi
+ 247 00f8 7B68     		ldr	r3, [r7, #4]
+ 248 00fa 1B88     		ldrh	r3, [r3]
+ 249 00fc B3F5C86F 		cmp	r3, #1600
+ 250 0100 0AD0     		beq	.L18
+ 251 0102 7B68     		ldr	r3, [r7, #4]
+ 252 0104 1B88     		ldrh	r3, [r3]
+ 253 0106 1846     		mov	r0, r3
+ 254 0108 FFF7FEFF 		bl	ptr_to_mem
+ 255 010c 0446     		mov	r4, r0
+ 256 010e B868     		ldr	r0, [r7, #8]
+ 257 0110 FFF7FEFF 		bl	mem_to_ptr
+ 258 0114 0346     		mov	r3, r0
+ 259 0116 6380     		strh	r3, [r4, #2]	@ movhi
+ 260              	.L18:
+ 261 0118 00BF     		nop
+ 262 011a 1437     		adds	r7, r7, #20
+ 263 011c BD46     		mov	sp, r7
+ 264              		@ sp needed
+ 265 011e 90BD     		pop	{r4, r7, pc}
+ 266              	.L20:
+ 267              		.align	2
+ 268              	.L19:
+ 269 0120 00000000 		.word	ram
+ 270 0124 00000000 		.word	.LC0
+ 271 0128 40000000 		.word	.LC1
+ 272 012c 58000000 		.word	.LC2
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 6
+
+
+ 273 0130 00000000 		.word	ram_end
+ 274 0134 80000000 		.word	.LC3
+ 275 0138 9C000000 		.word	.LC4
+ 276 013c B8000000 		.word	.LC5
+ 277 0140 00000000 		.word	lfree
+ 279              		.section	.rodata
+ 280 00e2 0000     		.align	2
+ 281              	.LC6:
+ 282 00e4 6661696C 		.ascii	"failed to create mem_mutex\000"
+ 282      65642074 
+ 282      6F206372 
+ 282      65617465 
+ 282      206D656D 
+ 283              		.section	.text.mem_init,"ax",%progbits
+ 284              		.align	1
+ 285              		.global	mem_init
+ 286              		.syntax unified
+ 287              		.thumb
+ 288              		.thumb_func
+ 290              	mem_init:
+ 291              		@ args = 0, pretend = 0, frame = 8
+ 292              		@ frame_needed = 1, uses_anonymous_args = 0
+ 293 0000 80B5     		push	{r7, lr}
+ 294 0002 82B0     		sub	sp, sp, #8
+ 295 0004 00AF     		add	r7, sp, #0
+ 296 0006 1D4B     		ldr	r3, .L24
+ 297 0008 1D4A     		ldr	r2, .L24+4
+ 298 000a 1A60     		str	r2, [r3]
+ 299 000c 1B4B     		ldr	r3, .L24
+ 300 000e 1B68     		ldr	r3, [r3]
+ 301 0010 7B60     		str	r3, [r7, #4]
+ 302 0012 7B68     		ldr	r3, [r7, #4]
+ 303 0014 4FF4C862 		mov	r2, #1600
+ 304 0018 1A80     		strh	r2, [r3]	@ movhi
+ 305 001a 7B68     		ldr	r3, [r7, #4]
+ 306 001c 0022     		movs	r2, #0
+ 307 001e 5A80     		strh	r2, [r3, #2]	@ movhi
+ 308 0020 7B68     		ldr	r3, [r7, #4]
+ 309 0022 0022     		movs	r2, #0
+ 310 0024 1A71     		strb	r2, [r3, #4]
+ 311 0026 4FF4C860 		mov	r0, #1600
+ 312 002a FFF7FEFF 		bl	ptr_to_mem
+ 313 002e 0346     		mov	r3, r0
+ 314 0030 144A     		ldr	r2, .L24+8
+ 315 0032 1360     		str	r3, [r2]
+ 316 0034 134B     		ldr	r3, .L24+8
+ 317 0036 1B68     		ldr	r3, [r3]
+ 318 0038 0122     		movs	r2, #1
+ 319 003a 1A71     		strb	r2, [r3, #4]
+ 320 003c 114B     		ldr	r3, .L24+8
+ 321 003e 1B68     		ldr	r3, [r3]
+ 322 0040 4FF4C862 		mov	r2, #1600
+ 323 0044 1A80     		strh	r2, [r3]	@ movhi
+ 324 0046 0F4B     		ldr	r3, .L24+8
+ 325 0048 1B68     		ldr	r3, [r3]
+ 326 004a 4FF4C862 		mov	r2, #1600
+ 327 004e 5A80     		strh	r2, [r3, #2]	@ movhi
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 7
+
+
+ 328 0050 0A4B     		ldr	r3, .L24
+ 329 0052 1B68     		ldr	r3, [r3]
+ 330 0054 0C4A     		ldr	r2, .L24+12
+ 331 0056 1360     		str	r3, [r2]
+ 332 0058 0C48     		ldr	r0, .L24+16
+ 333 005a FFF7FEFF 		bl	sys_mutex_new
+ 334 005e 0346     		mov	r3, r0
+ 335 0060 002B     		cmp	r3, #0
+ 336 0062 06D0     		beq	.L23
+ 337 0064 0A4B     		ldr	r3, .L24+20
+ 338 0066 40F21F22 		movw	r2, #543
+ 339 006a 0A49     		ldr	r1, .L24+24
+ 340 006c 0A48     		ldr	r0, .L24+28
+ 341 006e FFF7FEFF 		bl	printf
+ 342              	.L23:
+ 343 0072 00BF     		nop
+ 344 0074 0837     		adds	r7, r7, #8
+ 345 0076 BD46     		mov	sp, r7
+ 346              		@ sp needed
+ 347 0078 80BD     		pop	{r7, pc}
+ 348              	.L25:
+ 349 007a 00BF     		.align	2
+ 350              	.L24:
+ 351 007c 00000000 		.word	ram
+ 352 0080 00800420 		.word	537165824
+ 353 0084 00000000 		.word	ram_end
+ 354 0088 00000000 		.word	lfree
+ 355 008c 00000000 		.word	mem_mutex
+ 356 0090 00000000 		.word	.LC0
+ 357 0094 E4000000 		.word	.LC6
+ 358 0098 58000000 		.word	.LC2
+ 360              		.section	.text.mem_link_valid,"ax",%progbits
+ 361              		.align	1
+ 362              		.syntax unified
+ 363              		.thumb
+ 364              		.thumb_func
+ 366              	mem_link_valid:
+ 367              		@ args = 0, pretend = 0, frame = 24
+ 368              		@ frame_needed = 1, uses_anonymous_args = 0
+ 369 0000 80B5     		push	{r7, lr}
+ 370 0002 86B0     		sub	sp, sp, #24
+ 371 0004 00AF     		add	r7, sp, #0
+ 372 0006 7860     		str	r0, [r7, #4]
+ 373 0008 7868     		ldr	r0, [r7, #4]
+ 374 000a FFF7FEFF 		bl	mem_to_ptr
+ 375 000e 0346     		mov	r3, r0
+ 376 0010 FB82     		strh	r3, [r7, #22]	@ movhi
+ 377 0012 7B68     		ldr	r3, [r7, #4]
+ 378 0014 1B88     		ldrh	r3, [r3]
+ 379 0016 1846     		mov	r0, r3
+ 380 0018 FFF7FEFF 		bl	ptr_to_mem
+ 381 001c 3861     		str	r0, [r7, #16]
+ 382 001e 7B68     		ldr	r3, [r7, #4]
+ 383 0020 5B88     		ldrh	r3, [r3, #2]
+ 384 0022 1846     		mov	r0, r3
+ 385 0024 FFF7FEFF 		bl	ptr_to_mem
+ 386 0028 F860     		str	r0, [r7, #12]
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 8
+
+
+ 387 002a 7B68     		ldr	r3, [r7, #4]
+ 388 002c 1B88     		ldrh	r3, [r3]
+ 389 002e B3F5C86F 		cmp	r3, #1600
+ 390 0032 18D8     		bhi	.L27
+ 391 0034 7B68     		ldr	r3, [r7, #4]
+ 392 0036 5B88     		ldrh	r3, [r3, #2]
+ 393 0038 B3F5C86F 		cmp	r3, #1600
+ 394 003c 13D8     		bhi	.L27
+ 395 003e 7B68     		ldr	r3, [r7, #4]
+ 396 0040 5B88     		ldrh	r3, [r3, #2]
+ 397 0042 FA8A     		ldrh	r2, [r7, #22]
+ 398 0044 9A42     		cmp	r2, r3
+ 399 0046 04D0     		beq	.L28
+ 400 0048 FB68     		ldr	r3, [r7, #12]
+ 401 004a 1B88     		ldrh	r3, [r3]
+ 402 004c FA8A     		ldrh	r2, [r7, #22]
+ 403 004e 9A42     		cmp	r2, r3
+ 404 0050 09D1     		bne	.L27
+ 405              	.L28:
+ 406 0052 084B     		ldr	r3, .L31
+ 407 0054 1B68     		ldr	r3, [r3]
+ 408 0056 3A69     		ldr	r2, [r7, #16]
+ 409 0058 9A42     		cmp	r2, r3
+ 410 005a 06D0     		beq	.L29
+ 411 005c 3B69     		ldr	r3, [r7, #16]
+ 412 005e 5B88     		ldrh	r3, [r3, #2]
+ 413 0060 FA8A     		ldrh	r2, [r7, #22]
+ 414 0062 9A42     		cmp	r2, r3
+ 415 0064 01D0     		beq	.L29
+ 416              	.L27:
+ 417 0066 0023     		movs	r3, #0
+ 418 0068 00E0     		b	.L30
+ 419              	.L29:
+ 420 006a 0123     		movs	r3, #1
+ 421              	.L30:
+ 422 006c 1846     		mov	r0, r3
+ 423 006e 1837     		adds	r7, r7, #24
+ 424 0070 BD46     		mov	sp, r7
+ 425              		@ sp needed
+ 426 0072 80BD     		pop	{r7, pc}
+ 427              	.L32:
+ 428              		.align	2
+ 429              	.L31:
+ 430 0074 00000000 		.word	ram_end
+ 432              		.section	.rodata
+ 433 00ff 00       		.align	2
+ 434              	.LC7:
+ 435 0100 6D656D5F 		.ascii	"mem_free: sanity check alignment\000"
+ 435      66726565 
+ 435      3A207361 
+ 435      6E697479 
+ 435      20636865 
+ 436 0121 000000   		.align	2
+ 437              	.LC8:
+ 438 0124 6D656D5F 		.ascii	"mem_free: illegal memory\000"
+ 438      66726565 
+ 438      3A20696C 
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 9
+
+
+ 438      6C656761 
+ 438      6C206D65 
+ 439 013d 000000   		.align	2
+ 440              	.LC9:
+ 441 0140 6D656D5F 		.ascii	"mem_free: illegal memory: double free\000"
+ 441      66726565 
+ 441      3A20696C 
+ 441      6C656761 
+ 441      6C206D65 
+ 442 0166 0000     		.align	2
+ 443              	.LC10:
+ 444 0168 6D656D5F 		.ascii	"mem_free: illegal memory: non-linked: double free\000"
+ 444      66726565 
+ 444      3A20696C 
+ 444      6C656761 
+ 444      6C206D65 
+ 445              		.section	.text.mem_free,"ax",%progbits
+ 446              		.align	1
+ 447              		.global	mem_free
+ 448              		.syntax unified
+ 449              		.thumb
+ 450              		.thumb_func
+ 452              	mem_free:
+ 453              		@ args = 0, pretend = 0, frame = 32
+ 454              		@ frame_needed = 1, uses_anonymous_args = 0
+ 455 0000 80B5     		push	{r7, lr}
+ 456 0002 88B0     		sub	sp, sp, #32
+ 457 0004 00AF     		add	r7, sp, #0
+ 458 0006 7860     		str	r0, [r7, #4]
+ 459 0008 7B68     		ldr	r3, [r7, #4]
+ 460 000a 002B     		cmp	r3, #0
+ 461 000c 70D0     		beq	.L42
+ 462 000e 7B68     		ldr	r3, [r7, #4]
+ 463 0010 03F00303 		and	r3, r3, #3
+ 464 0014 002B     		cmp	r3, #0
+ 465 0016 0DD0     		beq	.L36
+ 466 0018 374B     		ldr	r3, .L43
+ 467 001a 40F27322 		movw	r2, #627
+ 468 001e 3749     		ldr	r1, .L43+4
+ 469 0020 3748     		ldr	r0, .L43+8
+ 470 0022 FFF7FEFF 		bl	printf
+ 471 0026 FFF7FEFF 		bl	sys_arch_protect
+ 472 002a F860     		str	r0, [r7, #12]
+ 473 002c F868     		ldr	r0, [r7, #12]
+ 474 002e FFF7FEFF 		bl	sys_arch_unprotect
+ 475 0032 5EE0     		b	.L33
+ 476              	.L36:
+ 477 0034 7B68     		ldr	r3, [r7, #4]
+ 478 0036 083B     		subs	r3, r3, #8
+ 479 0038 FB61     		str	r3, [r7, #28]
+ 480 003a 324B     		ldr	r3, .L43+12
+ 481 003c 1B68     		ldr	r3, [r3]
+ 482 003e FA69     		ldr	r2, [r7, #28]
+ 483 0040 9A42     		cmp	r2, r3
+ 484 0042 06D3     		bcc	.L37
+ 485 0044 7B68     		ldr	r3, [r7, #4]
+ 486 0046 03F10C02 		add	r2, r3, #12
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 10
+
+
+ 487 004a 2F4B     		ldr	r3, .L43+16
+ 488 004c 1B68     		ldr	r3, [r3]
+ 489 004e 9A42     		cmp	r2, r3
+ 490 0050 0DD9     		bls	.L38
+ 491              	.L37:
+ 492 0052 294B     		ldr	r3, .L43
+ 493 0054 40F27F22 		movw	r2, #639
+ 494 0058 2C49     		ldr	r1, .L43+20
+ 495 005a 2948     		ldr	r0, .L43+8
+ 496 005c FFF7FEFF 		bl	printf
+ 497 0060 FFF7FEFF 		bl	sys_arch_protect
+ 498 0064 3861     		str	r0, [r7, #16]
+ 499 0066 3869     		ldr	r0, [r7, #16]
+ 500 0068 FFF7FEFF 		bl	sys_arch_unprotect
+ 501 006c 41E0     		b	.L33
+ 502              	.L38:
+ 503 006e 2848     		ldr	r0, .L43+24
+ 504 0070 FFF7FEFF 		bl	sys_mutex_lock
+ 505 0074 FB69     		ldr	r3, [r7, #28]
+ 506 0076 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 507 0078 002B     		cmp	r3, #0
+ 508 007a 10D1     		bne	.L39
+ 509 007c 1E4B     		ldr	r3, .L43
+ 510 007e 4FF42372 		mov	r2, #652
+ 511 0082 2449     		ldr	r1, .L43+28
+ 512 0084 1E48     		ldr	r0, .L43+8
+ 513 0086 FFF7FEFF 		bl	printf
+ 514 008a 2148     		ldr	r0, .L43+24
+ 515 008c FFF7FEFF 		bl	sys_mutex_unlock
+ 516 0090 FFF7FEFF 		bl	sys_arch_protect
+ 517 0094 7861     		str	r0, [r7, #20]
+ 518 0096 7869     		ldr	r0, [r7, #20]
+ 519 0098 FFF7FEFF 		bl	sys_arch_unprotect
+ 520 009c 29E0     		b	.L33
+ 521              	.L39:
+ 522 009e F869     		ldr	r0, [r7, #28]
+ 523 00a0 FFF7FEFF 		bl	mem_link_valid
+ 524 00a4 0346     		mov	r3, r0
+ 525 00a6 002B     		cmp	r3, #0
+ 526 00a8 10D1     		bne	.L40
+ 527 00aa 134B     		ldr	r3, .L43
+ 528 00ac 40F29522 		movw	r2, #661
+ 529 00b0 1949     		ldr	r1, .L43+32
+ 530 00b2 1348     		ldr	r0, .L43+8
+ 531 00b4 FFF7FEFF 		bl	printf
+ 532 00b8 1548     		ldr	r0, .L43+24
+ 533 00ba FFF7FEFF 		bl	sys_mutex_unlock
+ 534 00be FFF7FEFF 		bl	sys_arch_protect
+ 535 00c2 B861     		str	r0, [r7, #24]
+ 536 00c4 B869     		ldr	r0, [r7, #24]
+ 537 00c6 FFF7FEFF 		bl	sys_arch_unprotect
+ 538 00ca 12E0     		b	.L33
+ 539              	.L40:
+ 540 00cc FB69     		ldr	r3, [r7, #28]
+ 541 00ce 0022     		movs	r2, #0
+ 542 00d0 1A71     		strb	r2, [r3, #4]
+ 543 00d2 124B     		ldr	r3, .L43+36
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 11
+
+
+ 544 00d4 1B68     		ldr	r3, [r3]
+ 545 00d6 FA69     		ldr	r2, [r7, #28]
+ 546 00d8 9A42     		cmp	r2, r3
+ 547 00da 02D2     		bcs	.L41
+ 548 00dc 0F4A     		ldr	r2, .L43+36
+ 549 00de FB69     		ldr	r3, [r7, #28]
+ 550 00e0 1360     		str	r3, [r2]
+ 551              	.L41:
+ 552 00e2 F869     		ldr	r0, [r7, #28]
+ 553 00e4 FFF7FEFF 		bl	plug_holes
+ 554 00e8 0948     		ldr	r0, .L43+24
+ 555 00ea FFF7FEFF 		bl	sys_mutex_unlock
+ 556 00ee 00E0     		b	.L33
+ 557              	.L42:
+ 558 00f0 00BF     		nop
+ 559              	.L33:
+ 560 00f2 2037     		adds	r7, r7, #32
+ 561 00f4 BD46     		mov	sp, r7
+ 562              		@ sp needed
+ 563 00f6 80BD     		pop	{r7, pc}
+ 564              	.L44:
+ 565              		.align	2
+ 566              	.L43:
+ 567 00f8 00000000 		.word	.LC0
+ 568 00fc 00010000 		.word	.LC7
+ 569 0100 58000000 		.word	.LC2
+ 570 0104 00000000 		.word	ram
+ 571 0108 00000000 		.word	ram_end
+ 572 010c 24010000 		.word	.LC8
+ 573 0110 00000000 		.word	mem_mutex
+ 574 0114 40010000 		.word	.LC9
+ 575 0118 68010000 		.word	.LC10
+ 576 011c 00000000 		.word	lfree
+ 578              		.section	.rodata
+ 579 019a 0000     		.align	2
+ 580              	.LC11:
+ 581 019c 6D656D5F 		.ascii	"mem_trim: legal memory\000"
+ 581      7472696D 
+ 581      3A206C65 
+ 581      67616C20 
+ 581      6D656D6F 
+ 582 01b3 00       		.align	2
+ 583              	.LC12:
+ 584 01b4 6D656D5F 		.ascii	"mem_trim can only shrink memory\000"
+ 584      7472696D 
+ 584      2063616E 
+ 584      206F6E6C 
+ 584      79207368 
+ 585              		.align	2
+ 586              	.LC13:
+ 587 01d4 696E7661 		.ascii	"invalid next ptr\000"
+ 587      6C696420 
+ 587      6E657874 
+ 587      20707472 
+ 587      00
+ 588              		.section	.text.mem_trim,"ax",%progbits
+ 589              		.align	1
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 12
+
+
+ 590              		.global	mem_trim
+ 591              		.syntax unified
+ 592              		.thumb
+ 593              		.thumb_func
+ 595              	mem_trim:
+ 596              		@ args = 0, pretend = 0, frame = 32
+ 597              		@ frame_needed = 1, uses_anonymous_args = 0
+ 598 0000 80B5     		push	{r7, lr}
+ 599 0002 88B0     		sub	sp, sp, #32
+ 600 0004 00AF     		add	r7, sp, #0
+ 601 0006 7860     		str	r0, [r7, #4]
+ 602 0008 0B46     		mov	r3, r1
+ 603 000a 7B80     		strh	r3, [r7, #2]	@ movhi
+ 604 000c 7B88     		ldrh	r3, [r7, #2]	@ movhi
+ 605 000e 0333     		adds	r3, r3, #3
+ 606 0010 9BB2     		uxth	r3, r3
+ 607 0012 23F00303 		bic	r3, r3, #3
+ 608 0016 FB83     		strh	r3, [r7, #30]	@ movhi
+ 609 0018 FB8B     		ldrh	r3, [r7, #30]
+ 610 001a 0B2B     		cmp	r3, #11
+ 611 001c 01D8     		bhi	.L46
+ 612 001e 0C23     		movs	r3, #12
+ 613 0020 FB83     		strh	r3, [r7, #30]	@ movhi
+ 614              	.L46:
+ 615 0022 FB8B     		ldrh	r3, [r7, #30]
+ 616 0024 B3F5C86F 		cmp	r3, #1600
+ 617 0028 03D8     		bhi	.L47
+ 618 002a FA8B     		ldrh	r2, [r7, #30]
+ 619 002c 7B88     		ldrh	r3, [r7, #2]
+ 620 002e 9A42     		cmp	r2, r3
+ 621 0030 01D2     		bcs	.L48
+ 622              	.L47:
+ 623 0032 0023     		movs	r3, #0
+ 624 0034 D8E0     		b	.L49
+ 625              	.L48:
+ 626 0036 6E4B     		ldr	r3, .L63
+ 627 0038 1B68     		ldr	r3, [r3]
+ 628 003a 7A68     		ldr	r2, [r7, #4]
+ 629 003c 9A42     		cmp	r2, r3
+ 630 003e 04D3     		bcc	.L50
+ 631 0040 6C4B     		ldr	r3, .L63+4
+ 632 0042 1B68     		ldr	r3, [r3]
+ 633 0044 7A68     		ldr	r2, [r7, #4]
+ 634 0046 9A42     		cmp	r2, r3
+ 635 0048 06D3     		bcc	.L51
+ 636              	.L50:
+ 637 004a 6B4B     		ldr	r3, .L63+8
+ 638 004c 40F2D122 		movw	r2, #721
+ 639 0050 6A49     		ldr	r1, .L63+12
+ 640 0052 6B48     		ldr	r0, .L63+16
+ 641 0054 FFF7FEFF 		bl	printf
+ 642              	.L51:
+ 643 0058 654B     		ldr	r3, .L63
+ 644 005a 1B68     		ldr	r3, [r3]
+ 645 005c 7A68     		ldr	r2, [r7, #4]
+ 646 005e 9A42     		cmp	r2, r3
+ 647 0060 04D3     		bcc	.L52
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 13
+
+
+ 648 0062 644B     		ldr	r3, .L63+4
+ 649 0064 1B68     		ldr	r3, [r3]
+ 650 0066 7A68     		ldr	r2, [r7, #4]
+ 651 0068 9A42     		cmp	r2, r3
+ 652 006a 07D3     		bcc	.L53
+ 653              	.L52:
+ 654 006c FFF7FEFF 		bl	sys_arch_protect
+ 655 0070 B860     		str	r0, [r7, #8]
+ 656 0072 B868     		ldr	r0, [r7, #8]
+ 657 0074 FFF7FEFF 		bl	sys_arch_unprotect
+ 658 0078 7B68     		ldr	r3, [r7, #4]
+ 659 007a B5E0     		b	.L49
+ 660              	.L53:
+ 661 007c 7B68     		ldr	r3, [r7, #4]
+ 662 007e 083B     		subs	r3, r3, #8
+ 663 0080 BB61     		str	r3, [r7, #24]
+ 664 0082 B869     		ldr	r0, [r7, #24]
+ 665 0084 FFF7FEFF 		bl	mem_to_ptr
+ 666 0088 0346     		mov	r3, r0
+ 667 008a FB82     		strh	r3, [r7, #22]	@ movhi
+ 668 008c BB69     		ldr	r3, [r7, #24]
+ 669 008e 1A88     		ldrh	r2, [r3]
+ 670 0090 FB8A     		ldrh	r3, [r7, #22]	@ movhi
+ 671 0092 D31A     		subs	r3, r2, r3
+ 672 0094 9BB2     		uxth	r3, r3
+ 673 0096 083B     		subs	r3, r3, #8
+ 674 0098 BB82     		strh	r3, [r7, #20]	@ movhi
+ 675 009a FA8B     		ldrh	r2, [r7, #30]
+ 676 009c BB8A     		ldrh	r3, [r7, #20]
+ 677 009e 9A42     		cmp	r2, r3
+ 678 00a0 06D9     		bls	.L54
+ 679 00a2 554B     		ldr	r3, .L63+8
+ 680 00a4 4FF43972 		mov	r2, #740
+ 681 00a8 5649     		ldr	r1, .L63+20
+ 682 00aa 5548     		ldr	r0, .L63+16
+ 683 00ac FFF7FEFF 		bl	printf
+ 684              	.L54:
+ 685 00b0 FA8B     		ldrh	r2, [r7, #30]
+ 686 00b2 BB8A     		ldrh	r3, [r7, #20]
+ 687 00b4 9A42     		cmp	r2, r3
+ 688 00b6 01D9     		bls	.L55
+ 689 00b8 0023     		movs	r3, #0
+ 690 00ba 95E0     		b	.L49
+ 691              	.L55:
+ 692 00bc FA8B     		ldrh	r2, [r7, #30]
+ 693 00be BB8A     		ldrh	r3, [r7, #20]
+ 694 00c0 9A42     		cmp	r2, r3
+ 695 00c2 01D1     		bne	.L56
+ 696 00c4 7B68     		ldr	r3, [r7, #4]
+ 697 00c6 8FE0     		b	.L49
+ 698              	.L56:
+ 699 00c8 4F48     		ldr	r0, .L63+24
+ 700 00ca FFF7FEFF 		bl	sys_mutex_lock
+ 701 00ce BB69     		ldr	r3, [r7, #24]
+ 702 00d0 1B88     		ldrh	r3, [r3]
+ 703 00d2 1846     		mov	r0, r3
+ 704 00d4 FFF7FEFF 		bl	ptr_to_mem
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 14
+
+
+ 705 00d8 3861     		str	r0, [r7, #16]
+ 706 00da 3B69     		ldr	r3, [r7, #16]
+ 707 00dc 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 708 00de 002B     		cmp	r3, #0
+ 709 00e0 3FD1     		bne	.L57
+ 710 00e2 BB69     		ldr	r3, [r7, #24]
+ 711 00e4 1B88     		ldrh	r3, [r3]
+ 712 00e6 B3F5C86F 		cmp	r3, #1600
+ 713 00ea 06D1     		bne	.L58
+ 714 00ec 424B     		ldr	r3, .L63+8
+ 715 00ee 40F2F522 		movw	r2, #757
+ 716 00f2 4649     		ldr	r1, .L63+28
+ 717 00f4 4248     		ldr	r0, .L63+16
+ 718 00f6 FFF7FEFF 		bl	printf
+ 719              	.L58:
+ 720 00fa 3B69     		ldr	r3, [r7, #16]
+ 721 00fc 1B88     		ldrh	r3, [r3]	@ movhi
+ 722 00fe BB81     		strh	r3, [r7, #12]	@ movhi
+ 723 0100 FA8A     		ldrh	r2, [r7, #22]	@ movhi
+ 724 0102 FB8B     		ldrh	r3, [r7, #30]	@ movhi
+ 725 0104 1344     		add	r3, r3, r2
+ 726 0106 9BB2     		uxth	r3, r3
+ 727 0108 0833     		adds	r3, r3, #8
+ 728 010a FB81     		strh	r3, [r7, #14]	@ movhi
+ 729 010c 404B     		ldr	r3, .L63+32
+ 730 010e 1B68     		ldr	r3, [r3]
+ 731 0110 3A69     		ldr	r2, [r7, #16]
+ 732 0112 9A42     		cmp	r2, r3
+ 733 0114 06D1     		bne	.L59
+ 734 0116 FB89     		ldrh	r3, [r7, #14]
+ 735 0118 1846     		mov	r0, r3
+ 736 011a FFF7FEFF 		bl	ptr_to_mem
+ 737 011e 0346     		mov	r3, r0
+ 738 0120 3B4A     		ldr	r2, .L63+32
+ 739 0122 1360     		str	r3, [r2]
+ 740              	.L59:
+ 741 0124 FB89     		ldrh	r3, [r7, #14]
+ 742 0126 1846     		mov	r0, r3
+ 743 0128 FFF7FEFF 		bl	ptr_to_mem
+ 744 012c 3861     		str	r0, [r7, #16]
+ 745 012e 3B69     		ldr	r3, [r7, #16]
+ 746 0130 0022     		movs	r2, #0
+ 747 0132 1A71     		strb	r2, [r3, #4]
+ 748 0134 3B69     		ldr	r3, [r7, #16]
+ 749 0136 BA89     		ldrh	r2, [r7, #12]	@ movhi
+ 750 0138 1A80     		strh	r2, [r3]	@ movhi
+ 751 013a 3B69     		ldr	r3, [r7, #16]
+ 752 013c FA8A     		ldrh	r2, [r7, #22]	@ movhi
+ 753 013e 5A80     		strh	r2, [r3, #2]	@ movhi
+ 754 0140 BB69     		ldr	r3, [r7, #24]
+ 755 0142 FA89     		ldrh	r2, [r7, #14]	@ movhi
+ 756 0144 1A80     		strh	r2, [r3]	@ movhi
+ 757 0146 3B69     		ldr	r3, [r7, #16]
+ 758 0148 1B88     		ldrh	r3, [r3]
+ 759 014a B3F5C86F 		cmp	r3, #1600
+ 760 014e 47D0     		beq	.L60
+ 761 0150 3B69     		ldr	r3, [r7, #16]
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 15
+
+
+ 762 0152 1B88     		ldrh	r3, [r3]
+ 763 0154 1846     		mov	r0, r3
+ 764 0156 FFF7FEFF 		bl	ptr_to_mem
+ 765 015a 0246     		mov	r2, r0
+ 766 015c FB89     		ldrh	r3, [r7, #14]	@ movhi
+ 767 015e 5380     		strh	r3, [r2, #2]	@ movhi
+ 768 0160 3EE0     		b	.L60
+ 769              	.L57:
+ 770 0162 FB8B     		ldrh	r3, [r7, #30]
+ 771 0164 03F11402 		add	r2, r3, #20
+ 772 0168 BB8A     		ldrh	r3, [r7, #20]
+ 773 016a 9A42     		cmp	r2, r3
+ 774 016c 38D8     		bhi	.L60
+ 775 016e FA8A     		ldrh	r2, [r7, #22]	@ movhi
+ 776 0170 FB8B     		ldrh	r3, [r7, #30]	@ movhi
+ 777 0172 1344     		add	r3, r3, r2
+ 778 0174 9BB2     		uxth	r3, r3
+ 779 0176 0833     		adds	r3, r3, #8
+ 780 0178 FB81     		strh	r3, [r7, #14]	@ movhi
+ 781 017a BB69     		ldr	r3, [r7, #24]
+ 782 017c 1B88     		ldrh	r3, [r3]
+ 783 017e B3F5C86F 		cmp	r3, #1600
+ 784 0182 06D1     		bne	.L61
+ 785 0184 1C4B     		ldr	r3, .L63+8
+ 786 0186 40F21632 		movw	r2, #790
+ 787 018a 2049     		ldr	r1, .L63+28
+ 788 018c 1C48     		ldr	r0, .L63+16
+ 789 018e FFF7FEFF 		bl	printf
+ 790              	.L61:
+ 791 0192 FB89     		ldrh	r3, [r7, #14]
+ 792 0194 1846     		mov	r0, r3
+ 793 0196 FFF7FEFF 		bl	ptr_to_mem
+ 794 019a 3861     		str	r0, [r7, #16]
+ 795 019c 1C4B     		ldr	r3, .L63+32
+ 796 019e 1B68     		ldr	r3, [r3]
+ 797 01a0 3A69     		ldr	r2, [r7, #16]
+ 798 01a2 9A42     		cmp	r2, r3
+ 799 01a4 02D2     		bcs	.L62
+ 800 01a6 1A4A     		ldr	r2, .L63+32
+ 801 01a8 3B69     		ldr	r3, [r7, #16]
+ 802 01aa 1360     		str	r3, [r2]
+ 803              	.L62:
+ 804 01ac 3B69     		ldr	r3, [r7, #16]
+ 805 01ae 0022     		movs	r2, #0
+ 806 01b0 1A71     		strb	r2, [r3, #4]
+ 807 01b2 BB69     		ldr	r3, [r7, #24]
+ 808 01b4 1A88     		ldrh	r2, [r3]
+ 809 01b6 3B69     		ldr	r3, [r7, #16]
+ 810 01b8 1A80     		strh	r2, [r3]	@ movhi
+ 811 01ba 3B69     		ldr	r3, [r7, #16]
+ 812 01bc FA8A     		ldrh	r2, [r7, #22]	@ movhi
+ 813 01be 5A80     		strh	r2, [r3, #2]	@ movhi
+ 814 01c0 BB69     		ldr	r3, [r7, #24]
+ 815 01c2 FA89     		ldrh	r2, [r7, #14]	@ movhi
+ 816 01c4 1A80     		strh	r2, [r3]	@ movhi
+ 817 01c6 3B69     		ldr	r3, [r7, #16]
+ 818 01c8 1B88     		ldrh	r3, [r3]
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 16
+
+
+ 819 01ca B3F5C86F 		cmp	r3, #1600
+ 820 01ce 07D0     		beq	.L60
+ 821 01d0 3B69     		ldr	r3, [r7, #16]
+ 822 01d2 1B88     		ldrh	r3, [r3]
+ 823 01d4 1846     		mov	r0, r3
+ 824 01d6 FFF7FEFF 		bl	ptr_to_mem
+ 825 01da 0246     		mov	r2, r0
+ 826 01dc FB89     		ldrh	r3, [r7, #14]	@ movhi
+ 827 01de 5380     		strh	r3, [r2, #2]	@ movhi
+ 828              	.L60:
+ 829 01e0 0948     		ldr	r0, .L63+24
+ 830 01e2 FFF7FEFF 		bl	sys_mutex_unlock
+ 831 01e6 7B68     		ldr	r3, [r7, #4]
+ 832              	.L49:
+ 833 01e8 1846     		mov	r0, r3
+ 834 01ea 2037     		adds	r7, r7, #32
+ 835 01ec BD46     		mov	sp, r7
+ 836              		@ sp needed
+ 837 01ee 80BD     		pop	{r7, pc}
+ 838              	.L64:
+ 839              		.align	2
+ 840              	.L63:
+ 841 01f0 00000000 		.word	ram
+ 842 01f4 00000000 		.word	ram_end
+ 843 01f8 00000000 		.word	.LC0
+ 844 01fc 9C010000 		.word	.LC11
+ 845 0200 58000000 		.word	.LC2
+ 846 0204 B4010000 		.word	.LC12
+ 847 0208 00000000 		.word	mem_mutex
+ 848 020c D4010000 		.word	.LC13
+ 849 0210 00000000 		.word	lfree
+ 851              		.section	.rodata
+ 852 01e5 000000   		.align	2
+ 853              	.LC14:
+ 854 01e8 6D656D5F 		.ascii	"mem_malloc: !lfree->used\000"
+ 854      6D616C6C 
+ 854      6F633A20 
+ 854      216C6672 
+ 854      65652D3E 
+ 855 0201 000000   		.align	2
+ 856              	.LC15:
+ 857 0204 6D656D5F 		.ascii	"mem_malloc: allocated memory not above ram_end.\000"
+ 857      6D616C6C 
+ 857      6F633A20 
+ 857      616C6C6F 
+ 857      63617465 
+ 858              		.align	2
+ 859              	.LC16:
+ 860 0234 6D656D5F 		.ascii	"mem_malloc: allocated memory properly aligned.\000"
+ 860      6D616C6C 
+ 860      6F633A20 
+ 860      616C6C6F 
+ 860      63617465 
+ 861 0263 00       		.align	2
+ 862              	.LC17:
+ 863 0264 6D656D5F 		.ascii	"mem_malloc: sanity check alignment\000"
+ 863      6D616C6C 
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 17
+
+
+ 863      6F633A20 
+ 863      73616E69 
+ 863      74792063 
+ 864              		.section	.text.mem_malloc,"ax",%progbits
+ 865              		.align	1
+ 866              		.global	mem_malloc
+ 867              		.syntax unified
+ 868              		.thumb
+ 869              		.thumb_func
+ 871              	mem_malloc:
+ 872              		@ args = 0, pretend = 0, frame = 32
+ 873              		@ frame_needed = 1, uses_anonymous_args = 0
+ 874 0000 80B5     		push	{r7, lr}
+ 875 0002 88B0     		sub	sp, sp, #32
+ 876 0004 00AF     		add	r7, sp, #0
+ 877 0006 0346     		mov	r3, r0
+ 878 0008 FB80     		strh	r3, [r7, #6]	@ movhi
+ 879 000a FB88     		ldrh	r3, [r7, #6]
+ 880 000c 002B     		cmp	r3, #0
+ 881 000e 01D1     		bne	.L66
+ 882 0010 0023     		movs	r3, #0
+ 883 0012 E2E0     		b	.L67
+ 884              	.L66:
+ 885 0014 FB88     		ldrh	r3, [r7, #6]	@ movhi
+ 886 0016 0333     		adds	r3, r3, #3
+ 887 0018 9BB2     		uxth	r3, r3
+ 888 001a 23F00303 		bic	r3, r3, #3
+ 889 001e BB83     		strh	r3, [r7, #28]	@ movhi
+ 890 0020 BB8B     		ldrh	r3, [r7, #28]
+ 891 0022 0B2B     		cmp	r3, #11
+ 892 0024 01D8     		bhi	.L68
+ 893 0026 0C23     		movs	r3, #12
+ 894 0028 BB83     		strh	r3, [r7, #28]	@ movhi
+ 895              	.L68:
+ 896 002a BB8B     		ldrh	r3, [r7, #28]
+ 897 002c B3F5C86F 		cmp	r3, #1600
+ 898 0030 03D8     		bhi	.L69
+ 899 0032 BA8B     		ldrh	r2, [r7, #28]
+ 900 0034 FB88     		ldrh	r3, [r7, #6]
+ 901 0036 9A42     		cmp	r2, r3
+ 902 0038 01D2     		bcs	.L70
+ 903              	.L69:
+ 904 003a 0023     		movs	r3, #0
+ 905 003c CDE0     		b	.L67
+ 906              	.L70:
+ 907 003e 6948     		ldr	r0, .L84
+ 908 0040 FFF7FEFF 		bl	sys_mutex_lock
+ 909 0044 684B     		ldr	r3, .L84+4
+ 910 0046 1B68     		ldr	r3, [r3]
+ 911 0048 1846     		mov	r0, r3
+ 912 004a FFF7FEFF 		bl	mem_to_ptr
+ 913 004e 0346     		mov	r3, r0
+ 914 0050 FB83     		strh	r3, [r7, #30]	@ movhi
+ 915 0052 B7E0     		b	.L71
+ 916              	.L83:
+ 917 0054 FB8B     		ldrh	r3, [r7, #30]
+ 918 0056 1846     		mov	r0, r3
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 18
+
+
+ 919 0058 FFF7FEFF 		bl	ptr_to_mem
+ 920 005c 7861     		str	r0, [r7, #20]
+ 921 005e 7B69     		ldr	r3, [r7, #20]
+ 922 0060 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 923 0062 002B     		cmp	r3, #0
+ 924 0064 40F0A780 		bne	.L72
+ 925 0068 7B69     		ldr	r3, [r7, #20]
+ 926 006a 1B88     		ldrh	r3, [r3]
+ 927 006c 1A46     		mov	r2, r3
+ 928 006e FB8B     		ldrh	r3, [r7, #30]
+ 929 0070 D31A     		subs	r3, r2, r3
+ 930 0072 A3F10802 		sub	r2, r3, #8
+ 931 0076 BB8B     		ldrh	r3, [r7, #28]
+ 932 0078 9A42     		cmp	r2, r3
+ 933 007a C0F09C80 		bcc	.L72
+ 934 007e 7B69     		ldr	r3, [r7, #20]
+ 935 0080 1B88     		ldrh	r3, [r3]
+ 936 0082 1A46     		mov	r2, r3
+ 937 0084 FB8B     		ldrh	r3, [r7, #30]
+ 938 0086 D31A     		subs	r3, r2, r3
+ 939 0088 A3F10802 		sub	r2, r3, #8
+ 940 008c BB8B     		ldrh	r3, [r7, #28]
+ 941 008e 1433     		adds	r3, r3, #20
+ 942 0090 9A42     		cmp	r2, r3
+ 943 0092 33D3     		bcc	.L73
+ 944 0094 FA8B     		ldrh	r2, [r7, #30]	@ movhi
+ 945 0096 BB8B     		ldrh	r3, [r7, #28]	@ movhi
+ 946 0098 1344     		add	r3, r3, r2
+ 947 009a 9BB2     		uxth	r3, r3
+ 948 009c 0833     		adds	r3, r3, #8
+ 949 009e 7B82     		strh	r3, [r7, #18]	@ movhi
+ 950 00a0 7B8A     		ldrh	r3, [r7, #18]
+ 951 00a2 B3F5C86F 		cmp	r3, #1600
+ 952 00a6 06D1     		bne	.L74
+ 953 00a8 504B     		ldr	r3, .L84+8
+ 954 00aa 40F28732 		movw	r2, #903
+ 955 00ae 5049     		ldr	r1, .L84+12
+ 956 00b0 5048     		ldr	r0, .L84+16
+ 957 00b2 FFF7FEFF 		bl	printf
+ 958              	.L74:
+ 959 00b6 7B8A     		ldrh	r3, [r7, #18]
+ 960 00b8 1846     		mov	r0, r3
+ 961 00ba FFF7FEFF 		bl	ptr_to_mem
+ 962 00be F860     		str	r0, [r7, #12]
+ 963 00c0 FB68     		ldr	r3, [r7, #12]
+ 964 00c2 0022     		movs	r2, #0
+ 965 00c4 1A71     		strb	r2, [r3, #4]
+ 966 00c6 7B69     		ldr	r3, [r7, #20]
+ 967 00c8 1A88     		ldrh	r2, [r3]
+ 968 00ca FB68     		ldr	r3, [r7, #12]
+ 969 00cc 1A80     		strh	r2, [r3]	@ movhi
+ 970 00ce FB68     		ldr	r3, [r7, #12]
+ 971 00d0 FA8B     		ldrh	r2, [r7, #30]	@ movhi
+ 972 00d2 5A80     		strh	r2, [r3, #2]	@ movhi
+ 973 00d4 7B69     		ldr	r3, [r7, #20]
+ 974 00d6 7A8A     		ldrh	r2, [r7, #18]	@ movhi
+ 975 00d8 1A80     		strh	r2, [r3]	@ movhi
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 19
+
+
+ 976 00da 7B69     		ldr	r3, [r7, #20]
+ 977 00dc 0122     		movs	r2, #1
+ 978 00de 1A71     		strb	r2, [r3, #4]
+ 979 00e0 FB68     		ldr	r3, [r7, #12]
+ 980 00e2 1B88     		ldrh	r3, [r3]
+ 981 00e4 B3F5C86F 		cmp	r3, #1600
+ 982 00e8 0BD0     		beq	.L75
+ 983 00ea FB68     		ldr	r3, [r7, #12]
+ 984 00ec 1B88     		ldrh	r3, [r3]
+ 985 00ee 1846     		mov	r0, r3
+ 986 00f0 FFF7FEFF 		bl	ptr_to_mem
+ 987 00f4 0246     		mov	r2, r0
+ 988 00f6 7B8A     		ldrh	r3, [r7, #18]	@ movhi
+ 989 00f8 5380     		strh	r3, [r2, #2]	@ movhi
+ 990 00fa 02E0     		b	.L75
+ 991              	.L73:
+ 992 00fc 7B69     		ldr	r3, [r7, #20]
+ 993 00fe 0122     		movs	r2, #1
+ 994 0100 1A71     		strb	r2, [r3, #4]
+ 995              	.L75:
+ 996 0102 394B     		ldr	r3, .L84+4
+ 997 0104 1B68     		ldr	r3, [r3]
+ 998 0106 7A69     		ldr	r2, [r7, #20]
+ 999 0108 9A42     		cmp	r2, r3
+ 1000 010a 27D1     		bne	.L76
+ 1001 010c 364B     		ldr	r3, .L84+4
+ 1002 010e 1B68     		ldr	r3, [r3]
+ 1003 0110 BB61     		str	r3, [r7, #24]
+ 1004 0112 05E0     		b	.L77
+ 1005              	.L79:
+ 1006 0114 BB69     		ldr	r3, [r7, #24]
+ 1007 0116 1B88     		ldrh	r3, [r3]
+ 1008 0118 1846     		mov	r0, r3
+ 1009 011a FFF7FEFF 		bl	ptr_to_mem
+ 1010 011e B861     		str	r0, [r7, #24]
+ 1011              	.L77:
+ 1012 0120 BB69     		ldr	r3, [r7, #24]
+ 1013 0122 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 1014 0124 002B     		cmp	r3, #0
+ 1015 0126 04D0     		beq	.L78
+ 1016 0128 334B     		ldr	r3, .L84+20
+ 1017 012a 1B68     		ldr	r3, [r3]
+ 1018 012c BA69     		ldr	r2, [r7, #24]
+ 1019 012e 9A42     		cmp	r2, r3
+ 1020 0130 F0D1     		bne	.L79
+ 1021              	.L78:
+ 1022 0132 2D4A     		ldr	r2, .L84+4
+ 1023 0134 BB69     		ldr	r3, [r7, #24]
+ 1024 0136 1360     		str	r3, [r2]
+ 1025 0138 2B4B     		ldr	r3, .L84+4
+ 1026 013a 1A68     		ldr	r2, [r3]
+ 1027 013c 2E4B     		ldr	r3, .L84+20
+ 1028 013e 1B68     		ldr	r3, [r3]
+ 1029 0140 9A42     		cmp	r2, r3
+ 1030 0142 0BD0     		beq	.L76
+ 1031 0144 284B     		ldr	r3, .L84+4
+ 1032 0146 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 20
+
+
+ 1033 0148 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 1034 014a 002B     		cmp	r3, #0
+ 1035 014c 06D0     		beq	.L76
+ 1036 014e 274B     		ldr	r3, .L84+8
+ 1037 0150 40F2B532 		movw	r2, #949
+ 1038 0154 2949     		ldr	r1, .L84+24
+ 1039 0156 2748     		ldr	r0, .L84+16
+ 1040 0158 FFF7FEFF 		bl	printf
+ 1041              	.L76:
+ 1042 015c 2148     		ldr	r0, .L84
+ 1043 015e FFF7FEFF 		bl	sys_mutex_unlock
+ 1044 0162 BA8B     		ldrh	r2, [r7, #28]
+ 1045 0164 7B69     		ldr	r3, [r7, #20]
+ 1046 0166 1344     		add	r3, r3, r2
+ 1047 0168 0833     		adds	r3, r3, #8
+ 1048 016a 234A     		ldr	r2, .L84+20
+ 1049 016c 1268     		ldr	r2, [r2]
+ 1050 016e 9342     		cmp	r3, r2
+ 1051 0170 06D9     		bls	.L80
+ 1052 0172 1E4B     		ldr	r3, .L84+8
+ 1053 0174 40F2B932 		movw	r2, #953
+ 1054 0178 2149     		ldr	r1, .L84+28
+ 1055 017a 1E48     		ldr	r0, .L84+16
+ 1056 017c FFF7FEFF 		bl	printf
+ 1057              	.L80:
+ 1058 0180 7B69     		ldr	r3, [r7, #20]
+ 1059 0182 03F00303 		and	r3, r3, #3
+ 1060 0186 002B     		cmp	r3, #0
+ 1061 0188 06D0     		beq	.L81
+ 1062 018a 184B     		ldr	r3, .L84+8
+ 1063 018c 40F2BB32 		movw	r2, #955
+ 1064 0190 1C49     		ldr	r1, .L84+32
+ 1065 0192 1848     		ldr	r0, .L84+16
+ 1066 0194 FFF7FEFF 		bl	printf
+ 1067              	.L81:
+ 1068 0198 7B69     		ldr	r3, [r7, #20]
+ 1069 019a 03F00303 		and	r3, r3, #3
+ 1070 019e 002B     		cmp	r3, #0
+ 1071 01a0 06D0     		beq	.L82
+ 1072 01a2 124B     		ldr	r3, .L84+8
+ 1073 01a4 40F2BD32 		movw	r2, #957
+ 1074 01a8 1749     		ldr	r1, .L84+36
+ 1075 01aa 1248     		ldr	r0, .L84+16
+ 1076 01ac FFF7FEFF 		bl	printf
+ 1077              	.L82:
+ 1078 01b0 7B69     		ldr	r3, [r7, #20]
+ 1079 01b2 0833     		adds	r3, r3, #8
+ 1080 01b4 11E0     		b	.L67
+ 1081              	.L72:
+ 1082 01b6 FB8B     		ldrh	r3, [r7, #30]
+ 1083 01b8 1846     		mov	r0, r3
+ 1084 01ba FFF7FEFF 		bl	ptr_to_mem
+ 1085 01be 0346     		mov	r3, r0
+ 1086 01c0 1B88     		ldrh	r3, [r3]	@ movhi
+ 1087 01c2 FB83     		strh	r3, [r7, #30]	@ movhi
+ 1088              	.L71:
+ 1089 01c4 FA8B     		ldrh	r2, [r7, #30]
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 21
+
+
+ 1090 01c6 BB8B     		ldrh	r3, [r7, #28]
+ 1091 01c8 C3F5C863 		rsb	r3, r3, #1600
+ 1092 01cc 9A42     		cmp	r2, r3
+ 1093 01ce FFF441AF 		bcc	.L83
+ 1094 01d2 0448     		ldr	r0, .L84
+ 1095 01d4 FFF7FEFF 		bl	sys_mutex_unlock
+ 1096 01d8 0023     		movs	r3, #0
+ 1097              	.L67:
+ 1098 01da 1846     		mov	r0, r3
+ 1099 01dc 2037     		adds	r7, r7, #32
+ 1100 01de BD46     		mov	sp, r7
+ 1101              		@ sp needed
+ 1102 01e0 80BD     		pop	{r7, pc}
+ 1103              	.L85:
+ 1104 01e2 00BF     		.align	2
+ 1105              	.L84:
+ 1106 01e4 00000000 		.word	mem_mutex
+ 1107 01e8 00000000 		.word	lfree
+ 1108 01ec 00000000 		.word	.LC0
+ 1109 01f0 D4010000 		.word	.LC13
+ 1110 01f4 58000000 		.word	.LC2
+ 1111 01f8 00000000 		.word	ram_end
+ 1112 01fc E8010000 		.word	.LC14
+ 1113 0200 04020000 		.word	.LC15
+ 1114 0204 34020000 		.word	.LC16
+ 1115 0208 64020000 		.word	.LC17
+ 1117              		.section	.text.mem_calloc,"ax",%progbits
+ 1118              		.align	1
+ 1119              		.global	mem_calloc
+ 1120              		.syntax unified
+ 1121              		.thumb
+ 1122              		.thumb_func
+ 1124              	mem_calloc:
+ 1125              		@ args = 0, pretend = 0, frame = 16
+ 1126              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1127 0000 80B5     		push	{r7, lr}
+ 1128 0002 84B0     		sub	sp, sp, #16
+ 1129 0004 00AF     		add	r7, sp, #0
+ 1130 0006 0346     		mov	r3, r0
+ 1131 0008 0A46     		mov	r2, r1
+ 1132 000a FB80     		strh	r3, [r7, #6]	@ movhi
+ 1133 000c 1346     		mov	r3, r2	@ movhi
+ 1134 000e BB80     		strh	r3, [r7, #4]	@ movhi
+ 1135 0010 FB88     		ldrh	r3, [r7, #6]
+ 1136 0012 BA88     		ldrh	r2, [r7, #4]
+ 1137 0014 02FB03F3 		mul	r3, r2, r3
+ 1138 0018 FB60     		str	r3, [r7, #12]
+ 1139 001a FB68     		ldr	r3, [r7, #12]
+ 1140 001c 9BB2     		uxth	r3, r3
+ 1141 001e 1A46     		mov	r2, r3
+ 1142 0020 FB68     		ldr	r3, [r7, #12]
+ 1143 0022 9342     		cmp	r3, r2
+ 1144 0024 01D0     		beq	.L87
+ 1145 0026 0023     		movs	r3, #0
+ 1146 0028 0EE0     		b	.L88
+ 1147              	.L87:
+ 1148 002a FB68     		ldr	r3, [r7, #12]
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 22
+
+
+ 1149 002c 9BB2     		uxth	r3, r3
+ 1150 002e 1846     		mov	r0, r3
+ 1151 0030 FFF7FEFF 		bl	mem_malloc
+ 1152 0034 B860     		str	r0, [r7, #8]
+ 1153 0036 BB68     		ldr	r3, [r7, #8]
+ 1154 0038 002B     		cmp	r3, #0
+ 1155 003a 04D0     		beq	.L89
+ 1156 003c FA68     		ldr	r2, [r7, #12]
+ 1157 003e 0021     		movs	r1, #0
+ 1158 0040 B868     		ldr	r0, [r7, #8]
+ 1159 0042 FFF7FEFF 		bl	memset
+ 1160              	.L89:
+ 1161 0046 BB68     		ldr	r3, [r7, #8]
+ 1162              	.L88:
+ 1163 0048 1846     		mov	r0, r3
+ 1164 004a 1037     		adds	r7, r7, #16
+ 1165 004c BD46     		mov	sp, r7
+ 1166              		@ sp needed
+ 1167 004e 80BD     		pop	{r7, pc}
+ 1169              		.ident	"GCC: (GNU) 13.3.0"
+ARM GAS  C:\msys64\tmp\cc5uQs1Q.s 			page 23
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 mem.c
+C:\msys64\tmp\cc5uQs1Q.s:18     .bss.ram:00000000 $d
+C:\msys64\tmp\cc5uQs1Q.s:21     .bss.ram:00000000 ram
+C:\msys64\tmp\cc5uQs1Q.s:24     .bss.ram_end:00000000 $d
+C:\msys64\tmp\cc5uQs1Q.s:27     .bss.ram_end:00000000 ram_end
+C:\msys64\tmp\cc5uQs1Q.s:30     .bss.mem_mutex:00000000 $d
+C:\msys64\tmp\cc5uQs1Q.s:33     .bss.mem_mutex:00000000 mem_mutex
+C:\msys64\tmp\cc5uQs1Q.s:36     .bss.lfree:00000000 $d
+C:\msys64\tmp\cc5uQs1Q.s:39     .bss.lfree:00000000 lfree
+C:\msys64\tmp\cc5uQs1Q.s:42     .text.ptr_to_mem:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:47     .text.ptr_to_mem:00000000 ptr_to_mem
+C:\msys64\tmp\cc5uQs1Q.s:69     .text.ptr_to_mem:00000020 $d
+C:\msys64\tmp\cc5uQs1Q.s:72     .text.mem_to_ptr:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:77     .text.mem_to_ptr:00000000 mem_to_ptr
+C:\msys64\tmp\cc5uQs1Q.s:99     .text.mem_to_ptr:00000020 $d
+C:\msys64\tmp\cc5uQs1Q.s:102    .rodata:00000000 $d
+C:\msys64\tmp\cc5uQs1Q.s:122    .text.plug_holes:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:127    .text.plug_holes:00000000 plug_holes
+C:\msys64\tmp\cc5uQs1Q.s:269    .text.plug_holes:00000120 $d
+C:\msys64\tmp\cc5uQs1Q.s:284    .text.mem_init:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:290    .text.mem_init:00000000 mem_init
+C:\msys64\tmp\cc5uQs1Q.s:351    .text.mem_init:0000007c $d
+C:\msys64\tmp\cc5uQs1Q.s:361    .text.mem_link_valid:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:366    .text.mem_link_valid:00000000 mem_link_valid
+C:\msys64\tmp\cc5uQs1Q.s:430    .text.mem_link_valid:00000074 $d
+C:\msys64\tmp\cc5uQs1Q.s:446    .text.mem_free:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:452    .text.mem_free:00000000 mem_free
+C:\msys64\tmp\cc5uQs1Q.s:567    .text.mem_free:000000f8 $d
+C:\msys64\tmp\cc5uQs1Q.s:589    .text.mem_trim:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:595    .text.mem_trim:00000000 mem_trim
+C:\msys64\tmp\cc5uQs1Q.s:841    .text.mem_trim:000001f0 $d
+C:\msys64\tmp\cc5uQs1Q.s:865    .text.mem_malloc:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:871    .text.mem_malloc:00000000 mem_malloc
+C:\msys64\tmp\cc5uQs1Q.s:1106   .text.mem_malloc:000001e4 $d
+C:\msys64\tmp\cc5uQs1Q.s:1118   .text.mem_calloc:00000000 $t
+C:\msys64\tmp\cc5uQs1Q.s:1124   .text.mem_calloc:00000000 mem_calloc
+
+UNDEFINED SYMBOLS
+printf
+sys_mutex_new
+sys_arch_protect
+sys_arch_unprotect
+sys_mutex_lock
+sys_mutex_unlock
+memset

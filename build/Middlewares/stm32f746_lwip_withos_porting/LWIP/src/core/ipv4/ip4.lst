@@ -1,0 +1,879 @@
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"ip4.c"
+  16              		.text
+  17              		.section	.bss.ip_id,"aw",%nobits
+  18              		.align	1
+  21              	ip_id:
+  22 0000 0000     		.space	2
+  23              		.section	.text.ip4_route,"ax",%progbits
+  24              		.align	1
+  25              		.global	ip4_route
+  26              		.syntax unified
+  27              		.thumb
+  28              		.thumb_func
+  30              	ip4_route:
+  31              		@ args = 0, pretend = 0, frame = 16
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34 0000 80B4     		push	{r7}
+  35 0002 85B0     		sub	sp, sp, #20
+  36 0004 00AF     		add	r7, sp, #0
+  37 0006 7860     		str	r0, [r7, #4]
+  38 0008 334B     		ldr	r3, .L9
+  39 000a 1B68     		ldr	r3, [r3]
+  40 000c FB60     		str	r3, [r7, #12]
+  41 000e 36E0     		b	.L2
+  42              	.L6:
+  43 0010 FB68     		ldr	r3, [r7, #12]
+  44 0012 93F82D30 		ldrb	r3, [r3, #45]	@ zero_extendqisi2
+  45 0016 03F00103 		and	r3, r3, #1
+  46 001a DBB2     		uxtb	r3, r3
+  47 001c 002B     		cmp	r3, #0
+  48 001e 2BD0     		beq	.L3
+  49 0020 FB68     		ldr	r3, [r7, #12]
+  50 0022 93F82D30 		ldrb	r3, [r3, #45]	@ zero_extendqisi2
+  51 0026 9B08     		lsrs	r3, r3, #2
+  52 0028 03F00103 		and	r3, r3, #1
+  53 002c DBB2     		uxtb	r3, r3
+  54 002e 002B     		cmp	r3, #0
+  55 0030 22D0     		beq	.L3
+  56 0032 FB68     		ldr	r3, [r7, #12]
+  57 0034 0433     		adds	r3, r3, #4
+  58 0036 1B68     		ldr	r3, [r3]
+  59 0038 002B     		cmp	r3, #0
+  60 003a 1DD0     		beq	.L3
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 2
+
+
+  61 003c 7B68     		ldr	r3, [r7, #4]
+  62 003e 1A68     		ldr	r2, [r3]
+  63 0040 FB68     		ldr	r3, [r7, #12]
+  64 0042 0433     		adds	r3, r3, #4
+  65 0044 1B68     		ldr	r3, [r3]
+  66 0046 5A40     		eors	r2, r2, r3
+  67 0048 FB68     		ldr	r3, [r7, #12]
+  68 004a 0833     		adds	r3, r3, #8
+  69 004c 1B68     		ldr	r3, [r3]
+  70 004e 1340     		ands	r3, r3, r2
+  71 0050 002B     		cmp	r3, #0
+  72 0052 01D1     		bne	.L4
+  73 0054 FB68     		ldr	r3, [r7, #12]
+  74 0056 38E0     		b	.L5
+  75              	.L4:
+  76 0058 FB68     		ldr	r3, [r7, #12]
+  77 005a 93F82D30 		ldrb	r3, [r3, #45]	@ zero_extendqisi2
+  78 005e 03F00203 		and	r3, r3, #2
+  79 0062 002B     		cmp	r3, #0
+  80 0064 08D1     		bne	.L3
+  81 0066 7B68     		ldr	r3, [r7, #4]
+  82 0068 1A68     		ldr	r2, [r3]
+  83 006a FB68     		ldr	r3, [r7, #12]
+  84 006c 0C33     		adds	r3, r3, #12
+  85 006e 1B68     		ldr	r3, [r3]
+  86 0070 9A42     		cmp	r2, r3
+  87 0072 01D1     		bne	.L3
+  88 0074 FB68     		ldr	r3, [r7, #12]
+  89 0076 28E0     		b	.L5
+  90              	.L3:
+  91 0078 FB68     		ldr	r3, [r7, #12]
+  92 007a 1B68     		ldr	r3, [r3]
+  93 007c FB60     		str	r3, [r7, #12]
+  94              	.L2:
+  95 007e FB68     		ldr	r3, [r7, #12]
+  96 0080 002B     		cmp	r3, #0
+  97 0082 C5D1     		bne	.L6
+  98 0084 154B     		ldr	r3, .L9+4
+  99 0086 1B68     		ldr	r3, [r3]
+ 100 0088 002B     		cmp	r3, #0
+ 101 008a 1AD0     		beq	.L7
+ 102 008c 134B     		ldr	r3, .L9+4
+ 103 008e 1B68     		ldr	r3, [r3]
+ 104 0090 93F82D30 		ldrb	r3, [r3, #45]	@ zero_extendqisi2
+ 105 0094 03F00103 		and	r3, r3, #1
+ 106 0098 002B     		cmp	r3, #0
+ 107 009a 12D0     		beq	.L7
+ 108 009c 0F4B     		ldr	r3, .L9+4
+ 109 009e 1B68     		ldr	r3, [r3]
+ 110 00a0 93F82D30 		ldrb	r3, [r3, #45]	@ zero_extendqisi2
+ 111 00a4 03F00403 		and	r3, r3, #4
+ 112 00a8 002B     		cmp	r3, #0
+ 113 00aa 0AD0     		beq	.L7
+ 114 00ac 0B4B     		ldr	r3, .L9+4
+ 115 00ae 1B68     		ldr	r3, [r3]
+ 116 00b0 0433     		adds	r3, r3, #4
+ 117 00b2 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 3
+
+
+ 118 00b4 002B     		cmp	r3, #0
+ 119 00b6 04D0     		beq	.L7
+ 120 00b8 7B68     		ldr	r3, [r7, #4]
+ 121 00ba 1B68     		ldr	r3, [r3]
+ 122 00bc DBB2     		uxtb	r3, r3
+ 123 00be 7F2B     		cmp	r3, #127
+ 124 00c0 01D1     		bne	.L8
+ 125              	.L7:
+ 126 00c2 0023     		movs	r3, #0
+ 127 00c4 01E0     		b	.L5
+ 128              	.L8:
+ 129 00c6 054B     		ldr	r3, .L9+4
+ 130 00c8 1B68     		ldr	r3, [r3]
+ 131              	.L5:
+ 132 00ca 1846     		mov	r0, r3
+ 133 00cc 1437     		adds	r7, r7, #20
+ 134 00ce BD46     		mov	sp, r7
+ 135              		@ sp needed
+ 136 00d0 5DF8047B 		ldr	r7, [sp], #4
+ 137 00d4 7047     		bx	lr
+ 138              	.L10:
+ 139 00d6 00BF     		.align	2
+ 140              	.L9:
+ 141 00d8 00000000 		.word	netif_list
+ 142 00dc 00000000 		.word	netif_default
+ 144              		.section	.text.ip4_input_accept,"ax",%progbits
+ 145              		.align	1
+ 146              		.syntax unified
+ 147              		.thumb
+ 148              		.thumb_func
+ 150              	ip4_input_accept:
+ 151              		@ args = 0, pretend = 0, frame = 8
+ 152              		@ frame_needed = 1, uses_anonymous_args = 0
+ 153 0000 80B5     		push	{r7, lr}
+ 154 0002 82B0     		sub	sp, sp, #8
+ 155 0004 00AF     		add	r7, sp, #0
+ 156 0006 7860     		str	r0, [r7, #4]
+ 157 0008 7B68     		ldr	r3, [r7, #4]
+ 158 000a 93F82D30 		ldrb	r3, [r3, #45]	@ zero_extendqisi2
+ 159 000e 03F00103 		and	r3, r3, #1
+ 160 0012 DBB2     		uxtb	r3, r3
+ 161 0014 002B     		cmp	r3, #0
+ 162 0016 16D0     		beq	.L12
+ 163 0018 7B68     		ldr	r3, [r7, #4]
+ 164 001a 0433     		adds	r3, r3, #4
+ 165 001c 1B68     		ldr	r3, [r3]
+ 166 001e 002B     		cmp	r3, #0
+ 167 0020 11D0     		beq	.L12
+ 168 0022 0B4B     		ldr	r3, .L15
+ 169 0024 5A69     		ldr	r2, [r3, #20]
+ 170 0026 7B68     		ldr	r3, [r7, #4]
+ 171 0028 0433     		adds	r3, r3, #4
+ 172 002a 1B68     		ldr	r3, [r3]
+ 173 002c 9A42     		cmp	r2, r3
+ 174 002e 08D0     		beq	.L13
+ 175 0030 074B     		ldr	r3, .L15
+ 176 0032 5B69     		ldr	r3, [r3, #20]
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 4
+
+
+ 177 0034 7968     		ldr	r1, [r7, #4]
+ 178 0036 1846     		mov	r0, r3
+ 179 0038 FFF7FEFF 		bl	ip4_addr_isbroadcast_u32
+ 180 003c 0346     		mov	r3, r0
+ 181 003e 002B     		cmp	r3, #0
+ 182 0040 01D0     		beq	.L12
+ 183              	.L13:
+ 184 0042 0123     		movs	r3, #1
+ 185 0044 00E0     		b	.L14
+ 186              	.L12:
+ 187 0046 0023     		movs	r3, #0
+ 188              	.L14:
+ 189 0048 1846     		mov	r0, r3
+ 190 004a 0837     		adds	r7, r7, #8
+ 191 004c BD46     		mov	sp, r7
+ 192              		@ sp needed
+ 193 004e 80BD     		pop	{r7, pc}
+ 194              	.L16:
+ 195              		.align	2
+ 196              	.L15:
+ 197 0050 00000000 		.word	ip_data
+ 199              		.section	.text.ip4_input,"ax",%progbits
+ 200              		.align	1
+ 201              		.global	ip4_input
+ 202              		.syntax unified
+ 203              		.thumb
+ 204              		.thumb_func
+ 206              	ip4_input:
+ 207              		@ args = 0, pretend = 0, frame = 24
+ 208              		@ frame_needed = 1, uses_anonymous_args = 0
+ 209 0000 80B5     		push	{r7, lr}
+ 210 0002 86B0     		sub	sp, sp, #24
+ 211 0004 00AF     		add	r7, sp, #0
+ 212 0006 7860     		str	r0, [r7, #4]
+ 213 0008 3960     		str	r1, [r7]
+ 214 000a 7B68     		ldr	r3, [r7, #4]
+ 215 000c 5B68     		ldr	r3, [r3, #4]
+ 216 000e 7B61     		str	r3, [r7, #20]
+ 217 0010 7B69     		ldr	r3, [r7, #20]
+ 218 0012 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 219 0014 1B09     		lsrs	r3, r3, #4
+ 220 0016 DBB2     		uxtb	r3, r3
+ 221 0018 042B     		cmp	r3, #4
+ 222 001a 04D0     		beq	.L18
+ 223 001c 7868     		ldr	r0, [r7, #4]
+ 224 001e FFF7FEFF 		bl	pbuf_free
+ 225 0022 0023     		movs	r3, #0
+ 226 0024 F6E0     		b	.L19
+ 227              	.L18:
+ 228 0026 7B69     		ldr	r3, [r7, #20]
+ 229 0028 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 230 002a 03F00F03 		and	r3, r3, #15
+ 231 002e DBB2     		uxtb	r3, r3
+ 232 0030 9B00     		lsls	r3, r3, #2
+ 233 0032 DBB2     		uxtb	r3, r3
+ 234 0034 FB81     		strh	r3, [r7, #14]	@ movhi
+ 235 0036 7B69     		ldr	r3, [r7, #20]
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 5
+
+
+ 236 0038 5B88     		ldrh	r3, [r3, #2]	@ unaligned
+ 237 003a 9BB2     		uxth	r3, r3
+ 238 003c 1846     		mov	r0, r3
+ 239 003e FFF7FEFF 		bl	lwip_htons
+ 240 0042 0346     		mov	r3, r0
+ 241 0044 BB81     		strh	r3, [r7, #12]	@ movhi
+ 242 0046 7B68     		ldr	r3, [r7, #4]
+ 243 0048 1B89     		ldrh	r3, [r3, #8]
+ 244 004a BA89     		ldrh	r2, [r7, #12]
+ 245 004c 9A42     		cmp	r2, r3
+ 246 004e 04D2     		bcs	.L20
+ 247 0050 BB89     		ldrh	r3, [r7, #12]
+ 248 0052 1946     		mov	r1, r3
+ 249 0054 7868     		ldr	r0, [r7, #4]
+ 250 0056 FFF7FEFF 		bl	pbuf_realloc
+ 251              	.L20:
+ 252 005a 7B68     		ldr	r3, [r7, #4]
+ 253 005c 5B89     		ldrh	r3, [r3, #10]
+ 254 005e FA89     		ldrh	r2, [r7, #14]
+ 255 0060 9A42     		cmp	r2, r3
+ 256 0062 07D8     		bhi	.L21
+ 257 0064 7B68     		ldr	r3, [r7, #4]
+ 258 0066 1B89     		ldrh	r3, [r3, #8]
+ 259 0068 BA89     		ldrh	r2, [r7, #12]
+ 260 006a 9A42     		cmp	r2, r3
+ 261 006c 02D8     		bhi	.L21
+ 262 006e FB89     		ldrh	r3, [r7, #14]
+ 263 0070 132B     		cmp	r3, #19
+ 264 0072 04D8     		bhi	.L22
+ 265              	.L21:
+ 266 0074 7868     		ldr	r0, [r7, #4]
+ 267 0076 FFF7FEFF 		bl	pbuf_free
+ 268 007a 0023     		movs	r3, #0
+ 269 007c CAE0     		b	.L19
+ 270              	.L22:
+ 271 007e 7B69     		ldr	r3, [r7, #20]
+ 272 0080 1B69     		ldr	r3, [r3, #16]	@ unaligned
+ 273 0082 664A     		ldr	r2, .L42
+ 274 0084 5361     		str	r3, [r2, #20]
+ 275 0086 7B69     		ldr	r3, [r7, #20]
+ 276 0088 DB68     		ldr	r3, [r3, #12]	@ unaligned
+ 277 008a 644A     		ldr	r2, .L42
+ 278 008c 1361     		str	r3, [r2, #16]
+ 279 008e 634B     		ldr	r3, .L42
+ 280 0090 5B69     		ldr	r3, [r3, #20]
+ 281 0092 03F0F003 		and	r3, r3, #240
+ 282 0096 E02B     		cmp	r3, #224
+ 283 0098 12D1     		bne	.L23
+ 284 009a 3B68     		ldr	r3, [r7]
+ 285 009c 93F82D30 		ldrb	r3, [r3, #45]	@ zero_extendqisi2
+ 286 00a0 03F00103 		and	r3, r3, #1
+ 287 00a4 DBB2     		uxtb	r3, r3
+ 288 00a6 002B     		cmp	r3, #0
+ 289 00a8 07D0     		beq	.L24
+ 290 00aa 3B68     		ldr	r3, [r7]
+ 291 00ac 0433     		adds	r3, r3, #4
+ 292 00ae 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 6
+
+
+ 293 00b0 002B     		cmp	r3, #0
+ 294 00b2 02D0     		beq	.L24
+ 295 00b4 3B68     		ldr	r3, [r7]
+ 296 00b6 3B61     		str	r3, [r7, #16]
+ 297 00b8 2AE0     		b	.L26
+ 298              	.L24:
+ 299 00ba 0023     		movs	r3, #0
+ 300 00bc 3B61     		str	r3, [r7, #16]
+ 301 00be 27E0     		b	.L26
+ 302              	.L23:
+ 303 00c0 3868     		ldr	r0, [r7]
+ 304 00c2 FFF7FEFF 		bl	ip4_input_accept
+ 305 00c6 0346     		mov	r3, r0
+ 306 00c8 002B     		cmp	r3, #0
+ 307 00ca 02D0     		beq	.L27
+ 308 00cc 3B68     		ldr	r3, [r7]
+ 309 00ce 3B61     		str	r3, [r7, #16]
+ 310 00d0 1EE0     		b	.L26
+ 311              	.L27:
+ 312 00d2 0023     		movs	r3, #0
+ 313 00d4 3B61     		str	r3, [r7, #16]
+ 314 00d6 514B     		ldr	r3, .L42
+ 315 00d8 5B69     		ldr	r3, [r3, #20]
+ 316 00da DBB2     		uxtb	r3, r3
+ 317 00dc 7F2B     		cmp	r3, #127
+ 318 00de 17D0     		beq	.L26
+ 319 00e0 4F4B     		ldr	r3, .L42+4
+ 320 00e2 1B68     		ldr	r3, [r3]
+ 321 00e4 3B61     		str	r3, [r7, #16]
+ 322 00e6 0EE0     		b	.L28
+ 323              	.L31:
+ 324 00e8 3A69     		ldr	r2, [r7, #16]
+ 325 00ea 3B68     		ldr	r3, [r7]
+ 326 00ec 9A42     		cmp	r2, r3
+ 327 00ee 06D0     		beq	.L40
+ 328 00f0 3869     		ldr	r0, [r7, #16]
+ 329 00f2 FFF7FEFF 		bl	ip4_input_accept
+ 330 00f6 0346     		mov	r3, r0
+ 331 00f8 002B     		cmp	r3, #0
+ 332 00fa 08D1     		bne	.L41
+ 333 00fc 00E0     		b	.L30
+ 334              	.L40:
+ 335 00fe 00BF     		nop
+ 336              	.L30:
+ 337 0100 3B69     		ldr	r3, [r7, #16]
+ 338 0102 1B68     		ldr	r3, [r3]
+ 339 0104 3B61     		str	r3, [r7, #16]
+ 340              	.L28:
+ 341 0106 3B69     		ldr	r3, [r7, #16]
+ 342 0108 002B     		cmp	r3, #0
+ 343 010a EDD1     		bne	.L31
+ 344 010c 00E0     		b	.L26
+ 345              	.L41:
+ 346 010e 00BF     		nop
+ 347              	.L26:
+ 348 0110 424B     		ldr	r3, .L42
+ 349 0112 1B69     		ldr	r3, [r3, #16]
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 7
+
+
+ 350 0114 3968     		ldr	r1, [r7]
+ 351 0116 1846     		mov	r0, r3
+ 352 0118 FFF7FEFF 		bl	ip4_addr_isbroadcast_u32
+ 353 011c 0346     		mov	r3, r0
+ 354 011e 002B     		cmp	r3, #0
+ 355 0120 05D1     		bne	.L32
+ 356 0122 3E4B     		ldr	r3, .L42
+ 357 0124 1B69     		ldr	r3, [r3, #16]
+ 358 0126 03F0F003 		and	r3, r3, #240
+ 359 012a E02B     		cmp	r3, #224
+ 360 012c 04D1     		bne	.L33
+ 361              	.L32:
+ 362 012e 7868     		ldr	r0, [r7, #4]
+ 363 0130 FFF7FEFF 		bl	pbuf_free
+ 364 0134 0023     		movs	r3, #0
+ 365 0136 6DE0     		b	.L19
+ 366              	.L33:
+ 367 0138 3B69     		ldr	r3, [r7, #16]
+ 368 013a 002B     		cmp	r3, #0
+ 369 013c 04D1     		bne	.L34
+ 370 013e 7868     		ldr	r0, [r7, #4]
+ 371 0140 FFF7FEFF 		bl	pbuf_free
+ 372 0144 0023     		movs	r3, #0
+ 373 0146 65E0     		b	.L19
+ 374              	.L34:
+ 375 0148 7B69     		ldr	r3, [r7, #20]
+ 376 014a DB88     		ldrh	r3, [r3, #6]	@ unaligned
+ 377 014c 9BB2     		uxth	r3, r3
+ 378 014e 1A46     		mov	r2, r3
+ 379 0150 4FF63F73 		movw	r3, #65343
+ 380 0154 1340     		ands	r3, r3, r2
+ 381 0156 002B     		cmp	r3, #0
+ 382 0158 0BD0     		beq	.L35
+ 383 015a 7868     		ldr	r0, [r7, #4]
+ 384 015c FFF7FEFF 		bl	ip4_reass
+ 385 0160 7860     		str	r0, [r7, #4]
+ 386 0162 7B68     		ldr	r3, [r7, #4]
+ 387 0164 002B     		cmp	r3, #0
+ 388 0166 01D1     		bne	.L36
+ 389 0168 0023     		movs	r3, #0
+ 390 016a 53E0     		b	.L19
+ 391              	.L36:
+ 392 016c 7B68     		ldr	r3, [r7, #4]
+ 393 016e 5B68     		ldr	r3, [r3, #4]
+ 394 0170 7B61     		str	r3, [r7, #20]
+ 395              	.L35:
+ 396 0172 2A4A     		ldr	r2, .L42
+ 397 0174 3B69     		ldr	r3, [r7, #16]
+ 398 0176 1360     		str	r3, [r2]
+ 399 0178 284A     		ldr	r2, .L42
+ 400 017a 3B68     		ldr	r3, [r7]
+ 401 017c 5360     		str	r3, [r2, #4]
+ 402 017e 274A     		ldr	r2, .L42
+ 403 0180 7B69     		ldr	r3, [r7, #20]
+ 404 0182 9360     		str	r3, [r2, #8]
+ 405 0184 7B69     		ldr	r3, [r7, #20]
+ 406 0186 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 8
+
+
+ 407 0188 03F00F03 		and	r3, r3, #15
+ 408 018c DBB2     		uxtb	r3, r3
+ 409 018e 9B00     		lsls	r3, r3, #2
+ 410 0190 DBB2     		uxtb	r3, r3
+ 411 0192 1A46     		mov	r2, r3
+ 412 0194 214B     		ldr	r3, .L42
+ 413 0196 9A81     		strh	r2, [r3, #12]	@ movhi
+ 414 0198 FB89     		ldrh	r3, [r7, #14]
+ 415 019a 1946     		mov	r1, r3
+ 416 019c 7868     		ldr	r0, [r7, #4]
+ 417 019e FFF7FEFF 		bl	pbuf_remove_header
+ 418 01a2 7B69     		ldr	r3, [r7, #20]
+ 419 01a4 5B7A     		ldrb	r3, [r3, #9]	@ zero_extendqisi2
+ 420 01a6 012B     		cmp	r3, #1
+ 421 01a8 04D1     		bne	.L37
+ 422 01aa 3968     		ldr	r1, [r7]
+ 423 01ac 7868     		ldr	r0, [r7, #4]
+ 424 01ae FFF7FEFF 		bl	icmp_input
+ 425 01b2 1CE0     		b	.L38
+ 426              	.L37:
+ 427 01b4 194B     		ldr	r3, .L42
+ 428 01b6 5B69     		ldr	r3, [r3, #20]
+ 429 01b8 3969     		ldr	r1, [r7, #16]
+ 430 01ba 1846     		mov	r0, r3
+ 431 01bc FFF7FEFF 		bl	ip4_addr_isbroadcast_u32
+ 432 01c0 0346     		mov	r3, r0
+ 433 01c2 002B     		cmp	r3, #0
+ 434 01c4 0FD1     		bne	.L39
+ 435 01c6 154B     		ldr	r3, .L42
+ 436 01c8 5B69     		ldr	r3, [r3, #20]
+ 437 01ca 03F0F003 		and	r3, r3, #240
+ 438 01ce E02B     		cmp	r3, #224
+ 439 01d0 09D0     		beq	.L39
+ 440 01d2 B7F90E30 		ldrsh	r3, [r7, #14]
+ 441 01d6 1946     		mov	r1, r3
+ 442 01d8 7868     		ldr	r0, [r7, #4]
+ 443 01da FFF7FEFF 		bl	pbuf_header_force
+ 444 01de 0221     		movs	r1, #2
+ 445 01e0 7868     		ldr	r0, [r7, #4]
+ 446 01e2 FFF7FEFF 		bl	icmp_dest_unreach
+ 447              	.L39:
+ 448 01e6 7868     		ldr	r0, [r7, #4]
+ 449 01e8 FFF7FEFF 		bl	pbuf_free
+ 450 01ec 00BF     		nop
+ 451              	.L38:
+ 452 01ee 0B4B     		ldr	r3, .L42
+ 453 01f0 0022     		movs	r2, #0
+ 454 01f2 1A60     		str	r2, [r3]
+ 455 01f4 094B     		ldr	r3, .L42
+ 456 01f6 0022     		movs	r2, #0
+ 457 01f8 5A60     		str	r2, [r3, #4]
+ 458 01fa 084B     		ldr	r3, .L42
+ 459 01fc 0022     		movs	r2, #0
+ 460 01fe 9A60     		str	r2, [r3, #8]
+ 461 0200 064B     		ldr	r3, .L42
+ 462 0202 0022     		movs	r2, #0
+ 463 0204 9A81     		strh	r2, [r3, #12]	@ movhi
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 9
+
+
+ 464 0206 054B     		ldr	r3, .L42
+ 465 0208 0022     		movs	r2, #0
+ 466 020a 1A61     		str	r2, [r3, #16]
+ 467 020c 034B     		ldr	r3, .L42
+ 468 020e 0022     		movs	r2, #0
+ 469 0210 5A61     		str	r2, [r3, #20]
+ 470 0212 0023     		movs	r3, #0
+ 471              	.L19:
+ 472 0214 1846     		mov	r0, r3
+ 473 0216 1837     		adds	r7, r7, #24
+ 474 0218 BD46     		mov	sp, r7
+ 475              		@ sp needed
+ 476 021a 80BD     		pop	{r7, pc}
+ 477              	.L43:
+ 478              		.align	2
+ 479              	.L42:
+ 480 021c 00000000 		.word	ip_data
+ 481 0220 00000000 		.word	netif_list
+ 483              		.section	.text.ip4_output_if,"ax",%progbits
+ 484              		.align	1
+ 485              		.global	ip4_output_if
+ 486              		.syntax unified
+ 487              		.thumb
+ 488              		.thumb_func
+ 490              	ip4_output_if:
+ 491              		@ args = 12, pretend = 0, frame = 24
+ 492              		@ frame_needed = 1, uses_anonymous_args = 0
+ 493 0000 80B5     		push	{r7, lr}
+ 494 0002 8AB0     		sub	sp, sp, #40
+ 495 0004 04AF     		add	r7, sp, #16
+ 496 0006 F860     		str	r0, [r7, #12]
+ 497 0008 B960     		str	r1, [r7, #8]
+ 498 000a 7A60     		str	r2, [r7, #4]
+ 499 000c FB70     		strb	r3, [r7, #3]
+ 500 000e BB68     		ldr	r3, [r7, #8]
+ 501 0010 7B61     		str	r3, [r7, #20]
+ 502 0012 7B68     		ldr	r3, [r7, #4]
+ 503 0014 002B     		cmp	r3, #0
+ 504 0016 09D0     		beq	.L45
+ 505 0018 BB68     		ldr	r3, [r7, #8]
+ 506 001a 002B     		cmp	r3, #0
+ 507 001c 03D0     		beq	.L46
+ 508 001e BB68     		ldr	r3, [r7, #8]
+ 509 0020 1B68     		ldr	r3, [r3]
+ 510 0022 002B     		cmp	r3, #0
+ 511 0024 02D1     		bne	.L45
+ 512              	.L46:
+ 513 0026 BB6A     		ldr	r3, [r7, #40]
+ 514 0028 0433     		adds	r3, r3, #4
+ 515 002a 7B61     		str	r3, [r7, #20]
+ 516              	.L45:
+ 517 002c FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 518 002e BB6A     		ldr	r3, [r7, #40]
+ 519 0030 0293     		str	r3, [sp, #8]
+ 520 0032 97F82430 		ldrb	r3, [r7, #36]	@ zero_extendqisi2
+ 521 0036 0193     		str	r3, [sp, #4]
+ 522 0038 97F82030 		ldrb	r3, [r7, #32]	@ zero_extendqisi2
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 10
+
+
+ 523 003c 0093     		str	r3, [sp]
+ 524 003e 1346     		mov	r3, r2
+ 525 0040 7A68     		ldr	r2, [r7, #4]
+ 526 0042 7969     		ldr	r1, [r7, #20]
+ 527 0044 F868     		ldr	r0, [r7, #12]
+ 528 0046 FFF7FEFF 		bl	ip4_output_if_src
+ 529 004a 0346     		mov	r3, r0
+ 530 004c 1846     		mov	r0, r3
+ 531 004e 1837     		adds	r7, r7, #24
+ 532 0050 BD46     		mov	sp, r7
+ 533              		@ sp needed
+ 534 0052 80BD     		pop	{r7, pc}
+ 536              		.section	.rodata
+ 537              		.align	2
+ 538              	.LC0:
+ 539 0000 4D696464 		.ascii	"Middlewares/stm32f746_lwip_withos_porting/LWIP/src/"
+ 539      6C657761 
+ 539      7265732F 
+ 539      73746D33 
+ 539      32663734 
+ 540 0033 636F7265 		.ascii	"core/ipv4/ip4.c\000"
+ 540      2F697076 
+ 540      342F6970 
+ 540      342E6300 
+ 541 0043 00       		.align	2
+ 542              	.LC1:
+ 543 0044 702D3E72 		.ascii	"p->ref == 1\000"
+ 543      6566203D 
+ 543      3D203100 
+ 544              		.align	2
+ 545              	.LC2:
+ 546 0050 41737365 		.ascii	"Assertion \"%s\" failed at line %d in %s\012\000"
+ 546      7274696F 
+ 546      6E202225 
+ 546      73222066 
+ 546      61696C65 
+ 547              		.align	2
+ 548              	.LC3:
+ 549 0078 63686563 		.ascii	"check that first pbuf can hold struct ip_hdr\000"
+ 549      6B207468 
+ 549      61742066 
+ 549      69727374 
+ 549      20706275 
+ 550              		.section	.text.ip4_output_if_src,"ax",%progbits
+ 551              		.align	1
+ 552              		.global	ip4_output_if_src
+ 553              		.syntax unified
+ 554              		.thumb
+ 555              		.thumb_func
+ 557              	ip4_output_if_src:
+ 558              		@ args = 12, pretend = 0, frame = 32
+ 559              		@ frame_needed = 1, uses_anonymous_args = 0
+ 560 0000 80B5     		push	{r7, lr}
+ 561 0002 88B0     		sub	sp, sp, #32
+ 562 0004 00AF     		add	r7, sp, #0
+ 563 0006 F860     		str	r0, [r7, #12]
+ 564 0008 B960     		str	r1, [r7, #8]
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 11
+
+
+ 565 000a 7A60     		str	r2, [r7, #4]
+ 566 000c FB70     		strb	r3, [r7, #3]
+ 567 000e FB68     		ldr	r3, [r7, #12]
+ 568 0010 9B7B     		ldrb	r3, [r3, #14]	@ zero_extendqisi2
+ 569 0012 012B     		cmp	r3, #1
+ 570 0014 06D0     		beq	.L49
+ 571 0016 4B4B     		ldr	r3, .L60
+ 572 0018 4FF45572 		mov	r2, #852
+ 573 001c 4A49     		ldr	r1, .L60+4
+ 574 001e 4B48     		ldr	r0, .L60+8
+ 575 0020 FFF7FEFF 		bl	printf
+ 576              	.L49:
+ 577 0024 7B68     		ldr	r3, [r7, #4]
+ 578 0026 002B     		cmp	r3, #0
+ 579 0028 60D0     		beq	.L50
+ 580 002a 1423     		movs	r3, #20
+ 581 002c 7B83     		strh	r3, [r7, #26]	@ movhi
+ 582 002e 1421     		movs	r1, #20
+ 583 0030 F868     		ldr	r0, [r7, #12]
+ 584 0032 FFF7FEFF 		bl	pbuf_add_header
+ 585 0036 0346     		mov	r3, r0
+ 586 0038 002B     		cmp	r3, #0
+ 587 003a 02D0     		beq	.L51
+ 588 003c 6FF00103 		mvn	r3, #1
+ 589 0040 7CE0     		b	.L59
+ 590              	.L51:
+ 591 0042 FB68     		ldr	r3, [r7, #12]
+ 592 0044 5B68     		ldr	r3, [r3, #4]
+ 593 0046 FB61     		str	r3, [r7, #28]
+ 594 0048 FB68     		ldr	r3, [r7, #12]
+ 595 004a 5B89     		ldrh	r3, [r3, #10]
+ 596 004c 132B     		cmp	r3, #19
+ 597 004e 06D8     		bhi	.L53
+ 598 0050 3C4B     		ldr	r3, .L60
+ 599 0052 4FF46272 		mov	r2, #904
+ 600 0056 3E49     		ldr	r1, .L60+12
+ 601 0058 3C48     		ldr	r0, .L60+8
+ 602 005a FFF7FEFF 		bl	printf
+ 603              	.L53:
+ 604 005e FB69     		ldr	r3, [r7, #28]
+ 605 0060 FA78     		ldrb	r2, [r7, #3]
+ 606 0062 1A72     		strb	r2, [r3, #8]
+ 607 0064 FB69     		ldr	r3, [r7, #28]
+ 608 0066 97F82C20 		ldrb	r2, [r7, #44]
+ 609 006a 5A72     		strb	r2, [r3, #9]
+ 610 006c 7B68     		ldr	r3, [r7, #4]
+ 611 006e 1A68     		ldr	r2, [r3]
+ 612 0070 FB69     		ldr	r3, [r7, #28]
+ 613 0072 1A61     		str	r2, [r3, #16]	@ unaligned
+ 614 0074 7B8B     		ldrh	r3, [r7, #26]
+ 615 0076 9B08     		lsrs	r3, r3, #2
+ 616 0078 9BB2     		uxth	r3, r3
+ 617 007a DBB2     		uxtb	r3, r3
+ 618 007c 43F04003 		orr	r3, r3, #64
+ 619 0080 DAB2     		uxtb	r2, r3
+ 620 0082 FB69     		ldr	r3, [r7, #28]
+ 621 0084 1A70     		strb	r2, [r3]
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 12
+
+
+ 622 0086 FB69     		ldr	r3, [r7, #28]
+ 623 0088 97F82820 		ldrb	r2, [r7, #40]
+ 624 008c 5A70     		strb	r2, [r3, #1]
+ 625 008e FB68     		ldr	r3, [r7, #12]
+ 626 0090 1B89     		ldrh	r3, [r3, #8]
+ 627 0092 1846     		mov	r0, r3
+ 628 0094 FFF7FEFF 		bl	lwip_htons
+ 629 0098 0346     		mov	r3, r0
+ 630 009a 1A46     		mov	r2, r3
+ 631 009c FB69     		ldr	r3, [r7, #28]
+ 632 009e 5A80     		strh	r2, [r3, #2]	@ unaligned
+ 633 00a0 FB69     		ldr	r3, [r7, #28]
+ 634 00a2 0022     		movs	r2, #0
+ 635 00a4 9A71     		strb	r2, [r3, #6]
+ 636 00a6 0022     		movs	r2, #0
+ 637 00a8 DA71     		strb	r2, [r3, #7]
+ 638 00aa 2A4B     		ldr	r3, .L60+16
+ 639 00ac 1B88     		ldrh	r3, [r3]
+ 640 00ae 1846     		mov	r0, r3
+ 641 00b0 FFF7FEFF 		bl	lwip_htons
+ 642 00b4 0346     		mov	r3, r0
+ 643 00b6 1A46     		mov	r2, r3
+ 644 00b8 FB69     		ldr	r3, [r7, #28]
+ 645 00ba 9A80     		strh	r2, [r3, #4]	@ unaligned
+ 646 00bc 254B     		ldr	r3, .L60+16
+ 647 00be 1B88     		ldrh	r3, [r3]
+ 648 00c0 0133     		adds	r3, r3, #1
+ 649 00c2 9AB2     		uxth	r2, r3
+ 650 00c4 234B     		ldr	r3, .L60+16
+ 651 00c6 1A80     		strh	r2, [r3]	@ movhi
+ 652 00c8 BB68     		ldr	r3, [r7, #8]
+ 653 00ca 002B     		cmp	r3, #0
+ 654 00cc 04D1     		bne	.L54
+ 655 00ce 224B     		ldr	r3, .L60+20
+ 656 00d0 1A68     		ldr	r2, [r3]
+ 657 00d2 FB69     		ldr	r3, [r7, #28]
+ 658 00d4 DA60     		str	r2, [r3, #12]	@ unaligned
+ 659 00d6 03E0     		b	.L55
+ 660              	.L54:
+ 661 00d8 BB68     		ldr	r3, [r7, #8]
+ 662 00da 1A68     		ldr	r2, [r3]
+ 663 00dc FB69     		ldr	r3, [r7, #28]
+ 664 00de DA60     		str	r2, [r3, #12]	@ unaligned
+ 665              	.L55:
+ 666 00e0 FB69     		ldr	r3, [r7, #28]
+ 667 00e2 0022     		movs	r2, #0
+ 668 00e4 9A72     		strb	r2, [r3, #10]
+ 669 00e6 0022     		movs	r2, #0
+ 670 00e8 DA72     		strb	r2, [r3, #11]
+ 671 00ea 0FE0     		b	.L56
+ 672              	.L50:
+ 673 00ec FB68     		ldr	r3, [r7, #12]
+ 674 00ee 5B89     		ldrh	r3, [r3, #10]
+ 675 00f0 132B     		cmp	r3, #19
+ 676 00f2 02D8     		bhi	.L57
+ 677 00f4 6FF00103 		mvn	r3, #1
+ 678 00f8 20E0     		b	.L59
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 13
+
+
+ 679              	.L57:
+ 680 00fa FB68     		ldr	r3, [r7, #12]
+ 681 00fc 5B68     		ldr	r3, [r3, #4]
+ 682 00fe FB61     		str	r3, [r7, #28]
+ 683 0100 FB69     		ldr	r3, [r7, #28]
+ 684 0102 1B69     		ldr	r3, [r3, #16]	@ unaligned
+ 685 0104 7B61     		str	r3, [r7, #20]
+ 686 0106 07F11403 		add	r3, r7, #20
+ 687 010a 7B60     		str	r3, [r7, #4]
+ 688              	.L56:
+ 689 010c 3B6B     		ldr	r3, [r7, #48]
+ 690 010e 9B8C     		ldrh	r3, [r3, #36]
+ 691 0110 002B     		cmp	r3, #0
+ 692 0112 0CD0     		beq	.L58
+ 693 0114 FB68     		ldr	r3, [r7, #12]
+ 694 0116 1A89     		ldrh	r2, [r3, #8]
+ 695 0118 3B6B     		ldr	r3, [r7, #48]
+ 696 011a 9B8C     		ldrh	r3, [r3, #36]
+ 697 011c 9A42     		cmp	r2, r3
+ 698 011e 06D9     		bls	.L58
+ 699 0120 7A68     		ldr	r2, [r7, #4]
+ 700 0122 396B     		ldr	r1, [r7, #48]
+ 701 0124 F868     		ldr	r0, [r7, #12]
+ 702 0126 FFF7FEFF 		bl	ip4_frag
+ 703 012a 0346     		mov	r3, r0
+ 704 012c 06E0     		b	.L59
+ 705              	.L58:
+ 706 012e 3B6B     		ldr	r3, [r7, #48]
+ 707 0130 5B69     		ldr	r3, [r3, #20]
+ 708 0132 7A68     		ldr	r2, [r7, #4]
+ 709 0134 F968     		ldr	r1, [r7, #12]
+ 710 0136 386B     		ldr	r0, [r7, #48]
+ 711 0138 9847     		blx	r3
+ 712 013a 0346     		mov	r3, r0
+ 713              	.L59:
+ 714 013c 1846     		mov	r0, r3
+ 715 013e 2037     		adds	r7, r7, #32
+ 716 0140 BD46     		mov	sp, r7
+ 717              		@ sp needed
+ 718 0142 80BD     		pop	{r7, pc}
+ 719              	.L61:
+ 720              		.align	2
+ 721              	.L60:
+ 722 0144 00000000 		.word	.LC0
+ 723 0148 44000000 		.word	.LC1
+ 724 014c 50000000 		.word	.LC2
+ 725 0150 78000000 		.word	.LC3
+ 726 0154 00000000 		.word	ip_id
+ 727 0158 00000000 		.word	ip_addr_any
+ 729              		.section	.text.ip4_output,"ax",%progbits
+ 730              		.align	1
+ 731              		.global	ip4_output
+ 732              		.syntax unified
+ 733              		.thumb
+ 734              		.thumb_func
+ 736              	ip4_output:
+ 737              		@ args = 8, pretend = 0, frame = 24
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 14
+
+
+ 738              		@ frame_needed = 1, uses_anonymous_args = 0
+ 739 0000 80B5     		push	{r7, lr}
+ 740 0002 8AB0     		sub	sp, sp, #40
+ 741 0004 04AF     		add	r7, sp, #16
+ 742 0006 F860     		str	r0, [r7, #12]
+ 743 0008 B960     		str	r1, [r7, #8]
+ 744 000a 7A60     		str	r2, [r7, #4]
+ 745 000c FB70     		strb	r3, [r7, #3]
+ 746 000e FB68     		ldr	r3, [r7, #12]
+ 747 0010 9B7B     		ldrb	r3, [r3, #14]	@ zero_extendqisi2
+ 748 0012 012B     		cmp	r3, #1
+ 749 0014 06D0     		beq	.L63
+ 750 0016 124B     		ldr	r3, .L66
+ 751 0018 40F20942 		movw	r2, #1033
+ 752 001c 1149     		ldr	r1, .L66+4
+ 753 001e 1248     		ldr	r0, .L66+8
+ 754 0020 FFF7FEFF 		bl	printf
+ 755              	.L63:
+ 756 0024 7868     		ldr	r0, [r7, #4]
+ 757 0026 FFF7FEFF 		bl	ip4_route
+ 758 002a 7861     		str	r0, [r7, #20]
+ 759 002c 7B69     		ldr	r3, [r7, #20]
+ 760 002e 002B     		cmp	r3, #0
+ 761 0030 02D1     		bne	.L64
+ 762 0032 6FF00303 		mvn	r3, #3
+ 763 0036 0FE0     		b	.L65
+ 764              	.L64:
+ 765 0038 FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 766 003a 7B69     		ldr	r3, [r7, #20]
+ 767 003c 0293     		str	r3, [sp, #8]
+ 768 003e 97F82430 		ldrb	r3, [r7, #36]	@ zero_extendqisi2
+ 769 0042 0193     		str	r3, [sp, #4]
+ 770 0044 97F82030 		ldrb	r3, [r7, #32]	@ zero_extendqisi2
+ 771 0048 0093     		str	r3, [sp]
+ 772 004a 1346     		mov	r3, r2
+ 773 004c 7A68     		ldr	r2, [r7, #4]
+ 774 004e B968     		ldr	r1, [r7, #8]
+ 775 0050 F868     		ldr	r0, [r7, #12]
+ 776 0052 FFF7FEFF 		bl	ip4_output_if
+ 777 0056 0346     		mov	r3, r0
+ 778              	.L65:
+ 779 0058 1846     		mov	r0, r3
+ 780 005a 1837     		adds	r7, r7, #24
+ 781 005c BD46     		mov	sp, r7
+ 782              		@ sp needed
+ 783 005e 80BD     		pop	{r7, pc}
+ 784              	.L67:
+ 785              		.align	2
+ 786              	.L66:
+ 787 0060 00000000 		.word	.LC0
+ 788 0064 44000000 		.word	.LC1
+ 789 0068 50000000 		.word	.LC2
+ 791              		.ident	"GCC: (GNU) 13.3.0"
+ARM GAS  C:\msys64\tmp\cceheo1c.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ip4.c
+C:\msys64\tmp\cceheo1c.s:18     .bss.ip_id:00000000 $d
+C:\msys64\tmp\cceheo1c.s:21     .bss.ip_id:00000000 ip_id
+C:\msys64\tmp\cceheo1c.s:24     .text.ip4_route:00000000 $t
+C:\msys64\tmp\cceheo1c.s:30     .text.ip4_route:00000000 ip4_route
+C:\msys64\tmp\cceheo1c.s:141    .text.ip4_route:000000d8 $d
+C:\msys64\tmp\cceheo1c.s:145    .text.ip4_input_accept:00000000 $t
+C:\msys64\tmp\cceheo1c.s:150    .text.ip4_input_accept:00000000 ip4_input_accept
+C:\msys64\tmp\cceheo1c.s:197    .text.ip4_input_accept:00000050 $d
+C:\msys64\tmp\cceheo1c.s:200    .text.ip4_input:00000000 $t
+C:\msys64\tmp\cceheo1c.s:206    .text.ip4_input:00000000 ip4_input
+C:\msys64\tmp\cceheo1c.s:480    .text.ip4_input:0000021c $d
+C:\msys64\tmp\cceheo1c.s:484    .text.ip4_output_if:00000000 $t
+C:\msys64\tmp\cceheo1c.s:490    .text.ip4_output_if:00000000 ip4_output_if
+C:\msys64\tmp\cceheo1c.s:557    .text.ip4_output_if_src:00000000 ip4_output_if_src
+C:\msys64\tmp\cceheo1c.s:537    .rodata:00000000 $d
+C:\msys64\tmp\cceheo1c.s:551    .text.ip4_output_if_src:00000000 $t
+C:\msys64\tmp\cceheo1c.s:722    .text.ip4_output_if_src:00000144 $d
+C:\msys64\tmp\cceheo1c.s:730    .text.ip4_output:00000000 $t
+C:\msys64\tmp\cceheo1c.s:736    .text.ip4_output:00000000 ip4_output
+C:\msys64\tmp\cceheo1c.s:787    .text.ip4_output:00000060 $d
+
+UNDEFINED SYMBOLS
+netif_list
+netif_default
+ip4_addr_isbroadcast_u32
+ip_data
+pbuf_free
+lwip_htons
+pbuf_realloc
+ip4_reass
+pbuf_remove_header
+icmp_input
+pbuf_header_force
+icmp_dest_unreach
+printf
+pbuf_add_header
+ip4_frag
+ip_addr_any

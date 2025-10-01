@@ -1,0 +1,58 @@
+ARM GAS  C:\msys64\tmp\ccLuYo3H.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"init.c"
+  16              		.text
+  17              		.section	.text.lwip_init,"ax",%progbits
+  18              		.align	1
+  19              		.global	lwip_init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	lwip_init:
+  25              		@ args = 0, pretend = 0, frame = 8
+  26              		@ frame_needed = 1, uses_anonymous_args = 0
+  27 0000 80B5     		push	{r7, lr}
+  28 0002 82B0     		sub	sp, sp, #8
+  29 0004 00AF     		add	r7, sp, #0
+  30 0006 0023     		movs	r3, #0
+  31 0008 7B60     		str	r3, [r7, #4]
+  32 000a FFF7FEFF 		bl	sys_init
+  33 000e FFF7FEFF 		bl	mem_init
+  34 0012 FFF7FEFF 		bl	memp_init
+  35 0016 FFF7FEFF 		bl	netif_init
+  36 001a FFF7FEFF 		bl	sys_timeouts_init
+  37 001e 00BF     		nop
+  38 0020 0837     		adds	r7, r7, #8
+  39 0022 BD46     		mov	sp, r7
+  40              		@ sp needed
+  41 0024 80BD     		pop	{r7, pc}
+  43              		.ident	"GCC: (GNU) 13.3.0"
+ARM GAS  C:\msys64\tmp\ccLuYo3H.s 			page 2
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 init.c
+C:\msys64\tmp\ccLuYo3H.s:18     .text.lwip_init:00000000 $t
+C:\msys64\tmp\ccLuYo3H.s:24     .text.lwip_init:00000000 lwip_init
+
+UNDEFINED SYMBOLS
+sys_init
+mem_init
+memp_init
+netif_init
+sys_timeouts_init

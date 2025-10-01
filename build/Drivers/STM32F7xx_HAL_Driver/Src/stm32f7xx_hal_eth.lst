@@ -1,0 +1,4868 @@
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f7xx_hal_eth.c"
+  16              		.text
+  17              		.section	.text.HAL_ETH_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	HAL_ETH_Init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	HAL_ETH_Init:
+  25              		@ args = 0, pretend = 0, frame = 16
+  26              		@ frame_needed = 1, uses_anonymous_args = 0
+  27 0000 80B5     		push	{r7, lr}
+  28 0002 84B0     		sub	sp, sp, #16
+  29 0004 00AF     		add	r7, sp, #0
+  30 0006 7860     		str	r0, [r7, #4]
+  31 0008 7B68     		ldr	r3, [r7, #4]
+  32 000a 002B     		cmp	r3, #0
+  33 000c 01D1     		bne	.L2
+  34 000e 0123     		movs	r3, #1
+  35 0010 86E0     		b	.L3
+  36              	.L2:
+  37 0012 7B68     		ldr	r3, [r7, #4]
+  38 0014 D3F88430 		ldr	r3, [r3, #132]
+  39 0018 002B     		cmp	r3, #0
+  40 001a 06D1     		bne	.L4
+  41 001c 7B68     		ldr	r3, [r7, #4]
+  42 001e 2022     		movs	r2, #32
+  43 0020 C3F88420 		str	r2, [r3, #132]
+  44 0024 7868     		ldr	r0, [r7, #4]
+  45 0026 FFF7FEFF 		bl	HAL_ETH_MspInit
+  46              	.L4:
+  47 002a 3F4B     		ldr	r3, .L7
+  48 002c 5B6C     		ldr	r3, [r3, #68]
+  49 002e 3E4A     		ldr	r2, .L7
+  50 0030 43F48043 		orr	r3, r3, #16384
+  51 0034 5364     		str	r3, [r2, #68]
+  52 0036 3C4B     		ldr	r3, .L7
+  53 0038 5B6C     		ldr	r3, [r3, #68]
+  54 003a 03F48043 		and	r3, r3, #16384
+  55 003e BB60     		str	r3, [r7, #8]
+  56 0040 BB68     		ldr	r3, [r7, #8]
+  57 0042 3A4B     		ldr	r3, .L7+4
+  58 0044 5B68     		ldr	r3, [r3, #4]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 2
+
+
+  59 0046 394A     		ldr	r2, .L7+4
+  60 0048 23F40003 		bic	r3, r3, #8388608
+  61 004c 5360     		str	r3, [r2, #4]
+  62 004e 374B     		ldr	r3, .L7+4
+  63 0050 5A68     		ldr	r2, [r3, #4]
+  64 0052 7B68     		ldr	r3, [r7, #4]
+  65 0054 9B68     		ldr	r3, [r3, #8]
+  66 0056 3549     		ldr	r1, .L7+4
+  67 0058 1343     		orrs	r3, r3, r2
+  68 005a 4B60     		str	r3, [r1, #4]
+  69 005c 334B     		ldr	r3, .L7+4
+  70 005e 5B68     		ldr	r3, [r3, #4]
+  71 0060 7B68     		ldr	r3, [r7, #4]
+  72 0062 1B68     		ldr	r3, [r3]
+  73 0064 03F58053 		add	r3, r3, #4096
+  74 0068 1B68     		ldr	r3, [r3]
+  75 006a 7A68     		ldr	r2, [r7, #4]
+  76 006c 1268     		ldr	r2, [r2]
+  77 006e 43F00103 		orr	r3, r3, #1
+  78 0072 02F58052 		add	r2, r2, #4096
+  79 0076 1360     		str	r3, [r2]
+  80 0078 FFF7FEFF 		bl	HAL_GetTick
+  81 007c F860     		str	r0, [r7, #12]
+  82 007e 11E0     		b	.L5
+  83              	.L6:
+  84 0080 FFF7FEFF 		bl	HAL_GetTick
+  85 0084 0246     		mov	r2, r0
+  86 0086 FB68     		ldr	r3, [r7, #12]
+  87 0088 D31A     		subs	r3, r2, r3
+  88 008a B3F5FA7F 		cmp	r3, #500
+  89 008e 09D9     		bls	.L5
+  90 0090 7B68     		ldr	r3, [r7, #4]
+  91 0092 0422     		movs	r2, #4
+  92 0094 C3F88820 		str	r2, [r3, #136]
+  93 0098 7B68     		ldr	r3, [r7, #4]
+  94 009a E022     		movs	r2, #224
+  95 009c C3F88420 		str	r2, [r3, #132]
+  96 00a0 0123     		movs	r3, #1
+  97 00a2 3DE0     		b	.L3
+  98              	.L5:
+  99 00a4 7B68     		ldr	r3, [r7, #4]
+ 100 00a6 1B68     		ldr	r3, [r3]
+ 101 00a8 03F58053 		add	r3, r3, #4096
+ 102 00ac 1B68     		ldr	r3, [r3]
+ 103 00ae 03F00103 		and	r3, r3, #1
+ 104 00b2 002B     		cmp	r3, #0
+ 105 00b4 E4D1     		bne	.L6
+ 106 00b6 7868     		ldr	r0, [r7, #4]
+ 107 00b8 FFF7FEFF 		bl	ETH_MACDMAConfig
+ 108 00bc 7868     		ldr	r0, [r7, #4]
+ 109 00be FFF7FEFF 		bl	ETH_DMATxDescListInit
+ 110 00c2 7868     		ldr	r0, [r7, #4]
+ 111 00c4 FFF7FEFF 		bl	ETH_DMARxDescListInit
+ 112 00c8 7B68     		ldr	r3, [r7, #4]
+ 113 00ca 5B68     		ldr	r3, [r3, #4]
+ 114 00cc 1A46     		mov	r2, r3
+ 115 00ce 0021     		movs	r1, #0
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 3
+
+
+ 116 00d0 7868     		ldr	r0, [r7, #4]
+ 117 00d2 FFF7FEFF 		bl	ETH_MACAddressConfig
+ 118 00d6 7B68     		ldr	r3, [r7, #4]
+ 119 00d8 1B68     		ldr	r3, [r3]
+ 120 00da DA6B     		ldr	r2, [r3, #60]
+ 121 00dc 7B68     		ldr	r3, [r7, #4]
+ 122 00de 1B68     		ldr	r3, [r3]
+ 123 00e0 42F40272 		orr	r2, r2, #520
+ 124 00e4 DA63     		str	r2, [r3, #60]
+ 125 00e6 7B68     		ldr	r3, [r7, #4]
+ 126 00e8 1B68     		ldr	r3, [r3]
+ 127 00ea D3F80C11 		ldr	r1, [r3, #268]
+ 128 00ee 7B68     		ldr	r3, [r7, #4]
+ 129 00f0 1A68     		ldr	r2, [r3]
+ 130 00f2 0F4B     		ldr	r3, .L7+8
+ 131 00f4 0B43     		orrs	r3, r3, r1
+ 132 00f6 C2F80C31 		str	r3, [r2, #268]
+ 133 00fa 7B68     		ldr	r3, [r7, #4]
+ 134 00fc 1B68     		ldr	r3, [r3]
+ 135 00fe D3F81021 		ldr	r2, [r3, #272]
+ 136 0102 7B68     		ldr	r3, [r7, #4]
+ 137 0104 1B68     		ldr	r3, [r3]
+ 138 0106 42F40312 		orr	r2, r2, #2146304
+ 139 010a C3F81021 		str	r2, [r3, #272]
+ 140 010e 7B68     		ldr	r3, [r7, #4]
+ 141 0110 0022     		movs	r2, #0
+ 142 0112 C3F88820 		str	r2, [r3, #136]
+ 143 0116 7B68     		ldr	r3, [r7, #4]
+ 144 0118 1022     		movs	r2, #16
+ 145 011a C3F88420 		str	r2, [r3, #132]
+ 146 011e 0023     		movs	r3, #0
+ 147              	.L3:
+ 148 0120 1846     		mov	r0, r3
+ 149 0122 1037     		adds	r7, r7, #16
+ 150 0124 BD46     		mov	sp, r7
+ 151              		@ sp needed
+ 152 0126 80BD     		pop	{r7, pc}
+ 153              	.L8:
+ 154              		.align	2
+ 155              	.L7:
+ 156 0128 00380240 		.word	1073887232
+ 157 012c 00380140 		.word	1073821696
+ 158 0130 60000200 		.word	131168
+ 160              		.section	.text.HAL_ETH_DeInit,"ax",%progbits
+ 161              		.align	1
+ 162              		.global	HAL_ETH_DeInit
+ 163              		.syntax unified
+ 164              		.thumb
+ 165              		.thumb_func
+ 167              	HAL_ETH_DeInit:
+ 168              		@ args = 0, pretend = 0, frame = 8
+ 169              		@ frame_needed = 1, uses_anonymous_args = 0
+ 170 0000 80B5     		push	{r7, lr}
+ 171 0002 82B0     		sub	sp, sp, #8
+ 172 0004 00AF     		add	r7, sp, #0
+ 173 0006 7860     		str	r0, [r7, #4]
+ 174 0008 7B68     		ldr	r3, [r7, #4]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 4
+
+
+ 175 000a 2022     		movs	r2, #32
+ 176 000c C3F88420 		str	r2, [r3, #132]
+ 177 0010 7868     		ldr	r0, [r7, #4]
+ 178 0012 FFF7FEFF 		bl	HAL_ETH_MspDeInit
+ 179 0016 7B68     		ldr	r3, [r7, #4]
+ 180 0018 0022     		movs	r2, #0
+ 181 001a C3F88420 		str	r2, [r3, #132]
+ 182 001e 0023     		movs	r3, #0
+ 183 0020 1846     		mov	r0, r3
+ 184 0022 0837     		adds	r7, r7, #8
+ 185 0024 BD46     		mov	sp, r7
+ 186              		@ sp needed
+ 187 0026 80BD     		pop	{r7, pc}
+ 189              		.section	.text.HAL_ETH_MspInit,"ax",%progbits
+ 190              		.align	1
+ 191              		.weak	HAL_ETH_MspInit
+ 192              		.syntax unified
+ 193              		.thumb
+ 194              		.thumb_func
+ 196              	HAL_ETH_MspInit:
+ 197              		@ args = 0, pretend = 0, frame = 8
+ 198              		@ frame_needed = 1, uses_anonymous_args = 0
+ 199              		@ link register save eliminated.
+ 200 0000 80B4     		push	{r7}
+ 201 0002 83B0     		sub	sp, sp, #12
+ 202 0004 00AF     		add	r7, sp, #0
+ 203 0006 7860     		str	r0, [r7, #4]
+ 204 0008 00BF     		nop
+ 205 000a 0C37     		adds	r7, r7, #12
+ 206 000c BD46     		mov	sp, r7
+ 207              		@ sp needed
+ 208 000e 5DF8047B 		ldr	r7, [sp], #4
+ 209 0012 7047     		bx	lr
+ 211              		.section	.text.HAL_ETH_MspDeInit,"ax",%progbits
+ 212              		.align	1
+ 213              		.weak	HAL_ETH_MspDeInit
+ 214              		.syntax unified
+ 215              		.thumb
+ 216              		.thumb_func
+ 218              	HAL_ETH_MspDeInit:
+ 219              		@ args = 0, pretend = 0, frame = 8
+ 220              		@ frame_needed = 1, uses_anonymous_args = 0
+ 221              		@ link register save eliminated.
+ 222 0000 80B4     		push	{r7}
+ 223 0002 83B0     		sub	sp, sp, #12
+ 224 0004 00AF     		add	r7, sp, #0
+ 225 0006 7860     		str	r0, [r7, #4]
+ 226 0008 00BF     		nop
+ 227 000a 0C37     		adds	r7, r7, #12
+ 228 000c BD46     		mov	sp, r7
+ 229              		@ sp needed
+ 230 000e 5DF8047B 		ldr	r7, [sp], #4
+ 231 0012 7047     		bx	lr
+ 233              		.section	.text.HAL_ETH_Start,"ax",%progbits
+ 234              		.align	1
+ 235              		.global	HAL_ETH_Start
+ 236              		.syntax unified
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 5
+
+
+ 237              		.thumb
+ 238              		.thumb_func
+ 240              	HAL_ETH_Start:
+ 241              		@ args = 0, pretend = 0, frame = 16
+ 242              		@ frame_needed = 1, uses_anonymous_args = 0
+ 243 0000 80B5     		push	{r7, lr}
+ 244 0002 84B0     		sub	sp, sp, #16
+ 245 0004 00AF     		add	r7, sp, #0
+ 246 0006 7860     		str	r0, [r7, #4]
+ 247 0008 7B68     		ldr	r3, [r7, #4]
+ 248 000a D3F88430 		ldr	r3, [r3, #132]
+ 249 000e 102B     		cmp	r3, #16
+ 250 0010 50D1     		bne	.L14
+ 251 0012 7B68     		ldr	r3, [r7, #4]
+ 252 0014 2022     		movs	r2, #32
+ 253 0016 C3F88420 		str	r2, [r3, #132]
+ 254 001a 7B68     		ldr	r3, [r7, #4]
+ 255 001c 0422     		movs	r2, #4
+ 256 001e DA66     		str	r2, [r3, #108]
+ 257 0020 7868     		ldr	r0, [r7, #4]
+ 258 0022 FFF7FEFF 		bl	ETH_UpdateDescriptor
+ 259 0026 7B68     		ldr	r3, [r7, #4]
+ 260 0028 1B68     		ldr	r3, [r3]
+ 261 002a 1A68     		ldr	r2, [r3]
+ 262 002c 7B68     		ldr	r3, [r7, #4]
+ 263 002e 1B68     		ldr	r3, [r3]
+ 264 0030 42F00802 		orr	r2, r2, #8
+ 265 0034 1A60     		str	r2, [r3]
+ 266 0036 7B68     		ldr	r3, [r7, #4]
+ 267 0038 1B68     		ldr	r3, [r3]
+ 268 003a 1B68     		ldr	r3, [r3]
+ 269 003c FB60     		str	r3, [r7, #12]
+ 270 003e 0120     		movs	r0, #1
+ 271 0040 FFF7FEFF 		bl	HAL_Delay
+ 272 0044 7B68     		ldr	r3, [r7, #4]
+ 273 0046 1B68     		ldr	r3, [r3]
+ 274 0048 FA68     		ldr	r2, [r7, #12]
+ 275 004a 1A60     		str	r2, [r3]
+ 276 004c 7B68     		ldr	r3, [r7, #4]
+ 277 004e 1B68     		ldr	r3, [r3]
+ 278 0050 1A68     		ldr	r2, [r3]
+ 279 0052 7B68     		ldr	r3, [r7, #4]
+ 280 0054 1B68     		ldr	r3, [r3]
+ 281 0056 42F00402 		orr	r2, r2, #4
+ 282 005a 1A60     		str	r2, [r3]
+ 283 005c 7B68     		ldr	r3, [r7, #4]
+ 284 005e 1B68     		ldr	r3, [r3]
+ 285 0060 1B68     		ldr	r3, [r3]
+ 286 0062 FB60     		str	r3, [r7, #12]
+ 287 0064 0120     		movs	r0, #1
+ 288 0066 FFF7FEFF 		bl	HAL_Delay
+ 289 006a 7B68     		ldr	r3, [r7, #4]
+ 290 006c 1B68     		ldr	r3, [r3]
+ 291 006e FA68     		ldr	r2, [r7, #12]
+ 292 0070 1A60     		str	r2, [r3]
+ 293 0072 7868     		ldr	r0, [r7, #4]
+ 294 0074 FFF7FEFF 		bl	ETH_FlushTransmitFIFO
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 6
+
+
+ 295 0078 7B68     		ldr	r3, [r7, #4]
+ 296 007a 1B68     		ldr	r3, [r3]
+ 297 007c 03F58053 		add	r3, r3, #4096
+ 298 0080 9B69     		ldr	r3, [r3, #24]
+ 299 0082 7A68     		ldr	r2, [r7, #4]
+ 300 0084 1268     		ldr	r2, [r2]
+ 301 0086 43F40053 		orr	r3, r3, #8192
+ 302 008a 02F58052 		add	r2, r2, #4096
+ 303 008e 9361     		str	r3, [r2, #24]
+ 304 0090 7B68     		ldr	r3, [r7, #4]
+ 305 0092 1B68     		ldr	r3, [r3]
+ 306 0094 03F58053 		add	r3, r3, #4096
+ 307 0098 9B69     		ldr	r3, [r3, #24]
+ 308 009a 7A68     		ldr	r2, [r7, #4]
+ 309 009c 1268     		ldr	r2, [r2]
+ 310 009e 43F00203 		orr	r3, r3, #2
+ 311 00a2 02F58052 		add	r2, r2, #4096
+ 312 00a6 9361     		str	r3, [r2, #24]
+ 313 00a8 7B68     		ldr	r3, [r7, #4]
+ 314 00aa 4022     		movs	r2, #64
+ 315 00ac C3F88420 		str	r2, [r3, #132]
+ 316 00b0 0023     		movs	r3, #0
+ 317 00b2 00E0     		b	.L15
+ 318              	.L14:
+ 319 00b4 0123     		movs	r3, #1
+ 320              	.L15:
+ 321 00b6 1846     		mov	r0, r3
+ 322 00b8 1037     		adds	r7, r7, #16
+ 323 00ba BD46     		mov	sp, r7
+ 324              		@ sp needed
+ 325 00bc 80BD     		pop	{r7, pc}
+ 327              		.section	.text.HAL_ETH_Start_IT,"ax",%progbits
+ 328              		.align	1
+ 329              		.global	HAL_ETH_Start_IT
+ 330              		.syntax unified
+ 331              		.thumb
+ 332              		.thumb_func
+ 334              	HAL_ETH_Start_IT:
+ 335              		@ args = 0, pretend = 0, frame = 16
+ 336              		@ frame_needed = 1, uses_anonymous_args = 0
+ 337 0000 80B5     		push	{r7, lr}
+ 338 0002 84B0     		sub	sp, sp, #16
+ 339 0004 00AF     		add	r7, sp, #0
+ 340 0006 7860     		str	r0, [r7, #4]
+ 341 0008 7B68     		ldr	r3, [r7, #4]
+ 342 000a D3F88430 		ldr	r3, [r3, #132]
+ 343 000e 102B     		cmp	r3, #16
+ 344 0010 5FD1     		bne	.L17
+ 345 0012 7B68     		ldr	r3, [r7, #4]
+ 346 0014 2022     		movs	r2, #32
+ 347 0016 C3F88420 		str	r2, [r3, #132]
+ 348 001a 7B68     		ldr	r3, [r7, #4]
+ 349 001c 0122     		movs	r2, #1
+ 350 001e 9A65     		str	r2, [r3, #88]
+ 351 0020 7B68     		ldr	r3, [r7, #4]
+ 352 0022 0422     		movs	r2, #4
+ 353 0024 DA66     		str	r2, [r3, #108]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 7
+
+
+ 354 0026 7868     		ldr	r0, [r7, #4]
+ 355 0028 FFF7FEFF 		bl	ETH_UpdateDescriptor
+ 356 002c 7B68     		ldr	r3, [r7, #4]
+ 357 002e 1B68     		ldr	r3, [r3]
+ 358 0030 1B68     		ldr	r3, [r3]
+ 359 0032 FB60     		str	r3, [r7, #12]
+ 360 0034 0120     		movs	r0, #1
+ 361 0036 FFF7FEFF 		bl	HAL_Delay
+ 362 003a 7B68     		ldr	r3, [r7, #4]
+ 363 003c 1B68     		ldr	r3, [r3]
+ 364 003e FA68     		ldr	r2, [r7, #12]
+ 365 0040 1A60     		str	r2, [r3]
+ 366 0042 7B68     		ldr	r3, [r7, #4]
+ 367 0044 1B68     		ldr	r3, [r3]
+ 368 0046 03F58053 		add	r3, r3, #4096
+ 369 004a 9B69     		ldr	r3, [r3, #24]
+ 370 004c 7A68     		ldr	r2, [r7, #4]
+ 371 004e 1268     		ldr	r2, [r2]
+ 372 0050 43F40053 		orr	r3, r3, #8192
+ 373 0054 02F58052 		add	r2, r2, #4096
+ 374 0058 9361     		str	r3, [r2, #24]
+ 375 005a 7B68     		ldr	r3, [r7, #4]
+ 376 005c 1B68     		ldr	r3, [r3]
+ 377 005e 03F58053 		add	r3, r3, #4096
+ 378 0062 9B69     		ldr	r3, [r3, #24]
+ 379 0064 7A68     		ldr	r2, [r7, #4]
+ 380 0066 1268     		ldr	r2, [r2]
+ 381 0068 43F00203 		orr	r3, r3, #2
+ 382 006c 02F58052 		add	r2, r2, #4096
+ 383 0070 9361     		str	r3, [r2, #24]
+ 384 0072 7868     		ldr	r0, [r7, #4]
+ 385 0074 FFF7FEFF 		bl	ETH_FlushTransmitFIFO
+ 386 0078 7B68     		ldr	r3, [r7, #4]
+ 387 007a 1B68     		ldr	r3, [r3]
+ 388 007c 1A68     		ldr	r2, [r3]
+ 389 007e 7B68     		ldr	r3, [r7, #4]
+ 390 0080 1B68     		ldr	r3, [r3]
+ 391 0082 42F00802 		orr	r2, r2, #8
+ 392 0086 1A60     		str	r2, [r3]
+ 393 0088 7B68     		ldr	r3, [r7, #4]
+ 394 008a 1B68     		ldr	r3, [r3]
+ 395 008c 1B68     		ldr	r3, [r3]
+ 396 008e FB60     		str	r3, [r7, #12]
+ 397 0090 0120     		movs	r0, #1
+ 398 0092 FFF7FEFF 		bl	HAL_Delay
+ 399 0096 7B68     		ldr	r3, [r7, #4]
+ 400 0098 1B68     		ldr	r3, [r3]
+ 401 009a FA68     		ldr	r2, [r7, #12]
+ 402 009c 1A60     		str	r2, [r3]
+ 403 009e 7B68     		ldr	r3, [r7, #4]
+ 404 00a0 1B68     		ldr	r3, [r3]
+ 405 00a2 1A68     		ldr	r2, [r3]
+ 406 00a4 7B68     		ldr	r3, [r7, #4]
+ 407 00a6 1B68     		ldr	r3, [r3]
+ 408 00a8 42F00402 		orr	r2, r2, #4
+ 409 00ac 1A60     		str	r2, [r3]
+ 410 00ae 7B68     		ldr	r3, [r7, #4]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 8
+
+
+ 411 00b0 1B68     		ldr	r3, [r3]
+ 412 00b2 03F58053 		add	r3, r3, #4096
+ 413 00b6 D969     		ldr	r1, [r3, #28]
+ 414 00b8 7B68     		ldr	r3, [r7, #4]
+ 415 00ba 1A68     		ldr	r2, [r3]
+ 416 00bc 074B     		ldr	r3, .L19
+ 417 00be 0B43     		orrs	r3, r3, r1
+ 418 00c0 02F58052 		add	r2, r2, #4096
+ 419 00c4 D361     		str	r3, [r2, #28]
+ 420 00c6 7B68     		ldr	r3, [r7, #4]
+ 421 00c8 4022     		movs	r2, #64
+ 422 00ca C3F88420 		str	r2, [r3, #132]
+ 423 00ce 0023     		movs	r3, #0
+ 424 00d0 00E0     		b	.L18
+ 425              	.L17:
+ 426 00d2 0123     		movs	r3, #1
+ 427              	.L18:
+ 428 00d4 1846     		mov	r0, r3
+ 429 00d6 1037     		adds	r7, r7, #16
+ 430 00d8 BD46     		mov	sp, r7
+ 431              		@ sp needed
+ 432 00da 80BD     		pop	{r7, pc}
+ 433              	.L20:
+ 434              		.align	2
+ 435              	.L19:
+ 436 00dc C1A00100 		.word	106689
+ 438              		.section	.text.HAL_ETH_Stop,"ax",%progbits
+ 439              		.align	1
+ 440              		.global	HAL_ETH_Stop
+ 441              		.syntax unified
+ 442              		.thumb
+ 443              		.thumb_func
+ 445              	HAL_ETH_Stop:
+ 446              		@ args = 0, pretend = 0, frame = 16
+ 447              		@ frame_needed = 1, uses_anonymous_args = 0
+ 448 0000 80B5     		push	{r7, lr}
+ 449 0002 84B0     		sub	sp, sp, #16
+ 450 0004 00AF     		add	r7, sp, #0
+ 451 0006 7860     		str	r0, [r7, #4]
+ 452 0008 7B68     		ldr	r3, [r7, #4]
+ 453 000a D3F88430 		ldr	r3, [r3, #132]
+ 454 000e 402B     		cmp	r3, #64
+ 455 0010 4AD1     		bne	.L22
+ 456 0012 7B68     		ldr	r3, [r7, #4]
+ 457 0014 2022     		movs	r2, #32
+ 458 0016 C3F88420 		str	r2, [r3, #132]
+ 459 001a 7B68     		ldr	r3, [r7, #4]
+ 460 001c 1B68     		ldr	r3, [r3]
+ 461 001e 03F58053 		add	r3, r3, #4096
+ 462 0022 9B69     		ldr	r3, [r3, #24]
+ 463 0024 7A68     		ldr	r2, [r7, #4]
+ 464 0026 1268     		ldr	r2, [r2]
+ 465 0028 23F40053 		bic	r3, r3, #8192
+ 466 002c 02F58052 		add	r2, r2, #4096
+ 467 0030 9361     		str	r3, [r2, #24]
+ 468 0032 7B68     		ldr	r3, [r7, #4]
+ 469 0034 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 9
+
+
+ 470 0036 03F58053 		add	r3, r3, #4096
+ 471 003a 9B69     		ldr	r3, [r3, #24]
+ 472 003c 7A68     		ldr	r2, [r7, #4]
+ 473 003e 1268     		ldr	r2, [r2]
+ 474 0040 23F00203 		bic	r3, r3, #2
+ 475 0044 02F58052 		add	r2, r2, #4096
+ 476 0048 9361     		str	r3, [r2, #24]
+ 477 004a 7B68     		ldr	r3, [r7, #4]
+ 478 004c 1B68     		ldr	r3, [r3]
+ 479 004e 1A68     		ldr	r2, [r3]
+ 480 0050 7B68     		ldr	r3, [r7, #4]
+ 481 0052 1B68     		ldr	r3, [r3]
+ 482 0054 22F00402 		bic	r2, r2, #4
+ 483 0058 1A60     		str	r2, [r3]
+ 484 005a 7B68     		ldr	r3, [r7, #4]
+ 485 005c 1B68     		ldr	r3, [r3]
+ 486 005e 1B68     		ldr	r3, [r3]
+ 487 0060 FB60     		str	r3, [r7, #12]
+ 488 0062 0120     		movs	r0, #1
+ 489 0064 FFF7FEFF 		bl	HAL_Delay
+ 490 0068 7B68     		ldr	r3, [r7, #4]
+ 491 006a 1B68     		ldr	r3, [r3]
+ 492 006c FA68     		ldr	r2, [r7, #12]
+ 493 006e 1A60     		str	r2, [r3]
+ 494 0070 7868     		ldr	r0, [r7, #4]
+ 495 0072 FFF7FEFF 		bl	ETH_FlushTransmitFIFO
+ 496 0076 7B68     		ldr	r3, [r7, #4]
+ 497 0078 1B68     		ldr	r3, [r3]
+ 498 007a 1A68     		ldr	r2, [r3]
+ 499 007c 7B68     		ldr	r3, [r7, #4]
+ 500 007e 1B68     		ldr	r3, [r3]
+ 501 0080 22F00802 		bic	r2, r2, #8
+ 502 0084 1A60     		str	r2, [r3]
+ 503 0086 7B68     		ldr	r3, [r7, #4]
+ 504 0088 1B68     		ldr	r3, [r3]
+ 505 008a 1B68     		ldr	r3, [r3]
+ 506 008c FB60     		str	r3, [r7, #12]
+ 507 008e 0120     		movs	r0, #1
+ 508 0090 FFF7FEFF 		bl	HAL_Delay
+ 509 0094 7B68     		ldr	r3, [r7, #4]
+ 510 0096 1B68     		ldr	r3, [r3]
+ 511 0098 FA68     		ldr	r2, [r7, #12]
+ 512 009a 1A60     		str	r2, [r3]
+ 513 009c 7B68     		ldr	r3, [r7, #4]
+ 514 009e 1022     		movs	r2, #16
+ 515 00a0 C3F88420 		str	r2, [r3, #132]
+ 516 00a4 0023     		movs	r3, #0
+ 517 00a6 00E0     		b	.L23
+ 518              	.L22:
+ 519 00a8 0123     		movs	r3, #1
+ 520              	.L23:
+ 521 00aa 1846     		mov	r0, r3
+ 522 00ac 1037     		adds	r7, r7, #16
+ 523 00ae BD46     		mov	sp, r7
+ 524              		@ sp needed
+ 525 00b0 80BD     		pop	{r7, pc}
+ 527              		.section	.text.HAL_ETH_Stop_IT,"ax",%progbits
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 10
+
+
+ 528              		.align	1
+ 529              		.global	HAL_ETH_Stop_IT
+ 530              		.syntax unified
+ 531              		.thumb
+ 532              		.thumb_func
+ 534              	HAL_ETH_Stop_IT:
+ 535              		@ args = 0, pretend = 0, frame = 24
+ 536              		@ frame_needed = 1, uses_anonymous_args = 0
+ 537 0000 80B5     		push	{r7, lr}
+ 538 0002 86B0     		sub	sp, sp, #24
+ 539 0004 00AF     		add	r7, sp, #0
+ 540 0006 7860     		str	r0, [r7, #4]
+ 541 0008 7B68     		ldr	r3, [r7, #4]
+ 542 000a D3F88430 		ldr	r3, [r3, #132]
+ 543 000e 402B     		cmp	r3, #64
+ 544 0010 6ED1     		bne	.L25
+ 545 0012 7B68     		ldr	r3, [r7, #4]
+ 546 0014 2022     		movs	r2, #32
+ 547 0016 C3F88420 		str	r2, [r3, #132]
+ 548 001a 7B68     		ldr	r3, [r7, #4]
+ 549 001c 1B68     		ldr	r3, [r3]
+ 550 001e 03F58053 		add	r3, r3, #4096
+ 551 0022 D969     		ldr	r1, [r3, #28]
+ 552 0024 7B68     		ldr	r3, [r7, #4]
+ 553 0026 1A68     		ldr	r2, [r3]
+ 554 0028 344B     		ldr	r3, .L29
+ 555 002a 0B40     		ands	r3, r3, r1
+ 556 002c 02F58052 		add	r2, r2, #4096
+ 557 0030 D361     		str	r3, [r2, #28]
+ 558 0032 7B68     		ldr	r3, [r7, #4]
+ 559 0034 1B68     		ldr	r3, [r3]
+ 560 0036 03F58053 		add	r3, r3, #4096
+ 561 003a 9B69     		ldr	r3, [r3, #24]
+ 562 003c 7A68     		ldr	r2, [r7, #4]
+ 563 003e 1268     		ldr	r2, [r2]
+ 564 0040 23F40053 		bic	r3, r3, #8192
+ 565 0044 02F58052 		add	r2, r2, #4096
+ 566 0048 9361     		str	r3, [r2, #24]
+ 567 004a 7B68     		ldr	r3, [r7, #4]
+ 568 004c 1B68     		ldr	r3, [r3]
+ 569 004e 03F58053 		add	r3, r3, #4096
+ 570 0052 9B69     		ldr	r3, [r3, #24]
+ 571 0054 7A68     		ldr	r2, [r7, #4]
+ 572 0056 1268     		ldr	r2, [r2]
+ 573 0058 23F00203 		bic	r3, r3, #2
+ 574 005c 02F58052 		add	r2, r2, #4096
+ 575 0060 9361     		str	r3, [r2, #24]
+ 576 0062 7B68     		ldr	r3, [r7, #4]
+ 577 0064 1B68     		ldr	r3, [r3]
+ 578 0066 1A68     		ldr	r2, [r3]
+ 579 0068 7B68     		ldr	r3, [r7, #4]
+ 580 006a 1B68     		ldr	r3, [r3]
+ 581 006c 22F00402 		bic	r2, r2, #4
+ 582 0070 1A60     		str	r2, [r3]
+ 583 0072 7B68     		ldr	r3, [r7, #4]
+ 584 0074 1B68     		ldr	r3, [r3]
+ 585 0076 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 11
+
+
+ 586 0078 3B61     		str	r3, [r7, #16]
+ 587 007a 0120     		movs	r0, #1
+ 588 007c FFF7FEFF 		bl	HAL_Delay
+ 589 0080 7B68     		ldr	r3, [r7, #4]
+ 590 0082 1B68     		ldr	r3, [r3]
+ 591 0084 3A69     		ldr	r2, [r7, #16]
+ 592 0086 1A60     		str	r2, [r3]
+ 593 0088 7868     		ldr	r0, [r7, #4]
+ 594 008a FFF7FEFF 		bl	ETH_FlushTransmitFIFO
+ 595 008e 7B68     		ldr	r3, [r7, #4]
+ 596 0090 1B68     		ldr	r3, [r3]
+ 597 0092 1A68     		ldr	r2, [r3]
+ 598 0094 7B68     		ldr	r3, [r7, #4]
+ 599 0096 1B68     		ldr	r3, [r3]
+ 600 0098 22F00802 		bic	r2, r2, #8
+ 601 009c 1A60     		str	r2, [r3]
+ 602 009e 7B68     		ldr	r3, [r7, #4]
+ 603 00a0 1B68     		ldr	r3, [r3]
+ 604 00a2 1B68     		ldr	r3, [r3]
+ 605 00a4 3B61     		str	r3, [r7, #16]
+ 606 00a6 0120     		movs	r0, #1
+ 607 00a8 FFF7FEFF 		bl	HAL_Delay
+ 608 00ac 7B68     		ldr	r3, [r7, #4]
+ 609 00ae 1B68     		ldr	r3, [r3]
+ 610 00b0 3A69     		ldr	r2, [r7, #16]
+ 611 00b2 1A60     		str	r2, [r3]
+ 612 00b4 0023     		movs	r3, #0
+ 613 00b6 7B61     		str	r3, [r7, #20]
+ 614 00b8 0EE0     		b	.L26
+ 615              	.L27:
+ 616 00ba 7B68     		ldr	r3, [r7, #4]
+ 617 00bc 7A69     		ldr	r2, [r7, #20]
+ 618 00be 1232     		adds	r2, r2, #18
+ 619 00c0 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 620 00c4 FB60     		str	r3, [r7, #12]
+ 621 00c6 FB68     		ldr	r3, [r7, #12]
+ 622 00c8 5B68     		ldr	r3, [r3, #4]
+ 623 00ca 43F00042 		orr	r2, r3, #-2147483648
+ 624 00ce FB68     		ldr	r3, [r7, #12]
+ 625 00d0 5A60     		str	r2, [r3, #4]
+ 626 00d2 7B69     		ldr	r3, [r7, #20]
+ 627 00d4 0133     		adds	r3, r3, #1
+ 628 00d6 7B61     		str	r3, [r7, #20]
+ 629              	.L26:
+ 630 00d8 7B69     		ldr	r3, [r7, #20]
+ 631 00da 032B     		cmp	r3, #3
+ 632 00dc EDD9     		bls	.L27
+ 633 00de 7B68     		ldr	r3, [r7, #4]
+ 634 00e0 0022     		movs	r2, #0
+ 635 00e2 9A65     		str	r2, [r3, #88]
+ 636 00e4 7B68     		ldr	r3, [r7, #4]
+ 637 00e6 1022     		movs	r2, #16
+ 638 00e8 C3F88420 		str	r2, [r3, #132]
+ 639 00ec 0023     		movs	r3, #0
+ 640 00ee 00E0     		b	.L28
+ 641              	.L25:
+ 642 00f0 0123     		movs	r3, #1
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 12
+
+
+ 643              	.L28:
+ 644 00f2 1846     		mov	r0, r3
+ 645 00f4 1837     		adds	r7, r7, #24
+ 646 00f6 BD46     		mov	sp, r7
+ 647              		@ sp needed
+ 648 00f8 80BD     		pop	{r7, pc}
+ 649              	.L30:
+ 650 00fa 00BF     		.align	2
+ 651              	.L29:
+ 652 00fc 3E5FFEFF 		.word	-106690
+ 654              		.section	.text.HAL_ETH_Transmit,"ax",%progbits
+ 655              		.align	1
+ 656              		.global	HAL_ETH_Transmit
+ 657              		.syntax unified
+ 658              		.thumb
+ 659              		.thumb_func
+ 661              	HAL_ETH_Transmit:
+ 662              		@ args = 0, pretend = 0, frame = 24
+ 663              		@ frame_needed = 1, uses_anonymous_args = 0
+ 664 0000 80B5     		push	{r7, lr}
+ 665 0002 86B0     		sub	sp, sp, #24
+ 666 0004 00AF     		add	r7, sp, #0
+ 667 0006 F860     		str	r0, [r7, #12]
+ 668 0008 B960     		str	r1, [r7, #8]
+ 669 000a 7A60     		str	r2, [r7, #4]
+ 670 000c BB68     		ldr	r3, [r7, #8]
+ 671 000e 002B     		cmp	r3, #0
+ 672 0010 09D1     		bne	.L32
+ 673 0012 FB68     		ldr	r3, [r7, #12]
+ 674 0014 D3F88830 		ldr	r3, [r3, #136]
+ 675 0018 43F00102 		orr	r2, r3, #1
+ 676 001c FB68     		ldr	r3, [r7, #12]
+ 677 001e C3F88820 		str	r2, [r3, #136]
+ 678 0022 0123     		movs	r3, #1
+ 679 0024 7CE0     		b	.L33
+ 680              	.L32:
+ 681 0026 FB68     		ldr	r3, [r7, #12]
+ 682 0028 D3F88430 		ldr	r3, [r3, #132]
+ 683 002c 402B     		cmp	r3, #64
+ 684 002e 76D1     		bne	.L34
+ 685 0030 0022     		movs	r2, #0
+ 686 0032 B968     		ldr	r1, [r7, #8]
+ 687 0034 F868     		ldr	r0, [r7, #12]
+ 688 0036 FFF7FEFF 		bl	ETH_Prepare_Tx_Descriptors
+ 689 003a 0346     		mov	r3, r0
+ 690 003c 002B     		cmp	r3, #0
+ 691 003e 09D0     		beq	.L35
+ 692 0040 FB68     		ldr	r3, [r7, #12]
+ 693 0042 D3F88830 		ldr	r3, [r3, #136]
+ 694 0046 43F00202 		orr	r2, r3, #2
+ 695 004a FB68     		ldr	r3, [r7, #12]
+ 696 004c C3F88820 		str	r2, [r3, #136]
+ 697 0050 0123     		movs	r3, #1
+ 698 0052 65E0     		b	.L33
+ 699              	.L35:
+ 700              		.syntax unified
+ 701              	@ 879 "cmsis/core/cmsis_gcc.h" 1
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 13
+
+
+ 702 0054 BFF34F8F 		dsb 0xF
+ 703              	@ 0 "" 2
+ 704              		.thumb
+ 705              		.syntax unified
+ 706 0058 00BF     		nop
+ 707 005a FB68     		ldr	r3, [r7, #12]
+ 708 005c 9A6A     		ldr	r2, [r3, #40]
+ 709 005e FB68     		ldr	r3, [r7, #12]
+ 710 0060 0632     		adds	r2, r2, #6
+ 711 0062 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 712 0066 7B61     		str	r3, [r7, #20]
+ 713 0068 FB68     		ldr	r3, [r7, #12]
+ 714 006a 9B6A     		ldr	r3, [r3, #40]
+ 715 006c 5A1C     		adds	r2, r3, #1
+ 716 006e FB68     		ldr	r3, [r7, #12]
+ 717 0070 9A62     		str	r2, [r3, #40]
+ 718 0072 FB68     		ldr	r3, [r7, #12]
+ 719 0074 9B6A     		ldr	r3, [r3, #40]
+ 720 0076 032B     		cmp	r3, #3
+ 721 0078 04D9     		bls	.L36
+ 722 007a FB68     		ldr	r3, [r7, #12]
+ 723 007c 9B6A     		ldr	r3, [r3, #40]
+ 724 007e 1A1F     		subs	r2, r3, #4
+ 725 0080 FB68     		ldr	r3, [r7, #12]
+ 726 0082 9A62     		str	r2, [r3, #40]
+ 727              	.L36:
+ 728 0084 FB68     		ldr	r3, [r7, #12]
+ 729 0086 996A     		ldr	r1, [r3, #40]
+ 730 0088 FB68     		ldr	r3, [r7, #12]
+ 731 008a 1A68     		ldr	r2, [r3]
+ 732 008c FB68     		ldr	r3, [r7, #12]
+ 733 008e 0631     		adds	r1, r1, #6
+ 734 0090 53F82130 		ldr	r3, [r3, r1, lsl #2]
+ 735 0094 02F58052 		add	r2, r2, #4096
+ 736 0098 5360     		str	r3, [r2, #4]
+ 737 009a FFF7FEFF 		bl	HAL_GetTick
+ 738 009e 3861     		str	r0, [r7, #16]
+ 739 00a0 37E0     		b	.L39
+ 740              	.L41:
+ 741 00a2 FB68     		ldr	r3, [r7, #12]
+ 742 00a4 1B68     		ldr	r3, [r3]
+ 743 00a6 03F58053 		add	r3, r3, #4096
+ 744 00aa 5B69     		ldr	r3, [r3, #20]
+ 745 00ac 03F40053 		and	r3, r3, #8192
+ 746 00b0 002B     		cmp	r3, #0
+ 747 00b2 11D0     		beq	.L38
+ 748 00b4 FB68     		ldr	r3, [r7, #12]
+ 749 00b6 D3F88830 		ldr	r3, [r3, #136]
+ 750 00ba 43F00802 		orr	r2, r3, #8
+ 751 00be FB68     		ldr	r3, [r7, #12]
+ 752 00c0 C3F88820 		str	r2, [r3, #136]
+ 753 00c4 FB68     		ldr	r3, [r7, #12]
+ 754 00c6 1B68     		ldr	r3, [r3]
+ 755 00c8 03F58053 		add	r3, r3, #4096
+ 756 00cc 5A69     		ldr	r2, [r3, #20]
+ 757 00ce FB68     		ldr	r3, [r7, #12]
+ 758 00d0 C3F88C20 		str	r2, [r3, #140]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 14
+
+
+ 759 00d4 0123     		movs	r3, #1
+ 760 00d6 23E0     		b	.L33
+ 761              	.L38:
+ 762 00d8 7B68     		ldr	r3, [r7, #4]
+ 763 00da B3F1FF3F 		cmp	r3, #-1
+ 764 00de 18D0     		beq	.L39
+ 765 00e0 FFF7FEFF 		bl	HAL_GetTick
+ 766 00e4 0246     		mov	r2, r0
+ 767 00e6 3B69     		ldr	r3, [r7, #16]
+ 768 00e8 D31A     		subs	r3, r2, r3
+ 769 00ea 7A68     		ldr	r2, [r7, #4]
+ 770 00ec 9A42     		cmp	r2, r3
+ 771 00ee 02D3     		bcc	.L40
+ 772 00f0 7B68     		ldr	r3, [r7, #4]
+ 773 00f2 002B     		cmp	r3, #0
+ 774 00f4 0DD1     		bne	.L39
+ 775              	.L40:
+ 776 00f6 FB68     		ldr	r3, [r7, #12]
+ 777 00f8 D3F88830 		ldr	r3, [r3, #136]
+ 778 00fc 43F00402 		orr	r2, r3, #4
+ 779 0100 FB68     		ldr	r3, [r7, #12]
+ 780 0102 C3F88820 		str	r2, [r3, #136]
+ 781 0106 7B69     		ldr	r3, [r7, #20]
+ 782 0108 4FF04052 		mov	r2, #805306368
+ 783 010c 1A60     		str	r2, [r3]
+ 784 010e 0123     		movs	r3, #1
+ 785 0110 06E0     		b	.L33
+ 786              	.L39:
+ 787 0112 7B69     		ldr	r3, [r7, #20]
+ 788 0114 1B68     		ldr	r3, [r3]
+ 789 0116 002B     		cmp	r3, #0
+ 790 0118 C3DB     		blt	.L41
+ 791 011a 0023     		movs	r3, #0
+ 792 011c 00E0     		b	.L33
+ 793              	.L34:
+ 794 011e 0123     		movs	r3, #1
+ 795              	.L33:
+ 796 0120 1846     		mov	r0, r3
+ 797 0122 1837     		adds	r7, r7, #24
+ 798 0124 BD46     		mov	sp, r7
+ 799              		@ sp needed
+ 800 0126 80BD     		pop	{r7, pc}
+ 802              		.section	.text.HAL_ETH_Transmit_IT,"ax",%progbits
+ 803              		.align	1
+ 804              		.global	HAL_ETH_Transmit_IT
+ 805              		.syntax unified
+ 806              		.thumb
+ 807              		.thumb_func
+ 809              	HAL_ETH_Transmit_IT:
+ 810              		@ args = 0, pretend = 0, frame = 8
+ 811              		@ frame_needed = 1, uses_anonymous_args = 0
+ 812 0000 80B5     		push	{r7, lr}
+ 813 0002 82B0     		sub	sp, sp, #8
+ 814 0004 00AF     		add	r7, sp, #0
+ 815 0006 7860     		str	r0, [r7, #4]
+ 816 0008 3960     		str	r1, [r7]
+ 817 000a 3B68     		ldr	r3, [r7]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 15
+
+
+ 818 000c 002B     		cmp	r3, #0
+ 819 000e 09D1     		bne	.L43
+ 820 0010 7B68     		ldr	r3, [r7, #4]
+ 821 0012 D3F88830 		ldr	r3, [r3, #136]
+ 822 0016 43F00102 		orr	r2, r3, #1
+ 823 001a 7B68     		ldr	r3, [r7, #4]
+ 824 001c C3F88820 		str	r2, [r3, #136]
+ 825 0020 0123     		movs	r3, #1
+ 826 0022 45E0     		b	.L44
+ 827              	.L43:
+ 828 0024 7B68     		ldr	r3, [r7, #4]
+ 829 0026 D3F88430 		ldr	r3, [r3, #132]
+ 830 002a 402B     		cmp	r3, #64
+ 831 002c 3FD1     		bne	.L45
+ 832 002e 3B68     		ldr	r3, [r7]
+ 833 0030 5A6B     		ldr	r2, [r3, #52]
+ 834 0032 7B68     		ldr	r3, [r7, #4]
+ 835 0034 DA63     		str	r2, [r3, #60]
+ 836 0036 0122     		movs	r2, #1
+ 837 0038 3968     		ldr	r1, [r7]
+ 838 003a 7868     		ldr	r0, [r7, #4]
+ 839 003c FFF7FEFF 		bl	ETH_Prepare_Tx_Descriptors
+ 840 0040 0346     		mov	r3, r0
+ 841 0042 002B     		cmp	r3, #0
+ 842 0044 09D0     		beq	.L46
+ 843 0046 7B68     		ldr	r3, [r7, #4]
+ 844 0048 D3F88830 		ldr	r3, [r3, #136]
+ 845 004c 43F00202 		orr	r2, r3, #2
+ 846 0050 7B68     		ldr	r3, [r7, #4]
+ 847 0052 C3F88820 		str	r2, [r3, #136]
+ 848 0056 0123     		movs	r3, #1
+ 849 0058 2AE0     		b	.L44
+ 850              	.L46:
+ 851              		.syntax unified
+ 852              	@ 879 "cmsis/core/cmsis_gcc.h" 1
+ 853 005a BFF34F8F 		dsb 0xF
+ 854              	@ 0 "" 2
+ 855              		.thumb
+ 856              		.syntax unified
+ 857 005e 00BF     		nop
+ 858 0060 7B68     		ldr	r3, [r7, #4]
+ 859 0062 9B6A     		ldr	r3, [r3, #40]
+ 860 0064 5A1C     		adds	r2, r3, #1
+ 861 0066 7B68     		ldr	r3, [r7, #4]
+ 862 0068 9A62     		str	r2, [r3, #40]
+ 863 006a 7B68     		ldr	r3, [r7, #4]
+ 864 006c 9B6A     		ldr	r3, [r3, #40]
+ 865 006e 032B     		cmp	r3, #3
+ 866 0070 04D9     		bls	.L47
+ 867 0072 7B68     		ldr	r3, [r7, #4]
+ 868 0074 9B6A     		ldr	r3, [r3, #40]
+ 869 0076 1A1F     		subs	r2, r3, #4
+ 870 0078 7B68     		ldr	r3, [r7, #4]
+ 871 007a 9A62     		str	r2, [r3, #40]
+ 872              	.L47:
+ 873 007c 7B68     		ldr	r3, [r7, #4]
+ 874 007e 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 16
+
+
+ 875 0080 03F58053 		add	r3, r3, #4096
+ 876 0084 5B69     		ldr	r3, [r3, #20]
+ 877 0086 03F00403 		and	r3, r3, #4
+ 878 008a 002B     		cmp	r3, #0
+ 879 008c 0DD0     		beq	.L48
+ 880 008e 7B68     		ldr	r3, [r7, #4]
+ 881 0090 1B68     		ldr	r3, [r3]
+ 882 0092 03F58053 		add	r3, r3, #4096
+ 883 0096 1A46     		mov	r2, r3
+ 884 0098 0423     		movs	r3, #4
+ 885 009a 5361     		str	r3, [r2, #20]
+ 886 009c 7B68     		ldr	r3, [r7, #4]
+ 887 009e 1B68     		ldr	r3, [r3]
+ 888 00a0 03F58053 		add	r3, r3, #4096
+ 889 00a4 1A46     		mov	r2, r3
+ 890 00a6 0023     		movs	r3, #0
+ 891 00a8 5360     		str	r3, [r2, #4]
+ 892              	.L48:
+ 893 00aa 0023     		movs	r3, #0
+ 894 00ac 00E0     		b	.L44
+ 895              	.L45:
+ 896 00ae 0123     		movs	r3, #1
+ 897              	.L44:
+ 898 00b0 1846     		mov	r0, r3
+ 899 00b2 0837     		adds	r7, r7, #8
+ 900 00b4 BD46     		mov	sp, r7
+ 901              		@ sp needed
+ 902 00b6 80BD     		pop	{r7, pc}
+ 904              		.section	.text.HAL_ETH_ReadData,"ax",%progbits
+ 905              		.align	1
+ 906              		.global	HAL_ETH_ReadData
+ 907              		.syntax unified
+ 908              		.thumb
+ 909              		.thumb_func
+ 911              	HAL_ETH_ReadData:
+ 912              		@ args = 0, pretend = 0, frame = 32
+ 913              		@ frame_needed = 1, uses_anonymous_args = 0
+ 914 0000 80B5     		push	{r7, lr}
+ 915 0002 88B0     		sub	sp, sp, #32
+ 916 0004 00AF     		add	r7, sp, #0
+ 917 0006 7860     		str	r0, [r7, #4]
+ 918 0008 3960     		str	r1, [r7]
+ 919 000a 0023     		movs	r3, #0
+ 920 000c 7B61     		str	r3, [r7, #20]
+ 921 000e 0023     		movs	r3, #0
+ 922 0010 FB74     		strb	r3, [r7, #19]
+ 923 0012 3B68     		ldr	r3, [r7]
+ 924 0014 002B     		cmp	r3, #0
+ 925 0016 09D1     		bne	.L50
+ 926 0018 7B68     		ldr	r3, [r7, #4]
+ 927 001a D3F88830 		ldr	r3, [r3, #136]
+ 928 001e 43F00102 		orr	r2, r3, #1
+ 929 0022 7B68     		ldr	r3, [r7, #4]
+ 930 0024 C3F88820 		str	r2, [r3, #136]
+ 931 0028 0123     		movs	r3, #1
+ 932 002a A4E0     		b	.L51
+ 933              	.L50:
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 17
+
+
+ 934 002c 7B68     		ldr	r3, [r7, #4]
+ 935 002e D3F88430 		ldr	r3, [r3, #132]
+ 936 0032 402B     		cmp	r3, #64
+ 937 0034 01D0     		beq	.L52
+ 938 0036 0123     		movs	r3, #1
+ 939 0038 9DE0     		b	.L51
+ 940              	.L52:
+ 941 003a 7B68     		ldr	r3, [r7, #4]
+ 942 003c DB6D     		ldr	r3, [r3, #92]
+ 943 003e FB61     		str	r3, [r7, #28]
+ 944 0040 7B68     		ldr	r3, [r7, #4]
+ 945 0042 FA69     		ldr	r2, [r7, #28]
+ 946 0044 1232     		adds	r2, r2, #18
+ 947 0046 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 948 004a BB61     		str	r3, [r7, #24]
+ 949 004c 7B68     		ldr	r3, [r7, #4]
+ 950 004e DB6E     		ldr	r3, [r3, #108]
+ 951 0050 C3F10403 		rsb	r3, r3, #4
+ 952 0054 FB60     		str	r3, [r7, #12]
+ 953 0056 66E0     		b	.L53
+ 954              	.L61:
+ 955 0058 BB69     		ldr	r3, [r7, #24]
+ 956 005a 1B68     		ldr	r3, [r3]
+ 957 005c 03F48073 		and	r3, r3, #256
+ 958 0060 002B     		cmp	r3, #0
+ 959 0062 07D0     		beq	.L54
+ 960 0064 BB69     		ldr	r3, [r7, #24]
+ 961 0066 DA69     		ldr	r2, [r3, #28]
+ 962 0068 7B68     		ldr	r3, [r7, #4]
+ 963 006a 9A67     		str	r2, [r3, #120]
+ 964 006c BB69     		ldr	r3, [r7, #24]
+ 965 006e 9A69     		ldr	r2, [r3, #24]
+ 966 0070 7B68     		ldr	r3, [r7, #4]
+ 967 0072 5A67     		str	r2, [r3, #116]
+ 968              	.L54:
+ 969 0074 BB69     		ldr	r3, [r7, #24]
+ 970 0076 1B68     		ldr	r3, [r3]
+ 971 0078 03F40073 		and	r3, r3, #512
+ 972 007c 002B     		cmp	r3, #0
+ 973 007e 03D1     		bne	.L55
+ 974 0080 7B68     		ldr	r3, [r7, #4]
+ 975 0082 DB6F     		ldr	r3, [r3, #124]
+ 976 0084 002B     		cmp	r3, #0
+ 977 0086 3CD0     		beq	.L56
+ 978              	.L55:
+ 979 0088 BB69     		ldr	r3, [r7, #24]
+ 980 008a 1B68     		ldr	r3, [r3]
+ 981 008c 03F40073 		and	r3, r3, #512
+ 982 0090 002B     		cmp	r3, #0
+ 983 0092 05D0     		beq	.L57
+ 984 0094 7B68     		ldr	r3, [r7, #4]
+ 985 0096 0022     		movs	r2, #0
+ 986 0098 1A66     		str	r2, [r3, #96]
+ 987 009a 7B68     		ldr	r3, [r7, #4]
+ 988 009c 0022     		movs	r2, #0
+ 989 009e 5A66     		str	r2, [r3, #100]
+ 990              	.L57:
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 18
+
+
+ 991 00a0 BB69     		ldr	r3, [r7, #24]
+ 992 00a2 1B68     		ldr	r3, [r3]
+ 993 00a4 1B0C     		lsrs	r3, r3, #16
+ 994 00a6 C3F30D03 		ubfx	r3, r3, #0, #14
+ 995 00aa BB60     		str	r3, [r7, #8]
+ 996 00ac BB69     		ldr	r3, [r7, #24]
+ 997 00ae 1B68     		ldr	r3, [r3]
+ 998 00b0 03F48073 		and	r3, r3, #256
+ 999 00b4 002B     		cmp	r3, #0
+ 1000 00b6 05D0     		beq	.L58
+ 1001 00b8 BB69     		ldr	r3, [r7, #24]
+ 1002 00ba 1A68     		ldr	r2, [r3]
+ 1003 00bc 7B68     		ldr	r3, [r7, #4]
+ 1004 00be 1A67     		str	r2, [r3, #112]
+ 1005 00c0 0123     		movs	r3, #1
+ 1006 00c2 FB74     		strb	r3, [r7, #19]
+ 1007              	.L58:
+ 1008 00c4 BB69     		ldr	r3, [r7, #24]
+ 1009 00c6 9A68     		ldr	r2, [r3, #8]
+ 1010 00c8 BB69     		ldr	r3, [r7, #24]
+ 1011 00ca 1A62     		str	r2, [r3, #32]
+ 1012 00cc 7B68     		ldr	r3, [r7, #4]
+ 1013 00ce 03F17C00 		add	r0, r3, #124
+ 1014 00d2 7B68     		ldr	r3, [r7, #4]
+ 1015 00d4 03F18001 		add	r1, r3, #128
+ 1016 00d8 BB69     		ldr	r3, [r7, #24]
+ 1017 00da 1B6A     		ldr	r3, [r3, #32]
+ 1018 00dc 1A46     		mov	r2, r3
+ 1019 00de BB68     		ldr	r3, [r7, #8]
+ 1020 00e0 9BB2     		uxth	r3, r3
+ 1021 00e2 FFF7FEFF 		bl	HAL_ETH_RxLinkCallback
+ 1022 00e6 7B68     		ldr	r3, [r7, #4]
+ 1023 00e8 1B6E     		ldr	r3, [r3, #96]
+ 1024 00ea 5A1C     		adds	r2, r3, #1
+ 1025 00ec 7B68     		ldr	r3, [r7, #4]
+ 1026 00ee 1A66     		str	r2, [r3, #96]
+ 1027 00f0 7B68     		ldr	r3, [r7, #4]
+ 1028 00f2 5A6E     		ldr	r2, [r3, #100]
+ 1029 00f4 BB68     		ldr	r3, [r7, #8]
+ 1030 00f6 1A44     		add	r2, r2, r3
+ 1031 00f8 7B68     		ldr	r3, [r7, #4]
+ 1032 00fa 5A66     		str	r2, [r3, #100]
+ 1033 00fc BB69     		ldr	r3, [r7, #24]
+ 1034 00fe 0022     		movs	r2, #0
+ 1035 0100 1A62     		str	r2, [r3, #32]
+ 1036              	.L56:
+ 1037 0102 FB69     		ldr	r3, [r7, #28]
+ 1038 0104 0133     		adds	r3, r3, #1
+ 1039 0106 FB61     		str	r3, [r7, #28]
+ 1040 0108 FB69     		ldr	r3, [r7, #28]
+ 1041 010a 032B     		cmp	r3, #3
+ 1042 010c 02D9     		bls	.L59
+ 1043 010e FB69     		ldr	r3, [r7, #28]
+ 1044 0110 043B     		subs	r3, r3, #4
+ 1045 0112 FB61     		str	r3, [r7, #28]
+ 1046              	.L59:
+ 1047 0114 7B68     		ldr	r3, [r7, #4]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 19
+
+
+ 1048 0116 FA69     		ldr	r2, [r7, #28]
+ 1049 0118 1232     		adds	r2, r2, #18
+ 1050 011a 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 1051 011e BB61     		str	r3, [r7, #24]
+ 1052 0120 7B69     		ldr	r3, [r7, #20]
+ 1053 0122 0133     		adds	r3, r3, #1
+ 1054 0124 7B61     		str	r3, [r7, #20]
+ 1055              	.L53:
+ 1056 0126 BB69     		ldr	r3, [r7, #24]
+ 1057 0128 1B68     		ldr	r3, [r3]
+ 1058 012a 002B     		cmp	r3, #0
+ 1059 012c 06DB     		blt	.L60
+ 1060 012e 7A69     		ldr	r2, [r7, #20]
+ 1061 0130 FB68     		ldr	r3, [r7, #12]
+ 1062 0132 9A42     		cmp	r2, r3
+ 1063 0134 02D2     		bcs	.L60
+ 1064 0136 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1065 0138 002B     		cmp	r3, #0
+ 1066 013a 8DD0     		beq	.L61
+ 1067              	.L60:
+ 1068 013c 7B68     		ldr	r3, [r7, #4]
+ 1069 013e DA6E     		ldr	r2, [r3, #108]
+ 1070 0140 7B69     		ldr	r3, [r7, #20]
+ 1071 0142 1A44     		add	r2, r2, r3
+ 1072 0144 7B68     		ldr	r3, [r7, #4]
+ 1073 0146 DA66     		str	r2, [r3, #108]
+ 1074 0148 7B68     		ldr	r3, [r7, #4]
+ 1075 014a DB6E     		ldr	r3, [r3, #108]
+ 1076 014c 002B     		cmp	r3, #0
+ 1077 014e 02D0     		beq	.L62
+ 1078 0150 7868     		ldr	r0, [r7, #4]
+ 1079 0152 FFF7FEFF 		bl	ETH_UpdateDescriptor
+ 1080              	.L62:
+ 1081 0156 7B68     		ldr	r3, [r7, #4]
+ 1082 0158 FA69     		ldr	r2, [r7, #28]
+ 1083 015a DA65     		str	r2, [r3, #92]
+ 1084 015c FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1085 015e 012B     		cmp	r3, #1
+ 1086 0160 08D1     		bne	.L63
+ 1087 0162 7B68     		ldr	r3, [r7, #4]
+ 1088 0164 DA6F     		ldr	r2, [r3, #124]
+ 1089 0166 3B68     		ldr	r3, [r7]
+ 1090 0168 1A60     		str	r2, [r3]
+ 1091 016a 7B68     		ldr	r3, [r7, #4]
+ 1092 016c 0022     		movs	r2, #0
+ 1093 016e DA67     		str	r2, [r3, #124]
+ 1094 0170 0023     		movs	r3, #0
+ 1095 0172 00E0     		b	.L51
+ 1096              	.L63:
+ 1097 0174 0123     		movs	r3, #1
+ 1098              	.L51:
+ 1099 0176 1846     		mov	r0, r3
+ 1100 0178 2037     		adds	r7, r7, #32
+ 1101 017a BD46     		mov	sp, r7
+ 1102              		@ sp needed
+ 1103 017c 80BD     		pop	{r7, pc}
+ 1105              		.section	.text.ETH_UpdateDescriptor,"ax",%progbits
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 20
+
+
+ 1106              		.align	1
+ 1107              		.syntax unified
+ 1108              		.thumb
+ 1109              		.thumb_func
+ 1111              	ETH_UpdateDescriptor:
+ 1112              		@ args = 0, pretend = 0, frame = 32
+ 1113              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1114 0000 80B5     		push	{r7, lr}
+ 1115 0002 88B0     		sub	sp, sp, #32
+ 1116 0004 00AF     		add	r7, sp, #0
+ 1117 0006 7860     		str	r0, [r7, #4]
+ 1118 0008 0023     		movs	r3, #0
+ 1119 000a BB60     		str	r3, [r7, #8]
+ 1120 000c 0123     		movs	r3, #1
+ 1121 000e FB74     		strb	r3, [r7, #19]
+ 1122 0010 7B68     		ldr	r3, [r7, #4]
+ 1123 0012 9B6E     		ldr	r3, [r3, #104]
+ 1124 0014 FB61     		str	r3, [r7, #28]
+ 1125 0016 7B68     		ldr	r3, [r7, #4]
+ 1126 0018 FA69     		ldr	r2, [r7, #28]
+ 1127 001a 1232     		adds	r2, r2, #18
+ 1128 001c 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 1129 0020 7B61     		str	r3, [r7, #20]
+ 1130 0022 7B68     		ldr	r3, [r7, #4]
+ 1131 0024 DB6E     		ldr	r3, [r3, #108]
+ 1132 0026 BB61     		str	r3, [r7, #24]
+ 1133 0028 42E0     		b	.L65
+ 1134              	.L73:
+ 1135 002a 7B69     		ldr	r3, [r7, #20]
+ 1136 002c 1B6A     		ldr	r3, [r3, #32]
+ 1137 002e 002B     		cmp	r3, #0
+ 1138 0030 12D1     		bne	.L66
+ 1139 0032 07F10803 		add	r3, r7, #8
+ 1140 0036 1846     		mov	r0, r3
+ 1141 0038 FFF7FEFF 		bl	HAL_ETH_RxAllocateCallback
+ 1142 003c BB68     		ldr	r3, [r7, #8]
+ 1143 003e 002B     		cmp	r3, #0
+ 1144 0040 02D1     		bne	.L67
+ 1145 0042 0023     		movs	r3, #0
+ 1146 0044 FB74     		strb	r3, [r7, #19]
+ 1147 0046 07E0     		b	.L66
+ 1148              	.L67:
+ 1149 0048 BB68     		ldr	r3, [r7, #8]
+ 1150 004a 1A46     		mov	r2, r3
+ 1151 004c 7B69     		ldr	r3, [r7, #20]
+ 1152 004e 1A62     		str	r2, [r3, #32]
+ 1153 0050 BB68     		ldr	r3, [r7, #8]
+ 1154 0052 1A46     		mov	r2, r3
+ 1155 0054 7B69     		ldr	r3, [r7, #20]
+ 1156 0056 9A60     		str	r2, [r3, #8]
+ 1157              	.L66:
+ 1158 0058 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1159 005a 002B     		cmp	r3, #0
+ 1160 005c 28D0     		beq	.L65
+ 1161 005e 7B68     		ldr	r3, [r7, #4]
+ 1162 0060 9B6D     		ldr	r3, [r3, #88]
+ 1163 0062 002B     		cmp	r3, #0
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 21
+
+
+ 1164 0064 06D1     		bne	.L69
+ 1165 0066 7B68     		ldr	r3, [r7, #4]
+ 1166 0068 5A69     		ldr	r2, [r3, #20]
+ 1167 006a 264B     		ldr	r3, .L76
+ 1168 006c 1343     		orrs	r3, r3, r2
+ 1169 006e 7A69     		ldr	r2, [r7, #20]
+ 1170 0070 5360     		str	r3, [r2, #4]
+ 1171 0072 05E0     		b	.L70
+ 1172              	.L69:
+ 1173 0074 7B68     		ldr	r3, [r7, #4]
+ 1174 0076 5B69     		ldr	r3, [r3, #20]
+ 1175 0078 43F48042 		orr	r2, r3, #16384
+ 1176 007c 7B69     		ldr	r3, [r7, #20]
+ 1177 007e 5A60     		str	r2, [r3, #4]
+ 1178              	.L70:
+ 1179 0080 7B69     		ldr	r3, [r7, #20]
+ 1180 0082 1B68     		ldr	r3, [r3]
+ 1181 0084 43F00042 		orr	r2, r3, #-2147483648
+ 1182 0088 7B69     		ldr	r3, [r7, #20]
+ 1183 008a 1A60     		str	r2, [r3]
+ 1184 008c FB69     		ldr	r3, [r7, #28]
+ 1185 008e 0133     		adds	r3, r3, #1
+ 1186 0090 FB61     		str	r3, [r7, #28]
+ 1187 0092 FB69     		ldr	r3, [r7, #28]
+ 1188 0094 032B     		cmp	r3, #3
+ 1189 0096 02D9     		bls	.L71
+ 1190 0098 FB69     		ldr	r3, [r7, #28]
+ 1191 009a 043B     		subs	r3, r3, #4
+ 1192 009c FB61     		str	r3, [r7, #28]
+ 1193              	.L71:
+ 1194 009e 7B68     		ldr	r3, [r7, #4]
+ 1195 00a0 FA69     		ldr	r2, [r7, #28]
+ 1196 00a2 1232     		adds	r2, r2, #18
+ 1197 00a4 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 1198 00a8 7B61     		str	r3, [r7, #20]
+ 1199 00aa BB69     		ldr	r3, [r7, #24]
+ 1200 00ac 013B     		subs	r3, r3, #1
+ 1201 00ae BB61     		str	r3, [r7, #24]
+ 1202              	.L65:
+ 1203 00b0 BB69     		ldr	r3, [r7, #24]
+ 1204 00b2 002B     		cmp	r3, #0
+ 1205 00b4 02D0     		beq	.L72
+ 1206 00b6 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1207 00b8 002B     		cmp	r3, #0
+ 1208 00ba B6D1     		bne	.L73
+ 1209              	.L72:
+ 1210 00bc 7B68     		ldr	r3, [r7, #4]
+ 1211 00be DB6E     		ldr	r3, [r3, #108]
+ 1212 00c0 BA69     		ldr	r2, [r7, #24]
+ 1213 00c2 9A42     		cmp	r2, r3
+ 1214 00c4 1AD0     		beq	.L75
+ 1215 00c6 FB69     		ldr	r3, [r7, #28]
+ 1216 00c8 0333     		adds	r3, r3, #3
+ 1217 00ca 03F00303 		and	r3, r3, #3
+ 1218 00ce FB60     		str	r3, [r7, #12]
+ 1219              		.syntax unified
+ 1220              	@ 890 "cmsis/core/cmsis_gcc.h" 1
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 22
+
+
+ 1221 00d0 BFF35F8F 		dmb 0xF
+ 1222              	@ 0 "" 2
+ 1223              		.thumb
+ 1224              		.syntax unified
+ 1225 00d4 00BF     		nop
+ 1226 00d6 7B68     		ldr	r3, [r7, #4]
+ 1227 00d8 1969     		ldr	r1, [r3, #16]
+ 1228 00da FA68     		ldr	r2, [r7, #12]
+ 1229 00dc 1346     		mov	r3, r2
+ 1230 00de 9B00     		lsls	r3, r3, #2
+ 1231 00e0 1344     		add	r3, r3, r2
+ 1232 00e2 DB00     		lsls	r3, r3, #3
+ 1233 00e4 CA18     		adds	r2, r1, r3
+ 1234 00e6 7B68     		ldr	r3, [r7, #4]
+ 1235 00e8 1B68     		ldr	r3, [r3]
+ 1236 00ea 03F58053 		add	r3, r3, #4096
+ 1237 00ee 9A60     		str	r2, [r3, #8]
+ 1238 00f0 7B68     		ldr	r3, [r7, #4]
+ 1239 00f2 FA69     		ldr	r2, [r7, #28]
+ 1240 00f4 9A66     		str	r2, [r3, #104]
+ 1241 00f6 7B68     		ldr	r3, [r7, #4]
+ 1242 00f8 BA69     		ldr	r2, [r7, #24]
+ 1243 00fa DA66     		str	r2, [r3, #108]
+ 1244              	.L75:
+ 1245 00fc 00BF     		nop
+ 1246 00fe 2037     		adds	r7, r7, #32
+ 1247 0100 BD46     		mov	sp, r7
+ 1248              		@ sp needed
+ 1249 0102 80BD     		pop	{r7, pc}
+ 1250              	.L77:
+ 1251              		.align	2
+ 1252              	.L76:
+ 1253 0104 00400080 		.word	-2147467264
+ 1255              		.section	.text.HAL_ETH_RegisterRxAllocateCallback,"ax",%progbits
+ 1256              		.align	1
+ 1257              		.global	HAL_ETH_RegisterRxAllocateCallback
+ 1258              		.syntax unified
+ 1259              		.thumb
+ 1260              		.thumb_func
+ 1262              	HAL_ETH_RegisterRxAllocateCallback:
+ 1263              		@ args = 0, pretend = 0, frame = 8
+ 1264              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1265              		@ link register save eliminated.
+ 1266 0000 80B4     		push	{r7}
+ 1267 0002 83B0     		sub	sp, sp, #12
+ 1268 0004 00AF     		add	r7, sp, #0
+ 1269 0006 7860     		str	r0, [r7, #4]
+ 1270 0008 3960     		str	r1, [r7]
+ 1271 000a 3B68     		ldr	r3, [r7]
+ 1272 000c 002B     		cmp	r3, #0
+ 1273 000e 01D1     		bne	.L79
+ 1274 0010 0123     		movs	r3, #1
+ 1275 0012 04E0     		b	.L80
+ 1276              	.L79:
+ 1277 0014 7B68     		ldr	r3, [r7, #4]
+ 1278 0016 3A68     		ldr	r2, [r7]
+ 1279 0018 C3F8A020 		str	r2, [r3, #160]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 23
+
+
+ 1280 001c 0023     		movs	r3, #0
+ 1281              	.L80:
+ 1282 001e 1846     		mov	r0, r3
+ 1283 0020 0C37     		adds	r7, r7, #12
+ 1284 0022 BD46     		mov	sp, r7
+ 1285              		@ sp needed
+ 1286 0024 5DF8047B 		ldr	r7, [sp], #4
+ 1287 0028 7047     		bx	lr
+ 1289              		.section	.text.HAL_ETH_UnRegisterRxAllocateCallback,"ax",%progbits
+ 1290              		.align	1
+ 1291              		.global	HAL_ETH_UnRegisterRxAllocateCallback
+ 1292              		.syntax unified
+ 1293              		.thumb
+ 1294              		.thumb_func
+ 1296              	HAL_ETH_UnRegisterRxAllocateCallback:
+ 1297              		@ args = 0, pretend = 0, frame = 8
+ 1298              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1299              		@ link register save eliminated.
+ 1300 0000 80B4     		push	{r7}
+ 1301 0002 83B0     		sub	sp, sp, #12
+ 1302 0004 00AF     		add	r7, sp, #0
+ 1303 0006 7860     		str	r0, [r7, #4]
+ 1304 0008 7B68     		ldr	r3, [r7, #4]
+ 1305 000a 054A     		ldr	r2, .L83
+ 1306 000c C3F8A020 		str	r2, [r3, #160]
+ 1307 0010 0023     		movs	r3, #0
+ 1308 0012 1846     		mov	r0, r3
+ 1309 0014 0C37     		adds	r7, r7, #12
+ 1310 0016 BD46     		mov	sp, r7
+ 1311              		@ sp needed
+ 1312 0018 5DF8047B 		ldr	r7, [sp], #4
+ 1313 001c 7047     		bx	lr
+ 1314              	.L84:
+ 1315 001e 00BF     		.align	2
+ 1316              	.L83:
+ 1317 0020 00000000 		.word	HAL_ETH_RxAllocateCallback
+ 1319              		.section	.text.HAL_ETH_RxAllocateCallback,"ax",%progbits
+ 1320              		.align	1
+ 1321              		.weak	HAL_ETH_RxAllocateCallback
+ 1322              		.syntax unified
+ 1323              		.thumb
+ 1324              		.thumb_func
+ 1326              	HAL_ETH_RxAllocateCallback:
+ 1327              		@ args = 0, pretend = 0, frame = 8
+ 1328              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1329              		@ link register save eliminated.
+ 1330 0000 80B4     		push	{r7}
+ 1331 0002 83B0     		sub	sp, sp, #12
+ 1332 0004 00AF     		add	r7, sp, #0
+ 1333 0006 7860     		str	r0, [r7, #4]
+ 1334 0008 00BF     		nop
+ 1335 000a 0C37     		adds	r7, r7, #12
+ 1336 000c BD46     		mov	sp, r7
+ 1337              		@ sp needed
+ 1338 000e 5DF8047B 		ldr	r7, [sp], #4
+ 1339 0012 7047     		bx	lr
+ 1341              		.section	.text.HAL_ETH_RxLinkCallback,"ax",%progbits
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 24
+
+
+ 1342              		.align	1
+ 1343              		.weak	HAL_ETH_RxLinkCallback
+ 1344              		.syntax unified
+ 1345              		.thumb
+ 1346              		.thumb_func
+ 1348              	HAL_ETH_RxLinkCallback:
+ 1349              		@ args = 0, pretend = 0, frame = 16
+ 1350              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1351              		@ link register save eliminated.
+ 1352 0000 80B4     		push	{r7}
+ 1353 0002 85B0     		sub	sp, sp, #20
+ 1354 0004 00AF     		add	r7, sp, #0
+ 1355 0006 F860     		str	r0, [r7, #12]
+ 1356 0008 B960     		str	r1, [r7, #8]
+ 1357 000a 7A60     		str	r2, [r7, #4]
+ 1358 000c 7B80     		strh	r3, [r7, #2]	@ movhi
+ 1359 000e 00BF     		nop
+ 1360 0010 1437     		adds	r7, r7, #20
+ 1361 0012 BD46     		mov	sp, r7
+ 1362              		@ sp needed
+ 1363 0014 5DF8047B 		ldr	r7, [sp], #4
+ 1364 0018 7047     		bx	lr
+ 1366              		.section	.text.HAL_ETH_RegisterRxLinkCallback,"ax",%progbits
+ 1367              		.align	1
+ 1368              		.global	HAL_ETH_RegisterRxLinkCallback
+ 1369              		.syntax unified
+ 1370              		.thumb
+ 1371              		.thumb_func
+ 1373              	HAL_ETH_RegisterRxLinkCallback:
+ 1374              		@ args = 0, pretend = 0, frame = 8
+ 1375              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1376              		@ link register save eliminated.
+ 1377 0000 80B4     		push	{r7}
+ 1378 0002 83B0     		sub	sp, sp, #12
+ 1379 0004 00AF     		add	r7, sp, #0
+ 1380 0006 7860     		str	r0, [r7, #4]
+ 1381 0008 3960     		str	r1, [r7]
+ 1382 000a 3B68     		ldr	r3, [r7]
+ 1383 000c 002B     		cmp	r3, #0
+ 1384 000e 01D1     		bne	.L88
+ 1385 0010 0123     		movs	r3, #1
+ 1386 0012 04E0     		b	.L89
+ 1387              	.L88:
+ 1388 0014 7B68     		ldr	r3, [r7, #4]
+ 1389 0016 3A68     		ldr	r2, [r7]
+ 1390 0018 C3F8A420 		str	r2, [r3, #164]
+ 1391 001c 0023     		movs	r3, #0
+ 1392              	.L89:
+ 1393 001e 1846     		mov	r0, r3
+ 1394 0020 0C37     		adds	r7, r7, #12
+ 1395 0022 BD46     		mov	sp, r7
+ 1396              		@ sp needed
+ 1397 0024 5DF8047B 		ldr	r7, [sp], #4
+ 1398 0028 7047     		bx	lr
+ 1400              		.section	.text.HAL_ETH_UnRegisterRxLinkCallback,"ax",%progbits
+ 1401              		.align	1
+ 1402              		.global	HAL_ETH_UnRegisterRxLinkCallback
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 25
+
+
+ 1403              		.syntax unified
+ 1404              		.thumb
+ 1405              		.thumb_func
+ 1407              	HAL_ETH_UnRegisterRxLinkCallback:
+ 1408              		@ args = 0, pretend = 0, frame = 8
+ 1409              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1410              		@ link register save eliminated.
+ 1411 0000 80B4     		push	{r7}
+ 1412 0002 83B0     		sub	sp, sp, #12
+ 1413 0004 00AF     		add	r7, sp, #0
+ 1414 0006 7860     		str	r0, [r7, #4]
+ 1415 0008 7B68     		ldr	r3, [r7, #4]
+ 1416 000a 054A     		ldr	r2, .L92
+ 1417 000c C3F8A420 		str	r2, [r3, #164]
+ 1418 0010 0023     		movs	r3, #0
+ 1419 0012 1846     		mov	r0, r3
+ 1420 0014 0C37     		adds	r7, r7, #12
+ 1421 0016 BD46     		mov	sp, r7
+ 1422              		@ sp needed
+ 1423 0018 5DF8047B 		ldr	r7, [sp], #4
+ 1424 001c 7047     		bx	lr
+ 1425              	.L93:
+ 1426 001e 00BF     		.align	2
+ 1427              	.L92:
+ 1428 0020 00000000 		.word	HAL_ETH_RxLinkCallback
+ 1430              		.section	.text.HAL_ETH_GetRxDataErrorCode,"ax",%progbits
+ 1431              		.align	1
+ 1432              		.global	HAL_ETH_GetRxDataErrorCode
+ 1433              		.syntax unified
+ 1434              		.thumb
+ 1435              		.thumb_func
+ 1437              	HAL_ETH_GetRxDataErrorCode:
+ 1438              		@ args = 0, pretend = 0, frame = 8
+ 1439              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1440              		@ link register save eliminated.
+ 1441 0000 80B4     		push	{r7}
+ 1442 0002 83B0     		sub	sp, sp, #12
+ 1443 0004 00AF     		add	r7, sp, #0
+ 1444 0006 7860     		str	r0, [r7, #4]
+ 1445 0008 3960     		str	r1, [r7]
+ 1446 000a 7B68     		ldr	r3, [r7, #4]
+ 1447 000c 1A6F     		ldr	r2, [r3, #112]
+ 1448 000e 44F6DE03 		movw	r3, #18654
+ 1449 0012 1340     		ands	r3, r3, r2
+ 1450 0014 3A68     		ldr	r2, [r7]
+ 1451 0016 1360     		str	r3, [r2]
+ 1452 0018 0023     		movs	r3, #0
+ 1453 001a 1846     		mov	r0, r3
+ 1454 001c 0C37     		adds	r7, r7, #12
+ 1455 001e BD46     		mov	sp, r7
+ 1456              		@ sp needed
+ 1457 0020 5DF8047B 		ldr	r7, [sp], #4
+ 1458 0024 7047     		bx	lr
+ 1460              		.section	.text.HAL_ETH_RegisterTxFreeCallback,"ax",%progbits
+ 1461              		.align	1
+ 1462              		.global	HAL_ETH_RegisterTxFreeCallback
+ 1463              		.syntax unified
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 26
+
+
+ 1464              		.thumb
+ 1465              		.thumb_func
+ 1467              	HAL_ETH_RegisterTxFreeCallback:
+ 1468              		@ args = 0, pretend = 0, frame = 8
+ 1469              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1470              		@ link register save eliminated.
+ 1471 0000 80B4     		push	{r7}
+ 1472 0002 83B0     		sub	sp, sp, #12
+ 1473 0004 00AF     		add	r7, sp, #0
+ 1474 0006 7860     		str	r0, [r7, #4]
+ 1475 0008 3960     		str	r1, [r7]
+ 1476 000a 3B68     		ldr	r3, [r7]
+ 1477 000c 002B     		cmp	r3, #0
+ 1478 000e 01D1     		bne	.L97
+ 1479 0010 0123     		movs	r3, #1
+ 1480 0012 04E0     		b	.L98
+ 1481              	.L97:
+ 1482 0014 7B68     		ldr	r3, [r7, #4]
+ 1483 0016 3A68     		ldr	r2, [r7]
+ 1484 0018 C3F8A820 		str	r2, [r3, #168]
+ 1485 001c 0023     		movs	r3, #0
+ 1486              	.L98:
+ 1487 001e 1846     		mov	r0, r3
+ 1488 0020 0C37     		adds	r7, r7, #12
+ 1489 0022 BD46     		mov	sp, r7
+ 1490              		@ sp needed
+ 1491 0024 5DF8047B 		ldr	r7, [sp], #4
+ 1492 0028 7047     		bx	lr
+ 1494              		.section	.text.HAL_ETH_UnRegisterTxFreeCallback,"ax",%progbits
+ 1495              		.align	1
+ 1496              		.global	HAL_ETH_UnRegisterTxFreeCallback
+ 1497              		.syntax unified
+ 1498              		.thumb
+ 1499              		.thumb_func
+ 1501              	HAL_ETH_UnRegisterTxFreeCallback:
+ 1502              		@ args = 0, pretend = 0, frame = 8
+ 1503              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1504              		@ link register save eliminated.
+ 1505 0000 80B4     		push	{r7}
+ 1506 0002 83B0     		sub	sp, sp, #12
+ 1507 0004 00AF     		add	r7, sp, #0
+ 1508 0006 7860     		str	r0, [r7, #4]
+ 1509 0008 7B68     		ldr	r3, [r7, #4]
+ 1510 000a 054A     		ldr	r2, .L101
+ 1511 000c C3F8A820 		str	r2, [r3, #168]
+ 1512 0010 0023     		movs	r3, #0
+ 1513 0012 1846     		mov	r0, r3
+ 1514 0014 0C37     		adds	r7, r7, #12
+ 1515 0016 BD46     		mov	sp, r7
+ 1516              		@ sp needed
+ 1517 0018 5DF8047B 		ldr	r7, [sp], #4
+ 1518 001c 7047     		bx	lr
+ 1519              	.L102:
+ 1520 001e 00BF     		.align	2
+ 1521              	.L101:
+ 1522 0020 00000000 		.word	HAL_ETH_TxFreeCallback
+ 1524              		.section	.text.HAL_ETH_TxFreeCallback,"ax",%progbits
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 27
+
+
+ 1525              		.align	1
+ 1526              		.weak	HAL_ETH_TxFreeCallback
+ 1527              		.syntax unified
+ 1528              		.thumb
+ 1529              		.thumb_func
+ 1531              	HAL_ETH_TxFreeCallback:
+ 1532              		@ args = 0, pretend = 0, frame = 8
+ 1533              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1534              		@ link register save eliminated.
+ 1535 0000 80B4     		push	{r7}
+ 1536 0002 83B0     		sub	sp, sp, #12
+ 1537 0004 00AF     		add	r7, sp, #0
+ 1538 0006 7860     		str	r0, [r7, #4]
+ 1539 0008 00BF     		nop
+ 1540 000a 0C37     		adds	r7, r7, #12
+ 1541 000c BD46     		mov	sp, r7
+ 1542              		@ sp needed
+ 1543 000e 5DF8047B 		ldr	r7, [sp], #4
+ 1544 0012 7047     		bx	lr
+ 1546              		.section	.text.HAL_ETH_ReleaseTxPacket,"ax",%progbits
+ 1547              		.align	1
+ 1548              		.global	HAL_ETH_ReleaseTxPacket
+ 1549              		.syntax unified
+ 1550              		.thumb
+ 1551              		.thumb_func
+ 1553              	HAL_ETH_ReleaseTxPacket:
+ 1554              		@ args = 0, pretend = 0, frame = 24
+ 1555              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1556 0000 80B5     		push	{r7, lr}
+ 1557 0002 86B0     		sub	sp, sp, #24
+ 1558 0004 00AF     		add	r7, sp, #0
+ 1559 0006 7860     		str	r0, [r7, #4]
+ 1560 0008 7B68     		ldr	r3, [r7, #4]
+ 1561 000a 1833     		adds	r3, r3, #24
+ 1562 000c BB60     		str	r3, [r7, #8]
+ 1563 000e BB68     		ldr	r3, [r7, #8]
+ 1564 0010 9B6A     		ldr	r3, [r3, #40]
+ 1565 0012 7B61     		str	r3, [r7, #20]
+ 1566 0014 BB68     		ldr	r3, [r7, #8]
+ 1567 0016 DB6A     		ldr	r3, [r3, #44]
+ 1568 0018 3B61     		str	r3, [r7, #16]
+ 1569 001a 0123     		movs	r3, #1
+ 1570 001c FB73     		strb	r3, [r7, #15]
+ 1571 001e 47E0     		b	.L105
+ 1572              	.L112:
+ 1573 0020 0123     		movs	r3, #1
+ 1574 0022 BB73     		strb	r3, [r7, #14]
+ 1575 0024 7B69     		ldr	r3, [r7, #20]
+ 1576 0026 013B     		subs	r3, r3, #1
+ 1577 0028 7B61     		str	r3, [r7, #20]
+ 1578 002a BA68     		ldr	r2, [r7, #8]
+ 1579 002c 3B69     		ldr	r3, [r7, #16]
+ 1580 002e 0433     		adds	r3, r3, #4
+ 1581 0030 9B00     		lsls	r3, r3, #2
+ 1582 0032 1344     		add	r3, r3, r2
+ 1583 0034 5B68     		ldr	r3, [r3, #4]
+ 1584 0036 002B     		cmp	r3, #0
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 28
+
+
+ 1585 0038 0AD1     		bne	.L106
+ 1586 003a 3B69     		ldr	r3, [r7, #16]
+ 1587 003c 0133     		adds	r3, r3, #1
+ 1588 003e 3B61     		str	r3, [r7, #16]
+ 1589 0040 3B69     		ldr	r3, [r7, #16]
+ 1590 0042 032B     		cmp	r3, #3
+ 1591 0044 02D9     		bls	.L107
+ 1592 0046 3B69     		ldr	r3, [r7, #16]
+ 1593 0048 043B     		subs	r3, r3, #4
+ 1594 004a 3B61     		str	r3, [r7, #16]
+ 1595              	.L107:
+ 1596 004c 0023     		movs	r3, #0
+ 1597 004e BB73     		strb	r3, [r7, #14]
+ 1598              	.L106:
+ 1599 0050 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 1600 0052 002B     		cmp	r3, #0
+ 1601 0054 2CD0     		beq	.L105
+ 1602 0056 7B68     		ldr	r3, [r7, #4]
+ 1603 0058 D968     		ldr	r1, [r3, #12]
+ 1604 005a 3A69     		ldr	r2, [r7, #16]
+ 1605 005c 1346     		mov	r3, r2
+ 1606 005e 9B00     		lsls	r3, r3, #2
+ 1607 0060 1344     		add	r3, r3, r2
+ 1608 0062 DB00     		lsls	r3, r3, #3
+ 1609 0064 0B44     		add	r3, r3, r1
+ 1610 0066 1B68     		ldr	r3, [r3]
+ 1611 0068 002B     		cmp	r3, #0
+ 1612 006a 1FDB     		blt	.L109
+ 1613 006c BA68     		ldr	r2, [r7, #8]
+ 1614 006e 3B69     		ldr	r3, [r7, #16]
+ 1615 0070 0433     		adds	r3, r3, #4
+ 1616 0072 9B00     		lsls	r3, r3, #2
+ 1617 0074 1344     		add	r3, r3, r2
+ 1618 0076 5B68     		ldr	r3, [r3, #4]
+ 1619 0078 1846     		mov	r0, r3
+ 1620 007a FFF7FEFF 		bl	HAL_ETH_TxFreeCallback
+ 1621 007e BA68     		ldr	r2, [r7, #8]
+ 1622 0080 3B69     		ldr	r3, [r7, #16]
+ 1623 0082 0433     		adds	r3, r3, #4
+ 1624 0084 9B00     		lsls	r3, r3, #2
+ 1625 0086 1344     		add	r3, r3, r2
+ 1626 0088 0022     		movs	r2, #0
+ 1627 008a 5A60     		str	r2, [r3, #4]
+ 1628 008c 3B69     		ldr	r3, [r7, #16]
+ 1629 008e 0133     		adds	r3, r3, #1
+ 1630 0090 3B61     		str	r3, [r7, #16]
+ 1631 0092 3B69     		ldr	r3, [r7, #16]
+ 1632 0094 032B     		cmp	r3, #3
+ 1633 0096 02D9     		bls	.L110
+ 1634 0098 3B69     		ldr	r3, [r7, #16]
+ 1635 009a 043B     		subs	r3, r3, #4
+ 1636 009c 3B61     		str	r3, [r7, #16]
+ 1637              	.L110:
+ 1638 009e BB68     		ldr	r3, [r7, #8]
+ 1639 00a0 7A69     		ldr	r2, [r7, #20]
+ 1640 00a2 9A62     		str	r2, [r3, #40]
+ 1641 00a4 BB68     		ldr	r3, [r7, #8]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 29
+
+
+ 1642 00a6 3A69     		ldr	r2, [r7, #16]
+ 1643 00a8 DA62     		str	r2, [r3, #44]
+ 1644 00aa 01E0     		b	.L105
+ 1645              	.L109:
+ 1646 00ac 0023     		movs	r3, #0
+ 1647 00ae FB73     		strb	r3, [r7, #15]
+ 1648              	.L105:
+ 1649 00b0 7B69     		ldr	r3, [r7, #20]
+ 1650 00b2 002B     		cmp	r3, #0
+ 1651 00b4 02D0     		beq	.L111
+ 1652 00b6 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1653 00b8 002B     		cmp	r3, #0
+ 1654 00ba B1D1     		bne	.L112
+ 1655              	.L111:
+ 1656 00bc 0023     		movs	r3, #0
+ 1657 00be 1846     		mov	r0, r3
+ 1658 00c0 1837     		adds	r7, r7, #24
+ 1659 00c2 BD46     		mov	sp, r7
+ 1660              		@ sp needed
+ 1661 00c4 80BD     		pop	{r7, pc}
+ 1663              		.section	.text.HAL_ETH_IRQHandler,"ax",%progbits
+ 1664              		.align	1
+ 1665              		.global	HAL_ETH_IRQHandler
+ 1666              		.syntax unified
+ 1667              		.thumb
+ 1668              		.thumb_func
+ 1670              	HAL_ETH_IRQHandler:
+ 1671              		@ args = 0, pretend = 0, frame = 24
+ 1672              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1673 0000 80B5     		push	{r7, lr}
+ 1674 0002 86B0     		sub	sp, sp, #24
+ 1675 0004 00AF     		add	r7, sp, #0
+ 1676 0006 7860     		str	r0, [r7, #4]
+ 1677 0008 7B68     		ldr	r3, [r7, #4]
+ 1678 000a 1B68     		ldr	r3, [r3]
+ 1679 000c 9B6B     		ldr	r3, [r3, #56]
+ 1680 000e 7B61     		str	r3, [r7, #20]
+ 1681 0010 7B68     		ldr	r3, [r7, #4]
+ 1682 0012 1B68     		ldr	r3, [r3]
+ 1683 0014 03F58053 		add	r3, r3, #4096
+ 1684 0018 5B69     		ldr	r3, [r3, #20]
+ 1685 001a 3B61     		str	r3, [r7, #16]
+ 1686 001c 7B68     		ldr	r3, [r7, #4]
+ 1687 001e 1B68     		ldr	r3, [r3]
+ 1688 0020 03F58053 		add	r3, r3, #4096
+ 1689 0024 DB69     		ldr	r3, [r3, #28]
+ 1690 0026 FB60     		str	r3, [r7, #12]
+ 1691 0028 4B4B     		ldr	r3, .L123
+ 1692 002a 5B69     		ldr	r3, [r3, #20]
+ 1693 002c BB60     		str	r3, [r7, #8]
+ 1694 002e 3B69     		ldr	r3, [r7, #16]
+ 1695 0030 03F04003 		and	r3, r3, #64
+ 1696 0034 002B     		cmp	r3, #0
+ 1697 0036 0ED0     		beq	.L115
+ 1698 0038 FB68     		ldr	r3, [r7, #12]
+ 1699 003a 03F04003 		and	r3, r3, #64
+ 1700 003e 002B     		cmp	r3, #0
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 30
+
+
+ 1701 0040 09D0     		beq	.L115
+ 1702 0042 7B68     		ldr	r3, [r7, #4]
+ 1703 0044 1B68     		ldr	r3, [r3]
+ 1704 0046 03F58053 		add	r3, r3, #4096
+ 1705 004a 1A46     		mov	r2, r3
+ 1706 004c 434B     		ldr	r3, .L123+4
+ 1707 004e 5361     		str	r3, [r2, #20]
+ 1708 0050 7868     		ldr	r0, [r7, #4]
+ 1709 0052 FFF7FEFF 		bl	HAL_ETH_RxCpltCallback
+ 1710              	.L115:
+ 1711 0056 3B69     		ldr	r3, [r7, #16]
+ 1712 0058 03F00103 		and	r3, r3, #1
+ 1713 005c 002B     		cmp	r3, #0
+ 1714 005e 0FD0     		beq	.L116
+ 1715 0060 FB68     		ldr	r3, [r7, #12]
+ 1716 0062 03F00103 		and	r3, r3, #1
+ 1717 0066 002B     		cmp	r3, #0
+ 1718 0068 0AD0     		beq	.L116
+ 1719 006a 7B68     		ldr	r3, [r7, #4]
+ 1720 006c 1B68     		ldr	r3, [r3]
+ 1721 006e 03F58053 		add	r3, r3, #4096
+ 1722 0072 1A46     		mov	r2, r3
+ 1723 0074 4FF00113 		mov	r3, #65537
+ 1724 0078 5361     		str	r3, [r2, #20]
+ 1725 007a 7868     		ldr	r0, [r7, #4]
+ 1726 007c FFF7FEFF 		bl	HAL_ETH_TxCpltCallback
+ 1727              	.L116:
+ 1728 0080 3B69     		ldr	r3, [r7, #16]
+ 1729 0082 03F40043 		and	r3, r3, #32768
+ 1730 0086 002B     		cmp	r3, #0
+ 1731 0088 42D0     		beq	.L117
+ 1732 008a FB68     		ldr	r3, [r7, #12]
+ 1733 008c 03F40043 		and	r3, r3, #32768
+ 1734 0090 002B     		cmp	r3, #0
+ 1735 0092 3DD0     		beq	.L117
+ 1736 0094 7B68     		ldr	r3, [r7, #4]
+ 1737 0096 D3F88830 		ldr	r3, [r3, #136]
+ 1738 009a 43F00802 		orr	r2, r3, #8
+ 1739 009e 7B68     		ldr	r3, [r7, #4]
+ 1740 00a0 C3F88820 		str	r2, [r3, #136]
+ 1741 00a4 3B69     		ldr	r3, [r7, #16]
+ 1742 00a6 03F40053 		and	r3, r3, #8192
+ 1743 00aa 002B     		cmp	r3, #0
+ 1744 00ac 1AD0     		beq	.L118
+ 1745 00ae 7B68     		ldr	r3, [r7, #4]
+ 1746 00b0 1B68     		ldr	r3, [r3]
+ 1747 00b2 03F58053 		add	r3, r3, #4096
+ 1748 00b6 5A69     		ldr	r2, [r3, #20]
+ 1749 00b8 294B     		ldr	r3, .L123+8
+ 1750 00ba 1340     		ands	r3, r3, r2
+ 1751 00bc 7A68     		ldr	r2, [r7, #4]
+ 1752 00be C2F88C30 		str	r3, [r2, #140]
+ 1753 00c2 7B68     		ldr	r3, [r7, #4]
+ 1754 00c4 1B68     		ldr	r3, [r3]
+ 1755 00c6 03F58053 		add	r3, r3, #4096
+ 1756 00ca DB69     		ldr	r3, [r3, #28]
+ 1757 00cc 7A68     		ldr	r2, [r7, #4]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 31
+
+
+ 1758 00ce 1268     		ldr	r2, [r2]
+ 1759 00d0 23F4C033 		bic	r3, r3, #98304
+ 1760 00d4 02F58052 		add	r2, r2, #4096
+ 1761 00d8 D361     		str	r3, [r2, #28]
+ 1762 00da 7B68     		ldr	r3, [r7, #4]
+ 1763 00dc E022     		movs	r2, #224
+ 1764 00de C3F88420 		str	r2, [r3, #132]
+ 1765 00e2 12E0     		b	.L119
+ 1766              	.L118:
+ 1767 00e4 7B68     		ldr	r3, [r7, #4]
+ 1768 00e6 1B68     		ldr	r3, [r3]
+ 1769 00e8 03F58053 		add	r3, r3, #4096
+ 1770 00ec 5A69     		ldr	r2, [r3, #20]
+ 1771 00ee 48F28063 		movw	r3, #34432
+ 1772 00f2 1340     		ands	r3, r3, r2
+ 1773 00f4 7A68     		ldr	r2, [r7, #4]
+ 1774 00f6 C2F88C30 		str	r3, [r2, #140]
+ 1775 00fa 7B68     		ldr	r3, [r7, #4]
+ 1776 00fc 1B68     		ldr	r3, [r3]
+ 1777 00fe 03F58053 		add	r3, r3, #4096
+ 1778 0102 1A46     		mov	r2, r3
+ 1779 0104 48F28063 		movw	r3, #34432
+ 1780 0108 5361     		str	r3, [r2, #20]
+ 1781              	.L119:
+ 1782 010a 7868     		ldr	r0, [r7, #4]
+ 1783 010c FFF7FEFF 		bl	HAL_ETH_ErrorCallback
+ 1784              	.L117:
+ 1785 0110 7B69     		ldr	r3, [r7, #20]
+ 1786 0112 03F00803 		and	r3, r3, #8
+ 1787 0116 002B     		cmp	r3, #0
+ 1788 0118 0ED0     		beq	.L120
+ 1789 011a 7B68     		ldr	r3, [r7, #4]
+ 1790 011c 1B68     		ldr	r3, [r3]
+ 1791 011e DB6A     		ldr	r3, [r3, #44]
+ 1792 0120 03F06002 		and	r2, r3, #96
+ 1793 0124 7B68     		ldr	r3, [r7, #4]
+ 1794 0126 C3F89420 		str	r2, [r3, #148]
+ 1795 012a 7868     		ldr	r0, [r7, #4]
+ 1796 012c FFF7FEFF 		bl	HAL_ETH_PMTCallback
+ 1797 0130 7B68     		ldr	r3, [r7, #4]
+ 1798 0132 0022     		movs	r2, #0
+ 1799 0134 C3F89420 		str	r2, [r3, #148]
+ 1800              	.L120:
+ 1801 0138 BB68     		ldr	r3, [r7, #8]
+ 1802 013a 03F40023 		and	r3, r3, #524288
+ 1803 013e 002B     		cmp	r3, #0
+ 1804 0140 06D0     		beq	.L122
+ 1805 0142 054B     		ldr	r3, .L123
+ 1806 0144 4FF40022 		mov	r2, #524288
+ 1807 0148 5A61     		str	r2, [r3, #20]
+ 1808 014a 7868     		ldr	r0, [r7, #4]
+ 1809 014c FFF7FEFF 		bl	HAL_ETH_WakeUpCallback
+ 1810              	.L122:
+ 1811 0150 00BF     		nop
+ 1812 0152 1837     		adds	r7, r7, #24
+ 1813 0154 BD46     		mov	sp, r7
+ 1814              		@ sp needed
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 32
+
+
+ 1815 0156 80BD     		pop	{r7, pc}
+ 1816              	.L124:
+ 1817              		.align	2
+ 1818              	.L123:
+ 1819 0158 003C0140 		.word	1073822720
+ 1820 015c 40000100 		.word	65600
+ 1821 0160 00207E00 		.word	8265728
+ 1823              		.section	.text.HAL_ETH_TxCpltCallback,"ax",%progbits
+ 1824              		.align	1
+ 1825              		.weak	HAL_ETH_TxCpltCallback
+ 1826              		.syntax unified
+ 1827              		.thumb
+ 1828              		.thumb_func
+ 1830              	HAL_ETH_TxCpltCallback:
+ 1831              		@ args = 0, pretend = 0, frame = 8
+ 1832              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1833              		@ link register save eliminated.
+ 1834 0000 80B4     		push	{r7}
+ 1835 0002 83B0     		sub	sp, sp, #12
+ 1836 0004 00AF     		add	r7, sp, #0
+ 1837 0006 7860     		str	r0, [r7, #4]
+ 1838 0008 00BF     		nop
+ 1839 000a 0C37     		adds	r7, r7, #12
+ 1840 000c BD46     		mov	sp, r7
+ 1841              		@ sp needed
+ 1842 000e 5DF8047B 		ldr	r7, [sp], #4
+ 1843 0012 7047     		bx	lr
+ 1845              		.section	.text.HAL_ETH_RxCpltCallback,"ax",%progbits
+ 1846              		.align	1
+ 1847              		.weak	HAL_ETH_RxCpltCallback
+ 1848              		.syntax unified
+ 1849              		.thumb
+ 1850              		.thumb_func
+ 1852              	HAL_ETH_RxCpltCallback:
+ 1853              		@ args = 0, pretend = 0, frame = 8
+ 1854              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1855              		@ link register save eliminated.
+ 1856 0000 80B4     		push	{r7}
+ 1857 0002 83B0     		sub	sp, sp, #12
+ 1858 0004 00AF     		add	r7, sp, #0
+ 1859 0006 7860     		str	r0, [r7, #4]
+ 1860 0008 00BF     		nop
+ 1861 000a 0C37     		adds	r7, r7, #12
+ 1862 000c BD46     		mov	sp, r7
+ 1863              		@ sp needed
+ 1864 000e 5DF8047B 		ldr	r7, [sp], #4
+ 1865 0012 7047     		bx	lr
+ 1867              		.section	.text.HAL_ETH_ErrorCallback,"ax",%progbits
+ 1868              		.align	1
+ 1869              		.weak	HAL_ETH_ErrorCallback
+ 1870              		.syntax unified
+ 1871              		.thumb
+ 1872              		.thumb_func
+ 1874              	HAL_ETH_ErrorCallback:
+ 1875              		@ args = 0, pretend = 0, frame = 8
+ 1876              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1877              		@ link register save eliminated.
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 33
+
+
+ 1878 0000 80B4     		push	{r7}
+ 1879 0002 83B0     		sub	sp, sp, #12
+ 1880 0004 00AF     		add	r7, sp, #0
+ 1881 0006 7860     		str	r0, [r7, #4]
+ 1882 0008 00BF     		nop
+ 1883 000a 0C37     		adds	r7, r7, #12
+ 1884 000c BD46     		mov	sp, r7
+ 1885              		@ sp needed
+ 1886 000e 5DF8047B 		ldr	r7, [sp], #4
+ 1887 0012 7047     		bx	lr
+ 1889              		.section	.text.HAL_ETH_PMTCallback,"ax",%progbits
+ 1890              		.align	1
+ 1891              		.weak	HAL_ETH_PMTCallback
+ 1892              		.syntax unified
+ 1893              		.thumb
+ 1894              		.thumb_func
+ 1896              	HAL_ETH_PMTCallback:
+ 1897              		@ args = 0, pretend = 0, frame = 8
+ 1898              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1899              		@ link register save eliminated.
+ 1900 0000 80B4     		push	{r7}
+ 1901 0002 83B0     		sub	sp, sp, #12
+ 1902 0004 00AF     		add	r7, sp, #0
+ 1903 0006 7860     		str	r0, [r7, #4]
+ 1904 0008 00BF     		nop
+ 1905 000a 0C37     		adds	r7, r7, #12
+ 1906 000c BD46     		mov	sp, r7
+ 1907              		@ sp needed
+ 1908 000e 5DF8047B 		ldr	r7, [sp], #4
+ 1909 0012 7047     		bx	lr
+ 1911              		.section	.text.HAL_ETH_WakeUpCallback,"ax",%progbits
+ 1912              		.align	1
+ 1913              		.weak	HAL_ETH_WakeUpCallback
+ 1914              		.syntax unified
+ 1915              		.thumb
+ 1916              		.thumb_func
+ 1918              	HAL_ETH_WakeUpCallback:
+ 1919              		@ args = 0, pretend = 0, frame = 8
+ 1920              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1921              		@ link register save eliminated.
+ 1922 0000 80B4     		push	{r7}
+ 1923 0002 83B0     		sub	sp, sp, #12
+ 1924 0004 00AF     		add	r7, sp, #0
+ 1925 0006 7860     		str	r0, [r7, #4]
+ 1926 0008 00BF     		nop
+ 1927 000a 0C37     		adds	r7, r7, #12
+ 1928 000c BD46     		mov	sp, r7
+ 1929              		@ sp needed
+ 1930 000e 5DF8047B 		ldr	r7, [sp], #4
+ 1931 0012 7047     		bx	lr
+ 1933              		.section	.text.HAL_ETH_ReadPHYRegister,"ax",%progbits
+ 1934              		.align	1
+ 1935              		.global	HAL_ETH_ReadPHYRegister
+ 1936              		.syntax unified
+ 1937              		.thumb
+ 1938              		.thumb_func
+ 1940              	HAL_ETH_ReadPHYRegister:
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 34
+
+
+ 1941              		@ args = 0, pretend = 0, frame = 24
+ 1942              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1943 0000 80B5     		push	{r7, lr}
+ 1944 0002 86B0     		sub	sp, sp, #24
+ 1945 0004 00AF     		add	r7, sp, #0
+ 1946 0006 F860     		str	r0, [r7, #12]
+ 1947 0008 B960     		str	r1, [r7, #8]
+ 1948 000a 7A60     		str	r2, [r7, #4]
+ 1949 000c 3B60     		str	r3, [r7]
+ 1950 000e FB68     		ldr	r3, [r7, #12]
+ 1951 0010 1B68     		ldr	r3, [r3]
+ 1952 0012 1B69     		ldr	r3, [r3, #16]
+ 1953 0014 7B61     		str	r3, [r7, #20]
+ 1954 0016 7B69     		ldr	r3, [r7, #20]
+ 1955 0018 03F01C03 		and	r3, r3, #28
+ 1956 001c 7B61     		str	r3, [r7, #20]
+ 1957 001e BB68     		ldr	r3, [r7, #8]
+ 1958 0020 DB02     		lsls	r3, r3, #11
+ 1959 0022 9BB2     		uxth	r3, r3
+ 1960 0024 7A69     		ldr	r2, [r7, #20]
+ 1961 0026 1343     		orrs	r3, r3, r2
+ 1962 0028 7B61     		str	r3, [r7, #20]
+ 1963 002a 7B68     		ldr	r3, [r7, #4]
+ 1964 002c 9B01     		lsls	r3, r3, #6
+ 1965 002e 03F4F863 		and	r3, r3, #1984
+ 1966 0032 7A69     		ldr	r2, [r7, #20]
+ 1967 0034 1343     		orrs	r3, r3, r2
+ 1968 0036 7B61     		str	r3, [r7, #20]
+ 1969 0038 7B69     		ldr	r3, [r7, #20]
+ 1970 003a 23F00203 		bic	r3, r3, #2
+ 1971 003e 7B61     		str	r3, [r7, #20]
+ 1972 0040 7B69     		ldr	r3, [r7, #20]
+ 1973 0042 43F00103 		orr	r3, r3, #1
+ 1974 0046 7B61     		str	r3, [r7, #20]
+ 1975 0048 FB68     		ldr	r3, [r7, #12]
+ 1976 004a 1B68     		ldr	r3, [r3]
+ 1977 004c 7A69     		ldr	r2, [r7, #20]
+ 1978 004e 1A61     		str	r2, [r3, #16]
+ 1979 0050 FFF7FEFF 		bl	HAL_GetTick
+ 1980 0054 3861     		str	r0, [r7, #16]
+ 1981 0056 0DE0     		b	.L131
+ 1982              	.L134:
+ 1983 0058 FFF7FEFF 		bl	HAL_GetTick
+ 1984 005c 0246     		mov	r2, r0
+ 1985 005e 3B69     		ldr	r3, [r7, #16]
+ 1986 0060 D31A     		subs	r3, r2, r3
+ 1987 0062 B3F5803F 		cmp	r3, #65536
+ 1988 0066 01D3     		bcc	.L132
+ 1989 0068 0123     		movs	r3, #1
+ 1990 006a 10E0     		b	.L133
+ 1991              	.L132:
+ 1992 006c FB68     		ldr	r3, [r7, #12]
+ 1993 006e 1B68     		ldr	r3, [r3]
+ 1994 0070 1B69     		ldr	r3, [r3, #16]
+ 1995 0072 7B61     		str	r3, [r7, #20]
+ 1996              	.L131:
+ 1997 0074 7B69     		ldr	r3, [r7, #20]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 35
+
+
+ 1998 0076 03F00103 		and	r3, r3, #1
+ 1999 007a 002B     		cmp	r3, #0
+ 2000 007c ECD1     		bne	.L134
+ 2001 007e FB68     		ldr	r3, [r7, #12]
+ 2002 0080 1B68     		ldr	r3, [r3]
+ 2003 0082 5B69     		ldr	r3, [r3, #20]
+ 2004 0084 9BB2     		uxth	r3, r3
+ 2005 0086 1A46     		mov	r2, r3
+ 2006 0088 3B68     		ldr	r3, [r7]
+ 2007 008a 1A60     		str	r2, [r3]
+ 2008 008c 0023     		movs	r3, #0
+ 2009              	.L133:
+ 2010 008e 1846     		mov	r0, r3
+ 2011 0090 1837     		adds	r7, r7, #24
+ 2012 0092 BD46     		mov	sp, r7
+ 2013              		@ sp needed
+ 2014 0094 80BD     		pop	{r7, pc}
+ 2016              		.section	.text.HAL_ETH_WritePHYRegister,"ax",%progbits
+ 2017              		.align	1
+ 2018              		.global	HAL_ETH_WritePHYRegister
+ 2019              		.syntax unified
+ 2020              		.thumb
+ 2021              		.thumb_func
+ 2023              	HAL_ETH_WritePHYRegister:
+ 2024              		@ args = 0, pretend = 0, frame = 24
+ 2025              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2026 0000 80B5     		push	{r7, lr}
+ 2027 0002 86B0     		sub	sp, sp, #24
+ 2028 0004 00AF     		add	r7, sp, #0
+ 2029 0006 F860     		str	r0, [r7, #12]
+ 2030 0008 B960     		str	r1, [r7, #8]
+ 2031 000a 7A60     		str	r2, [r7, #4]
+ 2032 000c 3B60     		str	r3, [r7]
+ 2033 000e FB68     		ldr	r3, [r7, #12]
+ 2034 0010 1B68     		ldr	r3, [r3]
+ 2035 0012 1B69     		ldr	r3, [r3, #16]
+ 2036 0014 7B61     		str	r3, [r7, #20]
+ 2037 0016 7B69     		ldr	r3, [r7, #20]
+ 2038 0018 03F01C03 		and	r3, r3, #28
+ 2039 001c 7B61     		str	r3, [r7, #20]
+ 2040 001e BB68     		ldr	r3, [r7, #8]
+ 2041 0020 DB02     		lsls	r3, r3, #11
+ 2042 0022 9BB2     		uxth	r3, r3
+ 2043 0024 7A69     		ldr	r2, [r7, #20]
+ 2044 0026 1343     		orrs	r3, r3, r2
+ 2045 0028 7B61     		str	r3, [r7, #20]
+ 2046 002a 7B68     		ldr	r3, [r7, #4]
+ 2047 002c 9B01     		lsls	r3, r3, #6
+ 2048 002e 03F4F863 		and	r3, r3, #1984
+ 2049 0032 7A69     		ldr	r2, [r7, #20]
+ 2050 0034 1343     		orrs	r3, r3, r2
+ 2051 0036 7B61     		str	r3, [r7, #20]
+ 2052 0038 7B69     		ldr	r3, [r7, #20]
+ 2053 003a 43F00203 		orr	r3, r3, #2
+ 2054 003e 7B61     		str	r3, [r7, #20]
+ 2055 0040 7B69     		ldr	r3, [r7, #20]
+ 2056 0042 43F00103 		orr	r3, r3, #1
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 36
+
+
+ 2057 0046 7B61     		str	r3, [r7, #20]
+ 2058 0048 3B68     		ldr	r3, [r7]
+ 2059 004a 9AB2     		uxth	r2, r3
+ 2060 004c FB68     		ldr	r3, [r7, #12]
+ 2061 004e 1B68     		ldr	r3, [r3]
+ 2062 0050 5A61     		str	r2, [r3, #20]
+ 2063 0052 FB68     		ldr	r3, [r7, #12]
+ 2064 0054 1B68     		ldr	r3, [r3]
+ 2065 0056 7A69     		ldr	r2, [r7, #20]
+ 2066 0058 1A61     		str	r2, [r3, #16]
+ 2067 005a FFF7FEFF 		bl	HAL_GetTick
+ 2068 005e 3861     		str	r0, [r7, #16]
+ 2069 0060 0DE0     		b	.L136
+ 2070              	.L139:
+ 2071 0062 FFF7FEFF 		bl	HAL_GetTick
+ 2072 0066 0246     		mov	r2, r0
+ 2073 0068 3B69     		ldr	r3, [r7, #16]
+ 2074 006a D31A     		subs	r3, r2, r3
+ 2075 006c B3F5803F 		cmp	r3, #65536
+ 2076 0070 01D3     		bcc	.L137
+ 2077 0072 0123     		movs	r3, #1
+ 2078 0074 09E0     		b	.L138
+ 2079              	.L137:
+ 2080 0076 FB68     		ldr	r3, [r7, #12]
+ 2081 0078 1B68     		ldr	r3, [r3]
+ 2082 007a 1B69     		ldr	r3, [r3, #16]
+ 2083 007c 7B61     		str	r3, [r7, #20]
+ 2084              	.L136:
+ 2085 007e 7B69     		ldr	r3, [r7, #20]
+ 2086 0080 03F00103 		and	r3, r3, #1
+ 2087 0084 002B     		cmp	r3, #0
+ 2088 0086 ECD1     		bne	.L139
+ 2089 0088 0023     		movs	r3, #0
+ 2090              	.L138:
+ 2091 008a 1846     		mov	r0, r3
+ 2092 008c 1837     		adds	r7, r7, #24
+ 2093 008e BD46     		mov	sp, r7
+ 2094              		@ sp needed
+ 2095 0090 80BD     		pop	{r7, pc}
+ 2097              		.section	.text.HAL_ETH_GetMACConfig,"ax",%progbits
+ 2098              		.align	1
+ 2099              		.global	HAL_ETH_GetMACConfig
+ 2100              		.syntax unified
+ 2101              		.thumb
+ 2102              		.thumb_func
+ 2104              	HAL_ETH_GetMACConfig:
+ 2105              		@ args = 0, pretend = 0, frame = 8
+ 2106              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2107              		@ link register save eliminated.
+ 2108 0000 80B4     		push	{r7}
+ 2109 0002 83B0     		sub	sp, sp, #12
+ 2110 0004 00AF     		add	r7, sp, #0
+ 2111 0006 7860     		str	r0, [r7, #4]
+ 2112 0008 3960     		str	r1, [r7]
+ 2113 000a 3B68     		ldr	r3, [r7]
+ 2114 000c 002B     		cmp	r3, #0
+ 2115 000e 01D1     		bne	.L141
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 37
+
+
+ 2116 0010 0123     		movs	r3, #1
+ 2117 0012 E6E0     		b	.L142
+ 2118              	.L141:
+ 2119 0014 7B68     		ldr	r3, [r7, #4]
+ 2120 0016 1B68     		ldr	r3, [r3]
+ 2121 0018 1B68     		ldr	r3, [r3]
+ 2122 001a 03F01003 		and	r3, r3, #16
+ 2123 001e 002B     		cmp	r3, #0
+ 2124 0020 14BF     		ite	ne
+ 2125 0022 0123     		movne	r3, #1
+ 2126 0024 0023     		moveq	r3, #0
+ 2127 0026 DBB2     		uxtb	r3, r3
+ 2128 0028 1A46     		mov	r2, r3
+ 2129 002a 3B68     		ldr	r3, [r7]
+ 2130 002c 83F82820 		strb	r2, [r3, #40]
+ 2131 0030 7B68     		ldr	r3, [r7, #4]
+ 2132 0032 1B68     		ldr	r3, [r3]
+ 2133 0034 1B68     		ldr	r3, [r3]
+ 2134 0036 03F06002 		and	r2, r3, #96
+ 2135 003a 3B68     		ldr	r3, [r7]
+ 2136 003c 5A62     		str	r2, [r3, #36]
+ 2137 003e 7B68     		ldr	r3, [r7, #4]
+ 2138 0040 1B68     		ldr	r3, [r3]
+ 2139 0042 1B68     		ldr	r3, [r3]
+ 2140 0044 03F40073 		and	r3, r3, #512
+ 2141 0048 002B     		cmp	r3, #0
+ 2142 004a 0CBF     		ite	eq
+ 2143 004c 0123     		moveq	r3, #1
+ 2144 004e 0023     		movne	r3, #0
+ 2145 0050 DBB2     		uxtb	r3, r3
+ 2146 0052 1A46     		mov	r2, r3
+ 2147 0054 3B68     		ldr	r3, [r7]
+ 2148 0056 83F82020 		strb	r2, [r3, #32]
+ 2149 005a 7B68     		ldr	r3, [r7, #4]
+ 2150 005c 1B68     		ldr	r3, [r3]
+ 2151 005e 1B68     		ldr	r3, [r3]
+ 2152 0060 03F48033 		and	r3, r3, #65536
+ 2153 0064 002B     		cmp	r3, #0
+ 2154 0066 14BF     		ite	ne
+ 2155 0068 0123     		movne	r3, #1
+ 2156 006a 0023     		moveq	r3, #0
+ 2157 006c DBB2     		uxtb	r3, r3
+ 2158 006e 1A46     		mov	r2, r3
+ 2159 0070 3B68     		ldr	r3, [r7]
+ 2160 0072 DA77     		strb	r2, [r3, #31]
+ 2161 0074 7B68     		ldr	r3, [r7, #4]
+ 2162 0076 1B68     		ldr	r3, [r3]
+ 2163 0078 1B68     		ldr	r3, [r3]
+ 2164 007a 03F40053 		and	r3, r3, #8192
+ 2165 007e 002B     		cmp	r3, #0
+ 2166 0080 0CBF     		ite	eq
+ 2167 0082 0123     		moveq	r3, #1
+ 2168 0084 0023     		movne	r3, #0
+ 2169 0086 DBB2     		uxtb	r3, r3
+ 2170 0088 1A46     		mov	r2, r3
+ 2171 008a 3B68     		ldr	r3, [r7]
+ 2172 008c 9A77     		strb	r2, [r3, #30]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 38
+
+
+ 2173 008e 7B68     		ldr	r3, [r7, #4]
+ 2174 0090 1B68     		ldr	r3, [r3]
+ 2175 0092 1B68     		ldr	r3, [r3]
+ 2176 0094 03F48053 		and	r3, r3, #4096
+ 2177 0098 002B     		cmp	r3, #0
+ 2178 009a 14BF     		ite	ne
+ 2179 009c 0123     		movne	r3, #1
+ 2180 009e 0023     		moveq	r3, #0
+ 2181 00a0 DBB2     		uxtb	r3, r3
+ 2182 00a2 1A46     		mov	r2, r3
+ 2183 00a4 3B68     		ldr	r3, [r7]
+ 2184 00a6 1A77     		strb	r2, [r3, #28]
+ 2185 00a8 7B68     		ldr	r3, [r7, #4]
+ 2186 00aa 1B68     		ldr	r3, [r3]
+ 2187 00ac 1B68     		ldr	r3, [r3]
+ 2188 00ae 03F40062 		and	r2, r3, #2048
+ 2189 00b2 3B68     		ldr	r3, [r7]
+ 2190 00b4 9A61     		str	r2, [r3, #24]
+ 2191 00b6 7B68     		ldr	r3, [r7, #4]
+ 2192 00b8 1B68     		ldr	r3, [r3]
+ 2193 00ba 1B68     		ldr	r3, [r3]
+ 2194 00bc 03F48042 		and	r2, r3, #16384
+ 2195 00c0 3B68     		ldr	r3, [r7]
+ 2196 00c2 5A61     		str	r2, [r3, #20]
+ 2197 00c4 7B68     		ldr	r3, [r7, #4]
+ 2198 00c6 1B68     		ldr	r3, [r3]
+ 2199 00c8 1B68     		ldr	r3, [r3]
+ 2200 00ca 03F48003 		and	r3, r3, #4194304
+ 2201 00ce 002B     		cmp	r3, #0
+ 2202 00d0 0CBF     		ite	eq
+ 2203 00d2 0123     		moveq	r3, #1
+ 2204 00d4 0023     		movne	r3, #0
+ 2205 00d6 DBB2     		uxtb	r3, r3
+ 2206 00d8 1A46     		mov	r2, r3
+ 2207 00da 3B68     		ldr	r3, [r7]
+ 2208 00dc 5A74     		strb	r2, [r3, #17]
+ 2209 00de 7B68     		ldr	r3, [r7, #4]
+ 2210 00e0 1B68     		ldr	r3, [r3]
+ 2211 00e2 1B68     		ldr	r3, [r3]
+ 2212 00e4 03F40003 		and	r3, r3, #8388608
+ 2213 00e8 002B     		cmp	r3, #0
+ 2214 00ea 0CBF     		ite	eq
+ 2215 00ec 0123     		moveq	r3, #1
+ 2216 00ee 0023     		movne	r3, #0
+ 2217 00f0 DBB2     		uxtb	r3, r3
+ 2218 00f2 1A46     		mov	r2, r3
+ 2219 00f4 3B68     		ldr	r3, [r7]
+ 2220 00f6 1A74     		strb	r2, [r3, #16]
+ 2221 00f8 7B68     		ldr	r3, [r7, #4]
+ 2222 00fa 1B68     		ldr	r3, [r3]
+ 2223 00fc 1B68     		ldr	r3, [r3]
+ 2224 00fe 03F08003 		and	r3, r3, #128
+ 2225 0102 002B     		cmp	r3, #0
+ 2226 0104 14BF     		ite	ne
+ 2227 0106 0123     		movne	r3, #1
+ 2228 0108 0023     		moveq	r3, #0
+ 2229 010a DBB2     		uxtb	r3, r3
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 39
+
+
+ 2230 010c 1A46     		mov	r2, r3
+ 2231 010e 3B68     		ldr	r3, [r7]
+ 2232 0110 DA73     		strb	r2, [r3, #15]
+ 2233 0112 7B68     		ldr	r3, [r7, #4]
+ 2234 0114 1B68     		ldr	r3, [r3]
+ 2235 0116 1B68     		ldr	r3, [r3]
+ 2236 0118 03F46022 		and	r2, r3, #917504
+ 2237 011c 3B68     		ldr	r3, [r7]
+ 2238 011e 9A60     		str	r2, [r3, #8]
+ 2239 0120 7B68     		ldr	r3, [r7, #4]
+ 2240 0122 1B68     		ldr	r3, [r3]
+ 2241 0124 1B68     		ldr	r3, [r3]
+ 2242 0126 03F48063 		and	r3, r3, #1024
+ 2243 012a 002B     		cmp	r3, #0
+ 2244 012c 14BF     		ite	ne
+ 2245 012e 0123     		movne	r3, #1
+ 2246 0130 0023     		moveq	r3, #0
+ 2247 0132 DBB2     		uxtb	r3, r3
+ 2248 0134 1A46     		mov	r2, r3
+ 2249 0136 3B68     		ldr	r3, [r7]
+ 2250 0138 1A71     		strb	r2, [r3, #4]
+ 2251 013a 7B68     		ldr	r3, [r7, #4]
+ 2252 013c 1B68     		ldr	r3, [r3]
+ 2253 013e 1B68     		ldr	r3, [r3]
+ 2254 0140 03F00073 		and	r3, r3, #33554432
+ 2255 0144 002B     		cmp	r3, #0
+ 2256 0146 14BF     		ite	ne
+ 2257 0148 0123     		movne	r3, #1
+ 2258 014a 0023     		moveq	r3, #0
+ 2259 014c DBB2     		uxtb	r3, r3
+ 2260 014e 1A46     		mov	r2, r3
+ 2261 0150 3B68     		ldr	r3, [r7]
+ 2262 0152 9A73     		strb	r2, [r3, #14]
+ 2263 0154 7B68     		ldr	r3, [r7, #4]
+ 2264 0156 1B68     		ldr	r3, [r3]
+ 2265 0158 9B69     		ldr	r3, [r3, #24]
+ 2266 015a 03F00203 		and	r3, r3, #2
+ 2267 015e 002B     		cmp	r3, #0
+ 2268 0160 14BF     		ite	ne
+ 2269 0162 0123     		movne	r3, #1
+ 2270 0164 0023     		moveq	r3, #0
+ 2271 0166 DBB2     		uxtb	r3, r3
+ 2272 0168 1A46     		mov	r2, r3
+ 2273 016a 3B68     		ldr	r3, [r7]
+ 2274 016c 83F85420 		strb	r2, [r3, #84]
+ 2275 0170 7B68     		ldr	r3, [r7, #4]
+ 2276 0172 1B68     		ldr	r3, [r3]
+ 2277 0174 9B69     		ldr	r3, [r3, #24]
+ 2278 0176 03F08003 		and	r3, r3, #128
+ 2279 017a 002B     		cmp	r3, #0
+ 2280 017c 0CBF     		ite	eq
+ 2281 017e 0123     		moveq	r3, #1
+ 2282 0180 0023     		movne	r3, #0
+ 2283 0182 DBB2     		uxtb	r3, r3
+ 2284 0184 1A46     		mov	r2, r3
+ 2285 0186 3B68     		ldr	r3, [r7]
+ 2286 0188 83F84C20 		strb	r2, [r3, #76]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 40
+
+
+ 2287 018c 7B68     		ldr	r3, [r7, #4]
+ 2288 018e 1B68     		ldr	r3, [r3]
+ 2289 0190 9B69     		ldr	r3, [r3, #24]
+ 2290 0192 03F03002 		and	r2, r3, #48
+ 2291 0196 3B68     		ldr	r3, [r7]
+ 2292 0198 1A65     		str	r2, [r3, #80]
+ 2293 019a 7B68     		ldr	r3, [r7, #4]
+ 2294 019c 1B68     		ldr	r3, [r3]
+ 2295 019e 9B69     		ldr	r3, [r3, #24]
+ 2296 01a0 1B0C     		lsrs	r3, r3, #16
+ 2297 01a2 9AB2     		uxth	r2, r3
+ 2298 01a4 3B68     		ldr	r3, [r7]
+ 2299 01a6 9A64     		str	r2, [r3, #72]
+ 2300 01a8 7B68     		ldr	r3, [r7, #4]
+ 2301 01aa 1B68     		ldr	r3, [r3]
+ 2302 01ac 9B69     		ldr	r3, [r3, #24]
+ 2303 01ae 03F00403 		and	r3, r3, #4
+ 2304 01b2 002B     		cmp	r3, #0
+ 2305 01b4 14BF     		ite	ne
+ 2306 01b6 0123     		movne	r3, #1
+ 2307 01b8 0023     		moveq	r3, #0
+ 2308 01ba DBB2     		uxtb	r3, r3
+ 2309 01bc 1A46     		mov	r2, r3
+ 2310 01be 3B68     		ldr	r3, [r7]
+ 2311 01c0 83F85620 		strb	r2, [r3, #86]
+ 2312 01c4 7B68     		ldr	r3, [r7, #4]
+ 2313 01c6 1B68     		ldr	r3, [r3]
+ 2314 01c8 9B69     		ldr	r3, [r3, #24]
+ 2315 01ca 03F00803 		and	r3, r3, #8
+ 2316 01ce 002B     		cmp	r3, #0
+ 2317 01d0 14BF     		ite	ne
+ 2318 01d2 0123     		movne	r3, #1
+ 2319 01d4 0023     		moveq	r3, #0
+ 2320 01d6 DBB2     		uxtb	r3, r3
+ 2321 01d8 1A46     		mov	r2, r3
+ 2322 01da 3B68     		ldr	r3, [r7]
+ 2323 01dc 83F85520 		strb	r2, [r3, #85]
+ 2324 01e0 0023     		movs	r3, #0
+ 2325              	.L142:
+ 2326 01e2 1846     		mov	r0, r3
+ 2327 01e4 0C37     		adds	r7, r7, #12
+ 2328 01e6 BD46     		mov	sp, r7
+ 2329              		@ sp needed
+ 2330 01e8 5DF8047B 		ldr	r7, [sp], #4
+ 2331 01ec 7047     		bx	lr
+ 2333              		.section	.text.HAL_ETH_GetDMAConfig,"ax",%progbits
+ 2334              		.align	1
+ 2335              		.global	HAL_ETH_GetDMAConfig
+ 2336              		.syntax unified
+ 2337              		.thumb
+ 2338              		.thumb_func
+ 2340              	HAL_ETH_GetDMAConfig:
+ 2341              		@ args = 0, pretend = 0, frame = 8
+ 2342              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2343              		@ link register save eliminated.
+ 2344 0000 80B4     		push	{r7}
+ 2345 0002 83B0     		sub	sp, sp, #12
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 41
+
+
+ 2346 0004 00AF     		add	r7, sp, #0
+ 2347 0006 7860     		str	r0, [r7, #4]
+ 2348 0008 3960     		str	r1, [r7]
+ 2349 000a 3B68     		ldr	r3, [r7]
+ 2350 000c 002B     		cmp	r3, #0
+ 2351 000e 01D1     		bne	.L144
+ 2352 0010 0123     		movs	r3, #1
+ 2353 0012 CAE0     		b	.L145
+ 2354              	.L144:
+ 2355 0014 7B68     		ldr	r3, [r7, #4]
+ 2356 0016 1B68     		ldr	r3, [r3]
+ 2357 0018 03F58053 		add	r3, r3, #4096
+ 2358 001c 1A68     		ldr	r2, [r3]
+ 2359 001e 4CF20203 		movw	r3, #49154
+ 2360 0022 1340     		ands	r3, r3, r2
+ 2361 0024 3A68     		ldr	r2, [r7]
+ 2362 0026 1360     		str	r3, [r2]
+ 2363 0028 7B68     		ldr	r3, [r7, #4]
+ 2364 002a 1B68     		ldr	r3, [r3]
+ 2365 002c 03F58053 		add	r3, r3, #4096
+ 2366 0030 1B68     		ldr	r3, [r3]
+ 2367 0032 03F00073 		and	r3, r3, #33554432
+ 2368 0036 002B     		cmp	r3, #0
+ 2369 0038 14BF     		ite	ne
+ 2370 003a 0123     		movne	r3, #1
+ 2371 003c 0023     		moveq	r3, #0
+ 2372 003e DBB2     		uxtb	r3, r3
+ 2373 0040 1A46     		mov	r2, r3
+ 2374 0042 3B68     		ldr	r3, [r7]
+ 2375 0044 1A71     		strb	r2, [r3, #4]
+ 2376 0046 7B68     		ldr	r3, [r7, #4]
+ 2377 0048 1B68     		ldr	r3, [r3]
+ 2378 004a 03F58053 		add	r3, r3, #4096
+ 2379 004e 1A68     		ldr	r2, [r3]
+ 2380 0050 594B     		ldr	r3, .L146
+ 2381 0052 1340     		ands	r3, r3, r2
+ 2382 0054 3A68     		ldr	r2, [r7]
+ 2383 0056 9360     		str	r3, [r2, #8]
+ 2384 0058 7B68     		ldr	r3, [r7, #4]
+ 2385 005a 1B68     		ldr	r3, [r3]
+ 2386 005c 03F58053 		add	r3, r3, #4096
+ 2387 0060 1B68     		ldr	r3, [r3]
+ 2388 0062 03F4FC02 		and	r2, r3, #8257536
+ 2389 0066 3B68     		ldr	r3, [r7]
+ 2390 0068 9A61     		str	r2, [r3, #24]
+ 2391 006a 7B68     		ldr	r3, [r7, #4]
+ 2392 006c 1B68     		ldr	r3, [r3]
+ 2393 006e 03F58053 		add	r3, r3, #4096
+ 2394 0072 1B68     		ldr	r3, [r3]
+ 2395 0074 03F47C52 		and	r2, r3, #16128
+ 2396 0078 3B68     		ldr	r3, [r7]
+ 2397 007a 1A61     		str	r2, [r3, #16]
+ 2398 007c 7B68     		ldr	r3, [r7, #4]
+ 2399 007e 1B68     		ldr	r3, [r3]
+ 2400 0080 03F58053 		add	r3, r3, #4096
+ 2401 0084 1B68     		ldr	r3, [r3]
+ 2402 0086 03F08003 		and	r3, r3, #128
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 42
+
+
+ 2403 008a 002B     		cmp	r3, #0
+ 2404 008c 14BF     		ite	ne
+ 2405 008e 0123     		movne	r3, #1
+ 2406 0090 0023     		moveq	r3, #0
+ 2407 0092 DBB2     		uxtb	r3, r3
+ 2408 0094 1A46     		mov	r2, r3
+ 2409 0096 3B68     		ldr	r3, [r7]
+ 2410 0098 83F82520 		strb	r2, [r3, #37]
+ 2411 009c 7B68     		ldr	r3, [r7, #4]
+ 2412 009e 1B68     		ldr	r3, [r3]
+ 2413 00a0 03F58053 		add	r3, r3, #4096
+ 2414 00a4 1B68     		ldr	r3, [r3]
+ 2415 00a6 9B08     		lsrs	r3, r3, #2
+ 2416 00a8 03F01F02 		and	r2, r3, #31
+ 2417 00ac 3B68     		ldr	r3, [r7]
+ 2418 00ae 9A62     		str	r2, [r3, #40]
+ 2419 00b0 7B68     		ldr	r3, [r7, #4]
+ 2420 00b2 1B68     		ldr	r3, [r3]
+ 2421 00b4 03F58053 		add	r3, r3, #4096
+ 2422 00b8 9B69     		ldr	r3, [r3, #24]
+ 2423 00ba 03F08063 		and	r3, r3, #67108864
+ 2424 00be 002B     		cmp	r3, #0
+ 2425 00c0 0CBF     		ite	eq
+ 2426 00c2 0123     		moveq	r3, #1
+ 2427 00c4 0023     		movne	r3, #0
+ 2428 00c6 DBB2     		uxtb	r3, r3
+ 2429 00c8 1A46     		mov	r2, r3
+ 2430 00ca 3B68     		ldr	r3, [r7]
+ 2431 00cc 1A73     		strb	r2, [r3, #12]
+ 2432 00ce 7B68     		ldr	r3, [r7, #4]
+ 2433 00d0 1B68     		ldr	r3, [r3]
+ 2434 00d2 03F58053 		add	r3, r3, #4096
+ 2435 00d6 9B69     		ldr	r3, [r3, #24]
+ 2436 00d8 03F00073 		and	r3, r3, #33554432
+ 2437 00dc 002B     		cmp	r3, #0
+ 2438 00de 14BF     		ite	ne
+ 2439 00e0 0123     		movne	r3, #1
+ 2440 00e2 0023     		moveq	r3, #0
+ 2441 00e4 DBB2     		uxtb	r3, r3
+ 2442 00e6 1A46     		mov	r2, r3
+ 2443 00e8 3B68     		ldr	r3, [r7]
+ 2444 00ea 5A73     		strb	r2, [r3, #13]
+ 2445 00ec 7B68     		ldr	r3, [r7, #4]
+ 2446 00ee 1B68     		ldr	r3, [r3]
+ 2447 00f0 03F58053 		add	r3, r3, #4096
+ 2448 00f4 9B69     		ldr	r3, [r3, #24]
+ 2449 00f6 03F48013 		and	r3, r3, #1048576
+ 2450 00fa 002B     		cmp	r3, #0
+ 2451 00fc 0CBF     		ite	eq
+ 2452 00fe 0123     		moveq	r3, #1
+ 2453 0100 0023     		movne	r3, #0
+ 2454 0102 DBB2     		uxtb	r3, r3
+ 2455 0104 1A46     		mov	r2, r3
+ 2456 0106 3B68     		ldr	r3, [r7]
+ 2457 0108 5A77     		strb	r2, [r3, #29]
+ 2458 010a 7B68     		ldr	r3, [r7, #4]
+ 2459 010c 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 43
+
+
+ 2460 010e 03F58053 		add	r3, r3, #4096
+ 2461 0112 9B69     		ldr	r3, [r3, #24]
+ 2462 0114 03F40013 		and	r3, r3, #2097152
+ 2463 0118 002B     		cmp	r3, #0
+ 2464 011a 14BF     		ite	ne
+ 2465 011c 0123     		movne	r3, #1
+ 2466 011e 0023     		moveq	r3, #0
+ 2467 0120 DBB2     		uxtb	r3, r3
+ 2468 0122 1A46     		mov	r2, r3
+ 2469 0124 3B68     		ldr	r3, [r7]
+ 2470 0126 9A73     		strb	r2, [r3, #14]
+ 2471 0128 7B68     		ldr	r3, [r7, #4]
+ 2472 012a 1B68     		ldr	r3, [r3]
+ 2473 012c 03F58053 		add	r3, r3, #4096
+ 2474 0130 9B69     		ldr	r3, [r3, #24]
+ 2475 0132 03F4E032 		and	r2, r3, #114688
+ 2476 0136 3B68     		ldr	r3, [r7]
+ 2477 0138 5A61     		str	r2, [r3, #20]
+ 2478 013a 7B68     		ldr	r3, [r7, #4]
+ 2479 013c 1B68     		ldr	r3, [r3]
+ 2480 013e 03F58053 		add	r3, r3, #4096
+ 2481 0142 9B69     		ldr	r3, [r3, #24]
+ 2482 0144 03F08003 		and	r3, r3, #128
+ 2483 0148 002B     		cmp	r3, #0
+ 2484 014a 14BF     		ite	ne
+ 2485 014c 0123     		movne	r3, #1
+ 2486 014e 0023     		moveq	r3, #0
+ 2487 0150 DBB2     		uxtb	r3, r3
+ 2488 0152 1A46     		mov	r2, r3
+ 2489 0154 3B68     		ldr	r3, [r7]
+ 2490 0156 1A77     		strb	r2, [r3, #28]
+ 2491 0158 7B68     		ldr	r3, [r7, #4]
+ 2492 015a 1B68     		ldr	r3, [r3]
+ 2493 015c 03F58053 		add	r3, r3, #4096
+ 2494 0160 9B69     		ldr	r3, [r3, #24]
+ 2495 0162 03F04003 		and	r3, r3, #64
+ 2496 0166 002B     		cmp	r3, #0
+ 2497 0168 14BF     		ite	ne
+ 2498 016a 0123     		movne	r3, #1
+ 2499 016c 0023     		moveq	r3, #0
+ 2500 016e DBB2     		uxtb	r3, r3
+ 2501 0170 1A46     		mov	r2, r3
+ 2502 0172 3B68     		ldr	r3, [r7]
+ 2503 0174 9A77     		strb	r2, [r3, #30]
+ 2504 0176 7B68     		ldr	r3, [r7, #4]
+ 2505 0178 1B68     		ldr	r3, [r3]
+ 2506 017a 03F58053 		add	r3, r3, #4096
+ 2507 017e 9B69     		ldr	r3, [r3, #24]
+ 2508 0180 03F01802 		and	r2, r3, #24
+ 2509 0184 3B68     		ldr	r3, [r7]
+ 2510 0186 1A62     		str	r2, [r3, #32]
+ 2511 0188 7B68     		ldr	r3, [r7, #4]
+ 2512 018a 1B68     		ldr	r3, [r3]
+ 2513 018c 03F58053 		add	r3, r3, #4096
+ 2514 0190 9B69     		ldr	r3, [r3, #24]
+ 2515 0192 03F00403 		and	r3, r3, #4
+ 2516 0196 002B     		cmp	r3, #0
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 44
+
+
+ 2517 0198 14BF     		ite	ne
+ 2518 019a 0123     		movne	r3, #1
+ 2519 019c 0023     		moveq	r3, #0
+ 2520 019e DBB2     		uxtb	r3, r3
+ 2521 01a0 1A46     		mov	r2, r3
+ 2522 01a2 3B68     		ldr	r3, [r7]
+ 2523 01a4 83F82420 		strb	r2, [r3, #36]
+ 2524 01a8 0023     		movs	r3, #0
+ 2525              	.L145:
+ 2526 01aa 1846     		mov	r0, r3
+ 2527 01ac 0C37     		adds	r7, r7, #12
+ 2528 01ae BD46     		mov	sp, r7
+ 2529              		@ sp needed
+ 2530 01b0 5DF8047B 		ldr	r7, [sp], #4
+ 2531 01b4 7047     		bx	lr
+ 2532              	.L147:
+ 2533 01b6 00BF     		.align	2
+ 2534              	.L146:
+ 2535 01b8 00000104 		.word	67174400
+ 2537              		.section	.text.HAL_ETH_SetMACConfig,"ax",%progbits
+ 2538              		.align	1
+ 2539              		.global	HAL_ETH_SetMACConfig
+ 2540              		.syntax unified
+ 2541              		.thumb
+ 2542              		.thumb_func
+ 2544              	HAL_ETH_SetMACConfig:
+ 2545              		@ args = 0, pretend = 0, frame = 8
+ 2546              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2547 0000 80B5     		push	{r7, lr}
+ 2548 0002 82B0     		sub	sp, sp, #8
+ 2549 0004 00AF     		add	r7, sp, #0
+ 2550 0006 7860     		str	r0, [r7, #4]
+ 2551 0008 3960     		str	r1, [r7]
+ 2552 000a 3B68     		ldr	r3, [r7]
+ 2553 000c 002B     		cmp	r3, #0
+ 2554 000e 01D1     		bne	.L149
+ 2555 0010 0123     		movs	r3, #1
+ 2556 0012 0BE0     		b	.L150
+ 2557              	.L149:
+ 2558 0014 7B68     		ldr	r3, [r7, #4]
+ 2559 0016 D3F88430 		ldr	r3, [r3, #132]
+ 2560 001a 102B     		cmp	r3, #16
+ 2561 001c 05D1     		bne	.L151
+ 2562 001e 3968     		ldr	r1, [r7]
+ 2563 0020 7868     		ldr	r0, [r7, #4]
+ 2564 0022 FFF7FEFF 		bl	ETH_SetMACConfig
+ 2565 0026 0023     		movs	r3, #0
+ 2566 0028 00E0     		b	.L150
+ 2567              	.L151:
+ 2568 002a 0123     		movs	r3, #1
+ 2569              	.L150:
+ 2570 002c 1846     		mov	r0, r3
+ 2571 002e 0837     		adds	r7, r7, #8
+ 2572 0030 BD46     		mov	sp, r7
+ 2573              		@ sp needed
+ 2574 0032 80BD     		pop	{r7, pc}
+ 2576              		.section	.text.HAL_ETH_SetDMAConfig,"ax",%progbits
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 45
+
+
+ 2577              		.align	1
+ 2578              		.global	HAL_ETH_SetDMAConfig
+ 2579              		.syntax unified
+ 2580              		.thumb
+ 2581              		.thumb_func
+ 2583              	HAL_ETH_SetDMAConfig:
+ 2584              		@ args = 0, pretend = 0, frame = 8
+ 2585              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2586 0000 80B5     		push	{r7, lr}
+ 2587 0002 82B0     		sub	sp, sp, #8
+ 2588 0004 00AF     		add	r7, sp, #0
+ 2589 0006 7860     		str	r0, [r7, #4]
+ 2590 0008 3960     		str	r1, [r7]
+ 2591 000a 3B68     		ldr	r3, [r7]
+ 2592 000c 002B     		cmp	r3, #0
+ 2593 000e 01D1     		bne	.L153
+ 2594 0010 0123     		movs	r3, #1
+ 2595 0012 0BE0     		b	.L154
+ 2596              	.L153:
+ 2597 0014 7B68     		ldr	r3, [r7, #4]
+ 2598 0016 D3F88430 		ldr	r3, [r3, #132]
+ 2599 001a 102B     		cmp	r3, #16
+ 2600 001c 05D1     		bne	.L155
+ 2601 001e 3968     		ldr	r1, [r7]
+ 2602 0020 7868     		ldr	r0, [r7, #4]
+ 2603 0022 FFF7FEFF 		bl	ETH_SetDMAConfig
+ 2604 0026 0023     		movs	r3, #0
+ 2605 0028 00E0     		b	.L154
+ 2606              	.L155:
+ 2607 002a 0123     		movs	r3, #1
+ 2608              	.L154:
+ 2609 002c 1846     		mov	r0, r3
+ 2610 002e 0837     		adds	r7, r7, #8
+ 2611 0030 BD46     		mov	sp, r7
+ 2612              		@ sp needed
+ 2613 0032 80BD     		pop	{r7, pc}
+ 2615              		.section	.text.HAL_ETH_SetMDIOClockRange,"ax",%progbits
+ 2616              		.align	1
+ 2617              		.global	HAL_ETH_SetMDIOClockRange
+ 2618              		.syntax unified
+ 2619              		.thumb
+ 2620              		.thumb_func
+ 2622              	HAL_ETH_SetMDIOClockRange:
+ 2623              		@ args = 0, pretend = 0, frame = 16
+ 2624              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2625 0000 80B5     		push	{r7, lr}
+ 2626 0002 84B0     		sub	sp, sp, #16
+ 2627 0004 00AF     		add	r7, sp, #0
+ 2628 0006 7860     		str	r0, [r7, #4]
+ 2629 0008 7B68     		ldr	r3, [r7, #4]
+ 2630 000a 1B68     		ldr	r3, [r3]
+ 2631 000c 1B69     		ldr	r3, [r3, #16]
+ 2632 000e FB60     		str	r3, [r7, #12]
+ 2633 0010 FB68     		ldr	r3, [r7, #12]
+ 2634 0012 23F01C03 		bic	r3, r3, #28
+ 2635 0016 FB60     		str	r3, [r7, #12]
+ 2636 0018 FFF7FEFF 		bl	HAL_RCC_GetHCLKFreq
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 46
+
+
+ 2637 001c B860     		str	r0, [r7, #8]
+ 2638 001e BB68     		ldr	r3, [r7, #8]
+ 2639 0020 144A     		ldr	r2, .L162
+ 2640 0022 9342     		cmp	r3, r2
+ 2641 0024 04D8     		bhi	.L157
+ 2642 0026 FB68     		ldr	r3, [r7, #12]
+ 2643 0028 43F00803 		orr	r3, r3, #8
+ 2644 002c FB60     		str	r3, [r7, #12]
+ 2645 002e 19E0     		b	.L158
+ 2646              	.L157:
+ 2647 0030 BB68     		ldr	r3, [r7, #8]
+ 2648 0032 114A     		ldr	r2, .L162+4
+ 2649 0034 9342     		cmp	r3, r2
+ 2650 0036 04D2     		bcs	.L159
+ 2651 0038 FB68     		ldr	r3, [r7, #12]
+ 2652 003a 43F00C03 		orr	r3, r3, #12
+ 2653 003e FB60     		str	r3, [r7, #12]
+ 2654 0040 10E0     		b	.L158
+ 2655              	.L159:
+ 2656 0042 BB68     		ldr	r3, [r7, #8]
+ 2657 0044 0D4A     		ldr	r2, .L162+8
+ 2658 0046 9342     		cmp	r3, r2
+ 2659 0048 0CD9     		bls	.L158
+ 2660 004a BB68     		ldr	r3, [r7, #8]
+ 2661 004c 0C4A     		ldr	r2, .L162+12
+ 2662 004e 9342     		cmp	r3, r2
+ 2663 0050 04D8     		bhi	.L161
+ 2664 0052 FB68     		ldr	r3, [r7, #12]
+ 2665 0054 43F00403 		orr	r3, r3, #4
+ 2666 0058 FB60     		str	r3, [r7, #12]
+ 2667 005a 03E0     		b	.L158
+ 2668              	.L161:
+ 2669 005c FB68     		ldr	r3, [r7, #12]
+ 2670 005e 43F01003 		orr	r3, r3, #16
+ 2671 0062 FB60     		str	r3, [r7, #12]
+ 2672              	.L158:
+ 2673 0064 7B68     		ldr	r3, [r7, #4]
+ 2674 0066 1B68     		ldr	r3, [r3]
+ 2675 0068 FA68     		ldr	r2, [r7, #12]
+ 2676 006a 1A61     		str	r2, [r3, #16]
+ 2677 006c 00BF     		nop
+ 2678 006e 1037     		adds	r7, r7, #16
+ 2679 0070 BD46     		mov	sp, r7
+ 2680              		@ sp needed
+ 2681 0072 80BD     		pop	{r7, pc}
+ 2682              	.L163:
+ 2683              		.align	2
+ 2684              	.L162:
+ 2685 0074 BF0E1602 		.word	34999999
+ 2686 0078 00879303 		.word	60000000
+ 2687 007c FFE0F505 		.word	99999999
+ 2688 0080 7FD1F008 		.word	149999999
+ 2690              		.section	.text.HAL_ETH_SetMACFilterConfig,"ax",%progbits
+ 2691              		.align	1
+ 2692              		.global	HAL_ETH_SetMACFilterConfig
+ 2693              		.syntax unified
+ 2694              		.thumb
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 47
+
+
+ 2695              		.thumb_func
+ 2697              	HAL_ETH_SetMACFilterConfig:
+ 2698              		@ args = 0, pretend = 0, frame = 16
+ 2699              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2700 0000 80B5     		push	{r7, lr}
+ 2701 0002 84B0     		sub	sp, sp, #16
+ 2702 0004 00AF     		add	r7, sp, #0
+ 2703 0006 7860     		str	r0, [r7, #4]
+ 2704 0008 3960     		str	r1, [r7]
+ 2705 000a 3B68     		ldr	r3, [r7]
+ 2706 000c 002B     		cmp	r3, #0
+ 2707 000e 01D1     		bne	.L165
+ 2708 0010 0123     		movs	r3, #1
+ 2709 0012 44E0     		b	.L166
+ 2710              	.L165:
+ 2711 0014 3B68     		ldr	r3, [r7]
+ 2712 0016 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 2713 0018 1A46     		mov	r2, r3
+ 2714 001a 3B68     		ldr	r3, [r7]
+ 2715 001c DB78     		ldrb	r3, [r3, #3]	@ zero_extendqisi2
+ 2716 001e 5B00     		lsls	r3, r3, #1
+ 2717 0020 1A43     		orrs	r2, r2, r3
+ 2718 0022 3B68     		ldr	r3, [r7]
+ 2719 0024 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 2720 0026 9B00     		lsls	r3, r3, #2
+ 2721 0028 1A43     		orrs	r2, r2, r3
+ 2722 002a 3B68     		ldr	r3, [r7]
+ 2723 002c 1B7A     		ldrb	r3, [r3, #8]	@ zero_extendqisi2
+ 2724 002e DB00     		lsls	r3, r3, #3
+ 2725 0030 1A43     		orrs	r2, r2, r3
+ 2726 0032 3B68     		ldr	r3, [r7]
+ 2727 0034 5B79     		ldrb	r3, [r3, #5]	@ zero_extendqisi2
+ 2728 0036 1B01     		lsls	r3, r3, #4
+ 2729 0038 1343     		orrs	r3, r3, r2
+ 2730 003a 3A68     		ldr	r2, [r7]
+ 2731 003c 527A     		ldrb	r2, [r2, #9]	@ zero_extendqisi2
+ 2732 003e 012A     		cmp	r2, #1
+ 2733 0040 01D1     		bne	.L167
+ 2734 0042 2022     		movs	r2, #32
+ 2735 0044 00E0     		b	.L168
+ 2736              	.L167:
+ 2737 0046 0022     		movs	r2, #0
+ 2738              	.L168:
+ 2739 0048 1A43     		orrs	r2, r2, r3
+ 2740 004a 3B68     		ldr	r3, [r7]
+ 2741 004c DB79     		ldrb	r3, [r3, #7]	@ zero_extendqisi2
+ 2742 004e 1B02     		lsls	r3, r3, #8
+ 2743 0050 1A43     		orrs	r2, r2, r3
+ 2744 0052 3B68     		ldr	r3, [r7]
+ 2745 0054 9B79     		ldrb	r3, [r3, #6]	@ zero_extendqisi2
+ 2746 0056 5B02     		lsls	r3, r3, #9
+ 2747 0058 1A43     		orrs	r2, r2, r3
+ 2748 005a 3B68     		ldr	r3, [r7]
+ 2749 005c 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ 2750 005e 9B02     		lsls	r3, r3, #10
+ 2751 0060 1A43     		orrs	r2, r2, r3
+ 2752 0062 3B68     		ldr	r3, [r7]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 48
+
+
+ 2753 0064 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 2754 0066 DB07     		lsls	r3, r3, #31
+ 2755 0068 1A43     		orrs	r2, r2, r3
+ 2756 006a 3B68     		ldr	r3, [r7]
+ 2757 006c DB68     		ldr	r3, [r3, #12]
+ 2758 006e 1343     		orrs	r3, r3, r2
+ 2759 0070 FB60     		str	r3, [r7, #12]
+ 2760 0072 7B68     		ldr	r3, [r7, #4]
+ 2761 0074 1B68     		ldr	r3, [r3]
+ 2762 0076 5A68     		ldr	r2, [r3, #4]
+ 2763 0078 0B4B     		ldr	r3, .L169
+ 2764 007a 1340     		ands	r3, r3, r2
+ 2765 007c 7A68     		ldr	r2, [r7, #4]
+ 2766 007e 1268     		ldr	r2, [r2]
+ 2767 0080 F968     		ldr	r1, [r7, #12]
+ 2768 0082 0B43     		orrs	r3, r3, r1
+ 2769 0084 5360     		str	r3, [r2, #4]
+ 2770 0086 7B68     		ldr	r3, [r7, #4]
+ 2771 0088 1B68     		ldr	r3, [r3]
+ 2772 008a 5B68     		ldr	r3, [r3, #4]
+ 2773 008c BB60     		str	r3, [r7, #8]
+ 2774 008e 0120     		movs	r0, #1
+ 2775 0090 FFF7FEFF 		bl	HAL_Delay
+ 2776 0094 7B68     		ldr	r3, [r7, #4]
+ 2777 0096 1B68     		ldr	r3, [r3]
+ 2778 0098 BA68     		ldr	r2, [r7, #8]
+ 2779 009a 5A60     		str	r2, [r3, #4]
+ 2780 009c 0023     		movs	r3, #0
+ 2781              	.L166:
+ 2782 009e 1846     		mov	r0, r3
+ 2783 00a0 1037     		adds	r7, r7, #16
+ 2784 00a2 BD46     		mov	sp, r7
+ 2785              		@ sp needed
+ 2786 00a4 80BD     		pop	{r7, pc}
+ 2787              	.L170:
+ 2788 00a6 00BF     		.align	2
+ 2789              	.L169:
+ 2790 00a8 00F8FF7F 		.word	2147481600
+ 2792              		.section	.text.HAL_ETH_GetMACFilterConfig,"ax",%progbits
+ 2793              		.align	1
+ 2794              		.global	HAL_ETH_GetMACFilterConfig
+ 2795              		.syntax unified
+ 2796              		.thumb
+ 2797              		.thumb_func
+ 2799              	HAL_ETH_GetMACFilterConfig:
+ 2800              		@ args = 0, pretend = 0, frame = 8
+ 2801              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2802              		@ link register save eliminated.
+ 2803 0000 80B4     		push	{r7}
+ 2804 0002 83B0     		sub	sp, sp, #12
+ 2805 0004 00AF     		add	r7, sp, #0
+ 2806 0006 7860     		str	r0, [r7, #4]
+ 2807 0008 3960     		str	r1, [r7]
+ 2808 000a 3B68     		ldr	r3, [r7]
+ 2809 000c 002B     		cmp	r3, #0
+ 2810 000e 01D1     		bne	.L172
+ 2811 0010 0123     		movs	r3, #1
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 49
+
+
+ 2812 0012 84E0     		b	.L173
+ 2813              	.L172:
+ 2814 0014 7B68     		ldr	r3, [r7, #4]
+ 2815 0016 1B68     		ldr	r3, [r3]
+ 2816 0018 5B68     		ldr	r3, [r3, #4]
+ 2817 001a 03F00103 		and	r3, r3, #1
+ 2818 001e 002B     		cmp	r3, #0
+ 2819 0020 14BF     		ite	ne
+ 2820 0022 0123     		movne	r3, #1
+ 2821 0024 0023     		moveq	r3, #0
+ 2822 0026 DBB2     		uxtb	r3, r3
+ 2823 0028 1A46     		mov	r2, r3
+ 2824 002a 3B68     		ldr	r3, [r7]
+ 2825 002c 1A70     		strb	r2, [r3]
+ 2826 002e 7B68     		ldr	r3, [r7, #4]
+ 2827 0030 1B68     		ldr	r3, [r3]
+ 2828 0032 5B68     		ldr	r3, [r3, #4]
+ 2829 0034 03F00203 		and	r3, r3, #2
+ 2830 0038 002B     		cmp	r3, #0
+ 2831 003a 14BF     		ite	ne
+ 2832 003c 0123     		movne	r3, #1
+ 2833 003e 0023     		moveq	r3, #0
+ 2834 0040 DBB2     		uxtb	r3, r3
+ 2835 0042 1A46     		mov	r2, r3
+ 2836 0044 3B68     		ldr	r3, [r7]
+ 2837 0046 DA70     		strb	r2, [r3, #3]
+ 2838 0048 7B68     		ldr	r3, [r7, #4]
+ 2839 004a 1B68     		ldr	r3, [r3]
+ 2840 004c 5B68     		ldr	r3, [r3, #4]
+ 2841 004e 03F00403 		and	r3, r3, #4
+ 2842 0052 002B     		cmp	r3, #0
+ 2843 0054 14BF     		ite	ne
+ 2844 0056 0123     		movne	r3, #1
+ 2845 0058 0023     		moveq	r3, #0
+ 2846 005a DBB2     		uxtb	r3, r3
+ 2847 005c 1A46     		mov	r2, r3
+ 2848 005e 3B68     		ldr	r3, [r7]
+ 2849 0060 1A71     		strb	r2, [r3, #4]
+ 2850 0062 7B68     		ldr	r3, [r7, #4]
+ 2851 0064 1B68     		ldr	r3, [r3]
+ 2852 0066 5B68     		ldr	r3, [r3, #4]
+ 2853 0068 03F00803 		and	r3, r3, #8
+ 2854 006c 002B     		cmp	r3, #0
+ 2855 006e 14BF     		ite	ne
+ 2856 0070 0123     		movne	r3, #1
+ 2857 0072 0023     		moveq	r3, #0
+ 2858 0074 DBB2     		uxtb	r3, r3
+ 2859 0076 1A46     		mov	r2, r3
+ 2860 0078 3B68     		ldr	r3, [r7]
+ 2861 007a 1A72     		strb	r2, [r3, #8]
+ 2862 007c 7B68     		ldr	r3, [r7, #4]
+ 2863 007e 1B68     		ldr	r3, [r3]
+ 2864 0080 5B68     		ldr	r3, [r3, #4]
+ 2865 0082 03F01003 		and	r3, r3, #16
+ 2866 0086 002B     		cmp	r3, #0
+ 2867 0088 14BF     		ite	ne
+ 2868 008a 0123     		movne	r3, #1
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 50
+
+
+ 2869 008c 0023     		moveq	r3, #0
+ 2870 008e DBB2     		uxtb	r3, r3
+ 2871 0090 1A46     		mov	r2, r3
+ 2872 0092 3B68     		ldr	r3, [r7]
+ 2873 0094 5A71     		strb	r2, [r3, #5]
+ 2874 0096 7B68     		ldr	r3, [r7, #4]
+ 2875 0098 1B68     		ldr	r3, [r3]
+ 2876 009a 5B68     		ldr	r3, [r3, #4]
+ 2877 009c 03F02003 		and	r3, r3, #32
+ 2878 00a0 002B     		cmp	r3, #0
+ 2879 00a2 14BF     		ite	ne
+ 2880 00a4 0123     		movne	r3, #1
+ 2881 00a6 0023     		moveq	r3, #0
+ 2882 00a8 DBB2     		uxtb	r3, r3
+ 2883 00aa 1A46     		mov	r2, r3
+ 2884 00ac 3B68     		ldr	r3, [r7]
+ 2885 00ae 5A72     		strb	r2, [r3, #9]
+ 2886 00b0 7B68     		ldr	r3, [r7, #4]
+ 2887 00b2 1B68     		ldr	r3, [r3]
+ 2888 00b4 5B68     		ldr	r3, [r3, #4]
+ 2889 00b6 03F0C002 		and	r2, r3, #192
+ 2890 00ba 3B68     		ldr	r3, [r7]
+ 2891 00bc DA60     		str	r2, [r3, #12]
+ 2892 00be 7B68     		ldr	r3, [r7, #4]
+ 2893 00c0 1B68     		ldr	r3, [r3]
+ 2894 00c2 5B68     		ldr	r3, [r3, #4]
+ 2895 00c4 03F48073 		and	r3, r3, #256
+ 2896 00c8 002B     		cmp	r3, #0
+ 2897 00ca 14BF     		ite	ne
+ 2898 00cc 0123     		movne	r3, #1
+ 2899 00ce 0023     		moveq	r3, #0
+ 2900 00d0 DBB2     		uxtb	r3, r3
+ 2901 00d2 1A46     		mov	r2, r3
+ 2902 00d4 3B68     		ldr	r3, [r7]
+ 2903 00d6 DA71     		strb	r2, [r3, #7]
+ 2904 00d8 7B68     		ldr	r3, [r7, #4]
+ 2905 00da 1B68     		ldr	r3, [r3]
+ 2906 00dc 5B68     		ldr	r3, [r3, #4]
+ 2907 00de 03F40073 		and	r3, r3, #512
+ 2908 00e2 002B     		cmp	r3, #0
+ 2909 00e4 14BF     		ite	ne
+ 2910 00e6 0123     		movne	r3, #1
+ 2911 00e8 0023     		moveq	r3, #0
+ 2912 00ea DBB2     		uxtb	r3, r3
+ 2913 00ec 1A46     		mov	r2, r3
+ 2914 00ee 3B68     		ldr	r3, [r7]
+ 2915 00f0 9A71     		strb	r2, [r3, #6]
+ 2916 00f2 7B68     		ldr	r3, [r7, #4]
+ 2917 00f4 1B68     		ldr	r3, [r3]
+ 2918 00f6 5B68     		ldr	r3, [r3, #4]
+ 2919 00f8 03F48063 		and	r3, r3, #1024
+ 2920 00fc 002B     		cmp	r3, #0
+ 2921 00fe 14BF     		ite	ne
+ 2922 0100 0123     		movne	r3, #1
+ 2923 0102 0023     		moveq	r3, #0
+ 2924 0104 DBB2     		uxtb	r3, r3
+ 2925 0106 1A46     		mov	r2, r3
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 51
+
+
+ 2926 0108 3B68     		ldr	r3, [r7]
+ 2927 010a 9A70     		strb	r2, [r3, #2]
+ 2928 010c 7B68     		ldr	r3, [r7, #4]
+ 2929 010e 1B68     		ldr	r3, [r3]
+ 2930 0110 5B68     		ldr	r3, [r3, #4]
+ 2931 0112 DB0F     		lsrs	r3, r3, #31
+ 2932 0114 DBB2     		uxtb	r3, r3
+ 2933 0116 1A46     		mov	r2, r3
+ 2934 0118 3B68     		ldr	r3, [r7]
+ 2935 011a 5A70     		strb	r2, [r3, #1]
+ 2936 011c 0023     		movs	r3, #0
+ 2937              	.L173:
+ 2938 011e 1846     		mov	r0, r3
+ 2939 0120 0C37     		adds	r7, r7, #12
+ 2940 0122 BD46     		mov	sp, r7
+ 2941              		@ sp needed
+ 2942 0124 5DF8047B 		ldr	r7, [sp], #4
+ 2943 0128 7047     		bx	lr
+ 2945              		.section	.text.HAL_ETH_SetSourceMACAddrMatch,"ax",%progbits
+ 2946              		.align	1
+ 2947              		.global	HAL_ETH_SetSourceMACAddrMatch
+ 2948              		.syntax unified
+ 2949              		.thumb
+ 2950              		.thumb_func
+ 2952              	HAL_ETH_SetSourceMACAddrMatch:
+ 2953              		@ args = 0, pretend = 0, frame = 24
+ 2954              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2955              		@ link register save eliminated.
+ 2956 0000 80B4     		push	{r7}
+ 2957 0002 87B0     		sub	sp, sp, #28
+ 2958 0004 00AF     		add	r7, sp, #0
+ 2959 0006 F860     		str	r0, [r7, #12]
+ 2960 0008 B960     		str	r1, [r7, #8]
+ 2961 000a 7A60     		str	r2, [r7, #4]
+ 2962 000c 7B68     		ldr	r3, [r7, #4]
+ 2963 000e 002B     		cmp	r3, #0
+ 2964 0010 01D1     		bne	.L175
+ 2965 0012 0123     		movs	r3, #1
+ 2966 0014 33E0     		b	.L176
+ 2967              	.L175:
+ 2968 0016 FB68     		ldr	r3, [r7, #12]
+ 2969 0018 1B68     		ldr	r3, [r3]
+ 2970 001a 4033     		adds	r3, r3, #64
+ 2971 001c 1A46     		mov	r2, r3
+ 2972 001e BB68     		ldr	r3, [r7, #8]
+ 2973 0020 1344     		add	r3, r3, r2
+ 2974 0022 7B61     		str	r3, [r7, #20]
+ 2975 0024 FB68     		ldr	r3, [r7, #12]
+ 2976 0026 1B68     		ldr	r3, [r3]
+ 2977 0028 4433     		adds	r3, r3, #68
+ 2978 002a 1A46     		mov	r2, r3
+ 2979 002c BB68     		ldr	r3, [r7, #8]
+ 2980 002e 1344     		add	r3, r3, r2
+ 2981 0030 3B61     		str	r3, [r7, #16]
+ 2982 0032 7B68     		ldr	r3, [r7, #4]
+ 2983 0034 0533     		adds	r3, r3, #5
+ 2984 0036 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 52
+
+
+ 2985 0038 1A02     		lsls	r2, r3, #8
+ 2986 003a 7B68     		ldr	r3, [r7, #4]
+ 2987 003c 0433     		adds	r3, r3, #4
+ 2988 003e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 2989 0040 1946     		mov	r1, r3
+ 2990 0042 7B69     		ldr	r3, [r7, #20]
+ 2991 0044 0A43     		orrs	r2, r2, r1
+ 2992 0046 1A60     		str	r2, [r3]
+ 2993 0048 7B68     		ldr	r3, [r7, #4]
+ 2994 004a 0333     		adds	r3, r3, #3
+ 2995 004c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 2996 004e 1A06     		lsls	r2, r3, #24
+ 2997 0050 7B68     		ldr	r3, [r7, #4]
+ 2998 0052 0233     		adds	r3, r3, #2
+ 2999 0054 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3000 0056 1B04     		lsls	r3, r3, #16
+ 3001 0058 1A43     		orrs	r2, r2, r3
+ 3002 005a 7B68     		ldr	r3, [r7, #4]
+ 3003 005c 0133     		adds	r3, r3, #1
+ 3004 005e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3005 0060 1B02     		lsls	r3, r3, #8
+ 3006 0062 1A43     		orrs	r2, r2, r3
+ 3007 0064 7B68     		ldr	r3, [r7, #4]
+ 3008 0066 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3009 0068 1946     		mov	r1, r3
+ 3010 006a 3B69     		ldr	r3, [r7, #16]
+ 3011 006c 0A43     		orrs	r2, r2, r1
+ 3012 006e 1A60     		str	r2, [r3]
+ 3013 0070 7B69     		ldr	r3, [r7, #20]
+ 3014 0072 1A68     		ldr	r2, [r3]
+ 3015 0074 7B69     		ldr	r3, [r7, #20]
+ 3016 0076 42F04042 		orr	r2, r2, #-1073741824
+ 3017 007a 1A60     		str	r2, [r3]
+ 3018 007c 0023     		movs	r3, #0
+ 3019              	.L176:
+ 3020 007e 1846     		mov	r0, r3
+ 3021 0080 1C37     		adds	r7, r7, #28
+ 3022 0082 BD46     		mov	sp, r7
+ 3023              		@ sp needed
+ 3024 0084 5DF8047B 		ldr	r7, [sp], #4
+ 3025 0088 7047     		bx	lr
+ 3027              		.section	.text.HAL_ETH_SetHashTable,"ax",%progbits
+ 3028              		.align	1
+ 3029              		.global	HAL_ETH_SetHashTable
+ 3030              		.syntax unified
+ 3031              		.thumb
+ 3032              		.thumb_func
+ 3034              	HAL_ETH_SetHashTable:
+ 3035              		@ args = 0, pretend = 0, frame = 16
+ 3036              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3037 0000 80B5     		push	{r7, lr}
+ 3038 0002 84B0     		sub	sp, sp, #16
+ 3039 0004 00AF     		add	r7, sp, #0
+ 3040 0006 7860     		str	r0, [r7, #4]
+ 3041 0008 3960     		str	r1, [r7]
+ 3042 000a 3B68     		ldr	r3, [r7]
+ 3043 000c 002B     		cmp	r3, #0
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 53
+
+
+ 3044 000e 01D1     		bne	.L178
+ 3045 0010 0123     		movs	r3, #1
+ 3046 0012 20E0     		b	.L179
+ 3047              	.L178:
+ 3048 0014 7B68     		ldr	r3, [r7, #4]
+ 3049 0016 1B68     		ldr	r3, [r3]
+ 3050 0018 3A68     		ldr	r2, [r7]
+ 3051 001a 1268     		ldr	r2, [r2]
+ 3052 001c 9A60     		str	r2, [r3, #8]
+ 3053 001e 7B68     		ldr	r3, [r7, #4]
+ 3054 0020 1B68     		ldr	r3, [r3]
+ 3055 0022 9B68     		ldr	r3, [r3, #8]
+ 3056 0024 FB60     		str	r3, [r7, #12]
+ 3057 0026 0120     		movs	r0, #1
+ 3058 0028 FFF7FEFF 		bl	HAL_Delay
+ 3059 002c 7B68     		ldr	r3, [r7, #4]
+ 3060 002e 1B68     		ldr	r3, [r3]
+ 3061 0030 FA68     		ldr	r2, [r7, #12]
+ 3062 0032 9A60     		str	r2, [r3, #8]
+ 3063 0034 7B68     		ldr	r3, [r7, #4]
+ 3064 0036 1B68     		ldr	r3, [r3]
+ 3065 0038 3A68     		ldr	r2, [r7]
+ 3066 003a 5268     		ldr	r2, [r2, #4]
+ 3067 003c DA60     		str	r2, [r3, #12]
+ 3068 003e 7B68     		ldr	r3, [r7, #4]
+ 3069 0040 1B68     		ldr	r3, [r3]
+ 3070 0042 DB68     		ldr	r3, [r3, #12]
+ 3071 0044 FB60     		str	r3, [r7, #12]
+ 3072 0046 0120     		movs	r0, #1
+ 3073 0048 FFF7FEFF 		bl	HAL_Delay
+ 3074 004c 7B68     		ldr	r3, [r7, #4]
+ 3075 004e 1B68     		ldr	r3, [r3]
+ 3076 0050 FA68     		ldr	r2, [r7, #12]
+ 3077 0052 DA60     		str	r2, [r3, #12]
+ 3078 0054 0023     		movs	r3, #0
+ 3079              	.L179:
+ 3080 0056 1846     		mov	r0, r3
+ 3081 0058 1037     		adds	r7, r7, #16
+ 3082 005a BD46     		mov	sp, r7
+ 3083              		@ sp needed
+ 3084 005c 80BD     		pop	{r7, pc}
+ 3086              		.section	.text.HAL_ETH_SetRxVLANIdentifier,"ax",%progbits
+ 3087              		.align	1
+ 3088              		.global	HAL_ETH_SetRxVLANIdentifier
+ 3089              		.syntax unified
+ 3090              		.thumb
+ 3091              		.thumb_func
+ 3093              	HAL_ETH_SetRxVLANIdentifier:
+ 3094              		@ args = 0, pretend = 0, frame = 24
+ 3095              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3096 0000 80B5     		push	{r7, lr}
+ 3097 0002 86B0     		sub	sp, sp, #24
+ 3098 0004 00AF     		add	r7, sp, #0
+ 3099 0006 F860     		str	r0, [r7, #12]
+ 3100 0008 B960     		str	r1, [r7, #8]
+ 3101 000a 7A60     		str	r2, [r7, #4]
+ 3102 000c FB68     		ldr	r3, [r7, #12]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 54
+
+
+ 3103 000e 1B68     		ldr	r3, [r3]
+ 3104 0010 DA69     		ldr	r2, [r3, #28]
+ 3105 0012 154B     		ldr	r3, .L183
+ 3106 0014 1340     		ands	r3, r3, r2
+ 3107 0016 FA68     		ldr	r2, [r7, #12]
+ 3108 0018 1268     		ldr	r2, [r2]
+ 3109 001a 7968     		ldr	r1, [r7, #4]
+ 3110 001c 0B43     		orrs	r3, r3, r1
+ 3111 001e D361     		str	r3, [r2, #28]
+ 3112 0020 BB68     		ldr	r3, [r7, #8]
+ 3113 0022 002B     		cmp	r3, #0
+ 3114 0024 08D1     		bne	.L181
+ 3115 0026 FB68     		ldr	r3, [r7, #12]
+ 3116 0028 1B68     		ldr	r3, [r3]
+ 3117 002a DA69     		ldr	r2, [r3, #28]
+ 3118 002c FB68     		ldr	r3, [r7, #12]
+ 3119 002e 1B68     		ldr	r3, [r3]
+ 3120 0030 22F48032 		bic	r2, r2, #65536
+ 3121 0034 DA61     		str	r2, [r3, #28]
+ 3122 0036 07E0     		b	.L182
+ 3123              	.L181:
+ 3124 0038 FB68     		ldr	r3, [r7, #12]
+ 3125 003a 1B68     		ldr	r3, [r3]
+ 3126 003c DA69     		ldr	r2, [r3, #28]
+ 3127 003e FB68     		ldr	r3, [r7, #12]
+ 3128 0040 1B68     		ldr	r3, [r3]
+ 3129 0042 42F48032 		orr	r2, r2, #65536
+ 3130 0046 DA61     		str	r2, [r3, #28]
+ 3131              	.L182:
+ 3132 0048 FB68     		ldr	r3, [r7, #12]
+ 3133 004a 1B68     		ldr	r3, [r3]
+ 3134 004c DB69     		ldr	r3, [r3, #28]
+ 3135 004e 7B61     		str	r3, [r7, #20]
+ 3136 0050 0120     		movs	r0, #1
+ 3137 0052 FFF7FEFF 		bl	HAL_Delay
+ 3138 0056 FB68     		ldr	r3, [r7, #12]
+ 3139 0058 1B68     		ldr	r3, [r3]
+ 3140 005a 7A69     		ldr	r2, [r7, #20]
+ 3141 005c DA61     		str	r2, [r3, #28]
+ 3142 005e 00BF     		nop
+ 3143 0060 1837     		adds	r7, r7, #24
+ 3144 0062 BD46     		mov	sp, r7
+ 3145              		@ sp needed
+ 3146 0064 80BD     		pop	{r7, pc}
+ 3147              	.L184:
+ 3148 0066 00BF     		.align	2
+ 3149              	.L183:
+ 3150 0068 0000FFFF 		.word	-65536
+ 3152              		.section	.text.HAL_ETH_EnterPowerDownMode,"ax",%progbits
+ 3153              		.align	1
+ 3154              		.global	HAL_ETH_EnterPowerDownMode
+ 3155              		.syntax unified
+ 3156              		.thumb
+ 3157              		.thumb_func
+ 3159              	HAL_ETH_EnterPowerDownMode:
+ 3160              		@ args = 0, pretend = 0, frame = 16
+ 3161              		@ frame_needed = 1, uses_anonymous_args = 0
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 55
+
+
+ 3162              		@ link register save eliminated.
+ 3163 0000 80B4     		push	{r7}
+ 3164 0002 85B0     		sub	sp, sp, #20
+ 3165 0004 00AF     		add	r7, sp, #0
+ 3166 0006 7860     		str	r0, [r7, #4]
+ 3167 0008 3960     		str	r1, [r7]
+ 3168 000a 3B68     		ldr	r3, [r7]
+ 3169 000c 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 3170 000e 5A00     		lsls	r2, r3, #1
+ 3171 0010 3B68     		ldr	r3, [r7]
+ 3172 0012 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3173 0014 9B00     		lsls	r3, r3, #2
+ 3174 0016 1A43     		orrs	r2, r2, r3
+ 3175 0018 3B68     		ldr	r3, [r7]
+ 3176 001a 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ 3177 001c 5B02     		lsls	r3, r3, #9
+ 3178 001e 1343     		orrs	r3, r3, r2
+ 3179 0020 43F00103 		orr	r3, r3, #1
+ 3180 0024 FB60     		str	r3, [r7, #12]
+ 3181 0026 7B68     		ldr	r3, [r7, #4]
+ 3182 0028 1B68     		ldr	r3, [r3]
+ 3183 002a DA6A     		ldr	r2, [r3, #44]
+ 3184 002c 064B     		ldr	r3, .L186
+ 3185 002e 1340     		ands	r3, r3, r2
+ 3186 0030 7A68     		ldr	r2, [r7, #4]
+ 3187 0032 1268     		ldr	r2, [r2]
+ 3188 0034 F968     		ldr	r1, [r7, #12]
+ 3189 0036 0B43     		orrs	r3, r3, r1
+ 3190 0038 D362     		str	r3, [r2, #44]
+ 3191 003a 00BF     		nop
+ 3192 003c 1437     		adds	r7, r7, #20
+ 3193 003e BD46     		mov	sp, r7
+ 3194              		@ sp needed
+ 3195 0040 5DF8047B 		ldr	r7, [sp], #4
+ 3196 0044 7047     		bx	lr
+ 3197              	.L187:
+ 3198 0046 00BF     		.align	2
+ 3199              	.L186:
+ 3200 0048 F8FDFFFF 		.word	-520
+ 3202              		.section	.text.HAL_ETH_ExitPowerDownMode,"ax",%progbits
+ 3203              		.align	1
+ 3204              		.global	HAL_ETH_ExitPowerDownMode
+ 3205              		.syntax unified
+ 3206              		.thumb
+ 3207              		.thumb_func
+ 3209              	HAL_ETH_ExitPowerDownMode:
+ 3210              		@ args = 0, pretend = 0, frame = 16
+ 3211              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3212 0000 80B5     		push	{r7, lr}
+ 3213 0002 84B0     		sub	sp, sp, #16
+ 3214 0004 00AF     		add	r7, sp, #0
+ 3215 0006 7860     		str	r0, [r7, #4]
+ 3216 0008 7B68     		ldr	r3, [r7, #4]
+ 3217 000a 1B68     		ldr	r3, [r3]
+ 3218 000c D96A     		ldr	r1, [r3, #44]
+ 3219 000e 7B68     		ldr	r3, [r7, #4]
+ 3220 0010 1A68     		ldr	r2, [r3]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 56
+
+
+ 3221 0012 1A4B     		ldr	r3, .L190
+ 3222 0014 0B40     		ands	r3, r3, r1
+ 3223 0016 D362     		str	r3, [r2, #44]
+ 3224 0018 7B68     		ldr	r3, [r7, #4]
+ 3225 001a 1B68     		ldr	r3, [r3]
+ 3226 001c DB6A     		ldr	r3, [r3, #44]
+ 3227 001e FB60     		str	r3, [r7, #12]
+ 3228 0020 0120     		movs	r0, #1
+ 3229 0022 FFF7FEFF 		bl	HAL_Delay
+ 3230 0026 7B68     		ldr	r3, [r7, #4]
+ 3231 0028 1B68     		ldr	r3, [r3]
+ 3232 002a FA68     		ldr	r2, [r7, #12]
+ 3233 002c DA62     		str	r2, [r3, #44]
+ 3234 002e 7B68     		ldr	r3, [r7, #4]
+ 3235 0030 1B68     		ldr	r3, [r3]
+ 3236 0032 DB6A     		ldr	r3, [r3, #44]
+ 3237 0034 03F00103 		and	r3, r3, #1
+ 3238 0038 002B     		cmp	r3, #0
+ 3239 003a 12D0     		beq	.L189
+ 3240 003c 7B68     		ldr	r3, [r7, #4]
+ 3241 003e 1B68     		ldr	r3, [r3]
+ 3242 0040 DA6A     		ldr	r2, [r3, #44]
+ 3243 0042 7B68     		ldr	r3, [r7, #4]
+ 3244 0044 1B68     		ldr	r3, [r3]
+ 3245 0046 22F00102 		bic	r2, r2, #1
+ 3246 004a DA62     		str	r2, [r3, #44]
+ 3247 004c 7B68     		ldr	r3, [r7, #4]
+ 3248 004e 1B68     		ldr	r3, [r3]
+ 3249 0050 DB6A     		ldr	r3, [r3, #44]
+ 3250 0052 FB60     		str	r3, [r7, #12]
+ 3251 0054 0120     		movs	r0, #1
+ 3252 0056 FFF7FEFF 		bl	HAL_Delay
+ 3253 005a 7B68     		ldr	r3, [r7, #4]
+ 3254 005c 1B68     		ldr	r3, [r3]
+ 3255 005e FA68     		ldr	r2, [r7, #12]
+ 3256 0060 DA62     		str	r2, [r3, #44]
+ 3257              	.L189:
+ 3258 0062 7B68     		ldr	r3, [r7, #4]
+ 3259 0064 1B68     		ldr	r3, [r3]
+ 3260 0066 DA6B     		ldr	r2, [r3, #60]
+ 3261 0068 7B68     		ldr	r3, [r7, #4]
+ 3262 006a 1B68     		ldr	r3, [r3]
+ 3263 006c 42F00802 		orr	r2, r2, #8
+ 3264 0070 DA63     		str	r2, [r3, #60]
+ 3265 0072 00BF     		nop
+ 3266 0074 1037     		adds	r7, r7, #16
+ 3267 0076 BD46     		mov	sp, r7
+ 3268              		@ sp needed
+ 3269 0078 80BD     		pop	{r7, pc}
+ 3270              	.L191:
+ 3271 007a 00BF     		.align	2
+ 3272              	.L190:
+ 3273 007c F9FDFFFF 		.word	-519
+ 3275              		.section	.text.HAL_ETH_SetWakeUpFilter,"ax",%progbits
+ 3276              		.align	1
+ 3277              		.global	HAL_ETH_SetWakeUpFilter
+ 3278              		.syntax unified
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 57
+
+
+ 3279              		.thumb
+ 3280              		.thumb_func
+ 3282              	HAL_ETH_SetWakeUpFilter:
+ 3283              		@ args = 0, pretend = 0, frame = 24
+ 3284              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3285              		@ link register save eliminated.
+ 3286 0000 80B4     		push	{r7}
+ 3287 0002 87B0     		sub	sp, sp, #28
+ 3288 0004 00AF     		add	r7, sp, #0
+ 3289 0006 F860     		str	r0, [r7, #12]
+ 3290 0008 B960     		str	r1, [r7, #8]
+ 3291 000a 7A60     		str	r2, [r7, #4]
+ 3292 000c BB68     		ldr	r3, [r7, #8]
+ 3293 000e 002B     		cmp	r3, #0
+ 3294 0010 01D1     		bne	.L193
+ 3295 0012 0123     		movs	r3, #1
+ 3296 0014 1AE0     		b	.L194
+ 3297              	.L193:
+ 3298 0016 FB68     		ldr	r3, [r7, #12]
+ 3299 0018 1B68     		ldr	r3, [r3]
+ 3300 001a DA6A     		ldr	r2, [r3, #44]
+ 3301 001c FB68     		ldr	r3, [r7, #12]
+ 3302 001e 1B68     		ldr	r3, [r3]
+ 3303 0020 42F00042 		orr	r2, r2, #-2147483648
+ 3304 0024 DA62     		str	r2, [r3, #44]
+ 3305 0026 0023     		movs	r3, #0
+ 3306 0028 7B61     		str	r3, [r7, #20]
+ 3307 002a 0AE0     		b	.L195
+ 3308              	.L196:
+ 3309 002c 7B69     		ldr	r3, [r7, #20]
+ 3310 002e 9B00     		lsls	r3, r3, #2
+ 3311 0030 BA68     		ldr	r2, [r7, #8]
+ 3312 0032 1A44     		add	r2, r2, r3
+ 3313 0034 FB68     		ldr	r3, [r7, #12]
+ 3314 0036 1B68     		ldr	r3, [r3]
+ 3315 0038 1268     		ldr	r2, [r2]
+ 3316 003a 9A62     		str	r2, [r3, #40]
+ 3317 003c 7B69     		ldr	r3, [r7, #20]
+ 3318 003e 0133     		adds	r3, r3, #1
+ 3319 0040 7B61     		str	r3, [r7, #20]
+ 3320              	.L195:
+ 3321 0042 7A69     		ldr	r2, [r7, #20]
+ 3322 0044 7B68     		ldr	r3, [r7, #4]
+ 3323 0046 9A42     		cmp	r2, r3
+ 3324 0048 F0D3     		bcc	.L196
+ 3325 004a 0023     		movs	r3, #0
+ 3326              	.L194:
+ 3327 004c 1846     		mov	r0, r3
+ 3328 004e 1C37     		adds	r7, r7, #28
+ 3329 0050 BD46     		mov	sp, r7
+ 3330              		@ sp needed
+ 3331 0052 5DF8047B 		ldr	r7, [sp], #4
+ 3332 0056 7047     		bx	lr
+ 3334              		.section	.text.HAL_ETH_GetState,"ax",%progbits
+ 3335              		.align	1
+ 3336              		.global	HAL_ETH_GetState
+ 3337              		.syntax unified
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 58
+
+
+ 3338              		.thumb
+ 3339              		.thumb_func
+ 3341              	HAL_ETH_GetState:
+ 3342              		@ args = 0, pretend = 0, frame = 8
+ 3343              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3344              		@ link register save eliminated.
+ 3345 0000 80B4     		push	{r7}
+ 3346 0002 83B0     		sub	sp, sp, #12
+ 3347 0004 00AF     		add	r7, sp, #0
+ 3348 0006 7860     		str	r0, [r7, #4]
+ 3349 0008 7B68     		ldr	r3, [r7, #4]
+ 3350 000a D3F88430 		ldr	r3, [r3, #132]
+ 3351 000e 1846     		mov	r0, r3
+ 3352 0010 0C37     		adds	r7, r7, #12
+ 3353 0012 BD46     		mov	sp, r7
+ 3354              		@ sp needed
+ 3355 0014 5DF8047B 		ldr	r7, [sp], #4
+ 3356 0018 7047     		bx	lr
+ 3358              		.section	.text.HAL_ETH_GetError,"ax",%progbits
+ 3359              		.align	1
+ 3360              		.global	HAL_ETH_GetError
+ 3361              		.syntax unified
+ 3362              		.thumb
+ 3363              		.thumb_func
+ 3365              	HAL_ETH_GetError:
+ 3366              		@ args = 0, pretend = 0, frame = 8
+ 3367              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3368              		@ link register save eliminated.
+ 3369 0000 80B4     		push	{r7}
+ 3370 0002 83B0     		sub	sp, sp, #12
+ 3371 0004 00AF     		add	r7, sp, #0
+ 3372 0006 7860     		str	r0, [r7, #4]
+ 3373 0008 7B68     		ldr	r3, [r7, #4]
+ 3374 000a D3F88830 		ldr	r3, [r3, #136]
+ 3375 000e 1846     		mov	r0, r3
+ 3376 0010 0C37     		adds	r7, r7, #12
+ 3377 0012 BD46     		mov	sp, r7
+ 3378              		@ sp needed
+ 3379 0014 5DF8047B 		ldr	r7, [sp], #4
+ 3380 0018 7047     		bx	lr
+ 3382              		.section	.text.HAL_ETH_GetDMAError,"ax",%progbits
+ 3383              		.align	1
+ 3384              		.global	HAL_ETH_GetDMAError
+ 3385              		.syntax unified
+ 3386              		.thumb
+ 3387              		.thumb_func
+ 3389              	HAL_ETH_GetDMAError:
+ 3390              		@ args = 0, pretend = 0, frame = 8
+ 3391              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3392              		@ link register save eliminated.
+ 3393 0000 80B4     		push	{r7}
+ 3394 0002 83B0     		sub	sp, sp, #12
+ 3395 0004 00AF     		add	r7, sp, #0
+ 3396 0006 7860     		str	r0, [r7, #4]
+ 3397 0008 7B68     		ldr	r3, [r7, #4]
+ 3398 000a D3F88C30 		ldr	r3, [r3, #140]
+ 3399 000e 1846     		mov	r0, r3
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 59
+
+
+ 3400 0010 0C37     		adds	r7, r7, #12
+ 3401 0012 BD46     		mov	sp, r7
+ 3402              		@ sp needed
+ 3403 0014 5DF8047B 		ldr	r7, [sp], #4
+ 3404 0018 7047     		bx	lr
+ 3406              		.section	.text.HAL_ETH_GetMACError,"ax",%progbits
+ 3407              		.align	1
+ 3408              		.global	HAL_ETH_GetMACError
+ 3409              		.syntax unified
+ 3410              		.thumb
+ 3411              		.thumb_func
+ 3413              	HAL_ETH_GetMACError:
+ 3414              		@ args = 0, pretend = 0, frame = 8
+ 3415              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3416              		@ link register save eliminated.
+ 3417 0000 80B4     		push	{r7}
+ 3418 0002 83B0     		sub	sp, sp, #12
+ 3419 0004 00AF     		add	r7, sp, #0
+ 3420 0006 7860     		str	r0, [r7, #4]
+ 3421 0008 7B68     		ldr	r3, [r7, #4]
+ 3422 000a D3F89030 		ldr	r3, [r3, #144]
+ 3423 000e 1846     		mov	r0, r3
+ 3424 0010 0C37     		adds	r7, r7, #12
+ 3425 0012 BD46     		mov	sp, r7
+ 3426              		@ sp needed
+ 3427 0014 5DF8047B 		ldr	r7, [sp], #4
+ 3428 0018 7047     		bx	lr
+ 3430              		.section	.text.HAL_ETH_GetMACWakeUpSource,"ax",%progbits
+ 3431              		.align	1
+ 3432              		.global	HAL_ETH_GetMACWakeUpSource
+ 3433              		.syntax unified
+ 3434              		.thumb
+ 3435              		.thumb_func
+ 3437              	HAL_ETH_GetMACWakeUpSource:
+ 3438              		@ args = 0, pretend = 0, frame = 8
+ 3439              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3440              		@ link register save eliminated.
+ 3441 0000 80B4     		push	{r7}
+ 3442 0002 83B0     		sub	sp, sp, #12
+ 3443 0004 00AF     		add	r7, sp, #0
+ 3444 0006 7860     		str	r0, [r7, #4]
+ 3445 0008 7B68     		ldr	r3, [r7, #4]
+ 3446 000a D3F89430 		ldr	r3, [r3, #148]
+ 3447 000e 1846     		mov	r0, r3
+ 3448 0010 0C37     		adds	r7, r7, #12
+ 3449 0012 BD46     		mov	sp, r7
+ 3450              		@ sp needed
+ 3451 0014 5DF8047B 		ldr	r7, [sp], #4
+ 3452 0018 7047     		bx	lr
+ 3454              		.section	.text.HAL_ETH_GetTxBuffersNumber,"ax",%progbits
+ 3455              		.align	1
+ 3456              		.global	HAL_ETH_GetTxBuffersNumber
+ 3457              		.syntax unified
+ 3458              		.thumb
+ 3459              		.thumb_func
+ 3461              	HAL_ETH_GetTxBuffersNumber:
+ 3462              		@ args = 0, pretend = 0, frame = 8
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 60
+
+
+ 3463              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3464              		@ link register save eliminated.
+ 3465 0000 80B4     		push	{r7}
+ 3466 0002 83B0     		sub	sp, sp, #12
+ 3467 0004 00AF     		add	r7, sp, #0
+ 3468 0006 7860     		str	r0, [r7, #4]
+ 3469 0008 7B68     		ldr	r3, [r7, #4]
+ 3470 000a 1B6C     		ldr	r3, [r3, #64]
+ 3471 000c 1846     		mov	r0, r3
+ 3472 000e 0C37     		adds	r7, r7, #12
+ 3473 0010 BD46     		mov	sp, r7
+ 3474              		@ sp needed
+ 3475 0012 5DF8047B 		ldr	r7, [sp], #4
+ 3476 0016 7047     		bx	lr
+ 3478              		.section	.text.ETH_FlushTransmitFIFO,"ax",%progbits
+ 3479              		.align	1
+ 3480              		.syntax unified
+ 3481              		.thumb
+ 3482              		.thumb_func
+ 3484              	ETH_FlushTransmitFIFO:
+ 3485              		@ args = 0, pretend = 0, frame = 16
+ 3486              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3487 0000 80B5     		push	{r7, lr}
+ 3488 0002 84B0     		sub	sp, sp, #16
+ 3489 0004 00AF     		add	r7, sp, #0
+ 3490 0006 7860     		str	r0, [r7, #4]
+ 3491 0008 0023     		movs	r3, #0
+ 3492 000a FB60     		str	r3, [r7, #12]
+ 3493 000c 7B68     		ldr	r3, [r7, #4]
+ 3494 000e 1B68     		ldr	r3, [r3]
+ 3495 0010 03F58053 		add	r3, r3, #4096
+ 3496 0014 9B69     		ldr	r3, [r3, #24]
+ 3497 0016 7A68     		ldr	r2, [r7, #4]
+ 3498 0018 1268     		ldr	r2, [r2]
+ 3499 001a 43F48013 		orr	r3, r3, #1048576
+ 3500 001e 02F58052 		add	r2, r2, #4096
+ 3501 0022 9361     		str	r3, [r2, #24]
+ 3502 0024 7B68     		ldr	r3, [r7, #4]
+ 3503 0026 1B68     		ldr	r3, [r3]
+ 3504 0028 03F58053 		add	r3, r3, #4096
+ 3505 002c 9B69     		ldr	r3, [r3, #24]
+ 3506 002e FB60     		str	r3, [r7, #12]
+ 3507 0030 0120     		movs	r0, #1
+ 3508 0032 FFF7FEFF 		bl	HAL_Delay
+ 3509 0036 7B68     		ldr	r3, [r7, #4]
+ 3510 0038 1A68     		ldr	r2, [r3]
+ 3511 003a FB68     		ldr	r3, [r7, #12]
+ 3512 003c 02F58052 		add	r2, r2, #4096
+ 3513 0040 9361     		str	r3, [r2, #24]
+ 3514 0042 00BF     		nop
+ 3515 0044 1037     		adds	r7, r7, #16
+ 3516 0046 BD46     		mov	sp, r7
+ 3517              		@ sp needed
+ 3518 0048 80BD     		pop	{r7, pc}
+ 3520              		.section	.text.ETH_SetMACConfig,"ax",%progbits
+ 3521              		.align	1
+ 3522              		.syntax unified
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 61
+
+
+ 3523              		.thumb
+ 3524              		.thumb_func
+ 3526              	ETH_SetMACConfig:
+ 3527              		@ args = 0, pretend = 0, frame = 16
+ 3528              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3529 0000 80B5     		push	{r7, lr}
+ 3530 0002 84B0     		sub	sp, sp, #16
+ 3531 0004 00AF     		add	r7, sp, #0
+ 3532 0006 7860     		str	r0, [r7, #4]
+ 3533 0008 3960     		str	r1, [r7]
+ 3534 000a 7B68     		ldr	r3, [r7, #4]
+ 3535 000c 1B68     		ldr	r3, [r3]
+ 3536 000e 1B68     		ldr	r3, [r3]
+ 3537 0010 FB60     		str	r3, [r7, #12]
+ 3538 0012 FA68     		ldr	r2, [r7, #12]
+ 3539 0014 534B     		ldr	r3, .L227
+ 3540 0016 1340     		ands	r3, r3, r2
+ 3541 0018 FB60     		str	r3, [r7, #12]
+ 3542 001a 3B68     		ldr	r3, [r7]
+ 3543 001c 9B7B     		ldrb	r3, [r3, #14]	@ zero_extendqisi2
+ 3544 001e 5B06     		lsls	r3, r3, #25
+ 3545 0020 3A68     		ldr	r2, [r7]
+ 3546 0022 127C     		ldrb	r2, [r2, #16]	@ zero_extendqisi2
+ 3547 0024 002A     		cmp	r2, #0
+ 3548 0026 02D1     		bne	.L211
+ 3549 0028 4FF40002 		mov	r2, #8388608
+ 3550 002c 00E0     		b	.L212
+ 3551              	.L211:
+ 3552 002e 0022     		movs	r2, #0
+ 3553              	.L212:
+ 3554 0030 1343     		orrs	r3, r3, r2
+ 3555 0032 3A68     		ldr	r2, [r7]
+ 3556 0034 527C     		ldrb	r2, [r2, #17]	@ zero_extendqisi2
+ 3557 0036 002A     		cmp	r2, #0
+ 3558 0038 02D1     		bne	.L213
+ 3559 003a 4FF48002 		mov	r2, #4194304
+ 3560 003e 00E0     		b	.L214
+ 3561              	.L213:
+ 3562 0040 0022     		movs	r2, #0
+ 3563              	.L214:
+ 3564 0042 1A43     		orrs	r2, r2, r3
+ 3565 0044 3B68     		ldr	r3, [r7]
+ 3566 0046 9B68     		ldr	r3, [r3, #8]
+ 3567 0048 1A43     		orrs	r2, r2, r3
+ 3568 004a 3B68     		ldr	r3, [r7]
+ 3569 004c DB7F     		ldrb	r3, [r3, #31]	@ zero_extendqisi2
+ 3570 004e 1B04     		lsls	r3, r3, #16
+ 3571 0050 1A43     		orrs	r2, r2, r3
+ 3572 0052 3B68     		ldr	r3, [r7]
+ 3573 0054 5B69     		ldr	r3, [r3, #20]
+ 3574 0056 1343     		orrs	r3, r3, r2
+ 3575 0058 3A68     		ldr	r2, [r7]
+ 3576 005a 927F     		ldrb	r2, [r2, #30]	@ zero_extendqisi2
+ 3577 005c 002A     		cmp	r2, #0
+ 3578 005e 02D1     		bne	.L215
+ 3579 0060 4FF40052 		mov	r2, #8192
+ 3580 0064 00E0     		b	.L216
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 62
+
+
+ 3581              	.L215:
+ 3582 0066 0022     		movs	r2, #0
+ 3583              	.L216:
+ 3584 0068 1A43     		orrs	r2, r2, r3
+ 3585 006a 3B68     		ldr	r3, [r7]
+ 3586 006c 1B7F     		ldrb	r3, [r3, #28]	@ zero_extendqisi2
+ 3587 006e 1B03     		lsls	r3, r3, #12
+ 3588 0070 1A43     		orrs	r2, r2, r3
+ 3589 0072 3B68     		ldr	r3, [r7]
+ 3590 0074 9B69     		ldr	r3, [r3, #24]
+ 3591 0076 1A43     		orrs	r2, r2, r3
+ 3592 0078 3B68     		ldr	r3, [r7]
+ 3593 007a 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 3594 007c 9B02     		lsls	r3, r3, #10
+ 3595 007e 1343     		orrs	r3, r3, r2
+ 3596 0080 3A68     		ldr	r2, [r7]
+ 3597 0082 92F82020 		ldrb	r2, [r2, #32]	@ zero_extendqisi2
+ 3598 0086 002A     		cmp	r2, #0
+ 3599 0088 02D1     		bne	.L217
+ 3600 008a 4FF40072 		mov	r2, #512
+ 3601 008e 00E0     		b	.L218
+ 3602              	.L217:
+ 3603 0090 0022     		movs	r2, #0
+ 3604              	.L218:
+ 3605 0092 1A43     		orrs	r2, r2, r3
+ 3606 0094 3B68     		ldr	r3, [r7]
+ 3607 0096 DB7B     		ldrb	r3, [r3, #15]	@ zero_extendqisi2
+ 3608 0098 DB01     		lsls	r3, r3, #7
+ 3609 009a 1A43     		orrs	r2, r2, r3
+ 3610 009c 3B68     		ldr	r3, [r7]
+ 3611 009e 5B6A     		ldr	r3, [r3, #36]
+ 3612 00a0 1A43     		orrs	r2, r2, r3
+ 3613 00a2 3B68     		ldr	r3, [r7]
+ 3614 00a4 93F82830 		ldrb	r3, [r3, #40]	@ zero_extendqisi2
+ 3615 00a8 1B01     		lsls	r3, r3, #4
+ 3616 00aa 1343     		orrs	r3, r3, r2
+ 3617 00ac FA68     		ldr	r2, [r7, #12]
+ 3618 00ae 1343     		orrs	r3, r3, r2
+ 3619 00b0 FB60     		str	r3, [r7, #12]
+ 3620 00b2 7B68     		ldr	r3, [r7, #4]
+ 3621 00b4 1B68     		ldr	r3, [r3]
+ 3622 00b6 FA68     		ldr	r2, [r7, #12]
+ 3623 00b8 1A60     		str	r2, [r3]
+ 3624 00ba 7B68     		ldr	r3, [r7, #4]
+ 3625 00bc 1B68     		ldr	r3, [r3]
+ 3626 00be 1B68     		ldr	r3, [r3]
+ 3627 00c0 FB60     		str	r3, [r7, #12]
+ 3628 00c2 0120     		movs	r0, #1
+ 3629 00c4 FFF7FEFF 		bl	HAL_Delay
+ 3630 00c8 7B68     		ldr	r3, [r7, #4]
+ 3631 00ca 1B68     		ldr	r3, [r3]
+ 3632 00cc FA68     		ldr	r2, [r7, #12]
+ 3633 00ce 1A60     		str	r2, [r3]
+ 3634 00d0 7B68     		ldr	r3, [r7, #4]
+ 3635 00d2 1B68     		ldr	r3, [r3]
+ 3636 00d4 9B69     		ldr	r3, [r3, #24]
+ 3637 00d6 FB60     		str	r3, [r7, #12]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 63
+
+
+ 3638 00d8 FA68     		ldr	r2, [r7, #12]
+ 3639 00da 4FF64173 		movw	r3, #65345
+ 3640 00de 1340     		ands	r3, r3, r2
+ 3641 00e0 FB60     		str	r3, [r7, #12]
+ 3642 00e2 3B68     		ldr	r3, [r7]
+ 3643 00e4 9B6C     		ldr	r3, [r3, #72]
+ 3644 00e6 1B04     		lsls	r3, r3, #16
+ 3645 00e8 3A68     		ldr	r2, [r7]
+ 3646 00ea 92F84C20 		ldrb	r2, [r2, #76]	@ zero_extendqisi2
+ 3647 00ee 002A     		cmp	r2, #0
+ 3648 00f0 01D1     		bne	.L219
+ 3649 00f2 8022     		movs	r2, #128
+ 3650 00f4 00E0     		b	.L220
+ 3651              	.L219:
+ 3652 00f6 0022     		movs	r2, #0
+ 3653              	.L220:
+ 3654 00f8 1A43     		orrs	r2, r2, r3
+ 3655 00fa 3B68     		ldr	r3, [r7]
+ 3656 00fc 1B6D     		ldr	r3, [r3, #80]
+ 3657 00fe 1343     		orrs	r3, r3, r2
+ 3658 0100 3A68     		ldr	r2, [r7]
+ 3659 0102 92F85520 		ldrb	r2, [r2, #85]	@ zero_extendqisi2
+ 3660 0106 012A     		cmp	r2, #1
+ 3661 0108 01D1     		bne	.L221
+ 3662 010a 0822     		movs	r2, #8
+ 3663 010c 00E0     		b	.L222
+ 3664              	.L221:
+ 3665 010e 0022     		movs	r2, #0
+ 3666              	.L222:
+ 3667 0110 1343     		orrs	r3, r3, r2
+ 3668 0112 3A68     		ldr	r2, [r7]
+ 3669 0114 92F85620 		ldrb	r2, [r2, #86]	@ zero_extendqisi2
+ 3670 0118 012A     		cmp	r2, #1
+ 3671 011a 01D1     		bne	.L223
+ 3672 011c 0422     		movs	r2, #4
+ 3673 011e 00E0     		b	.L224
+ 3674              	.L223:
+ 3675 0120 0022     		movs	r2, #0
+ 3676              	.L224:
+ 3677 0122 1343     		orrs	r3, r3, r2
+ 3678 0124 3A68     		ldr	r2, [r7]
+ 3679 0126 92F85420 		ldrb	r2, [r2, #84]	@ zero_extendqisi2
+ 3680 012a 012A     		cmp	r2, #1
+ 3681 012c 01D1     		bne	.L225
+ 3682 012e 0222     		movs	r2, #2
+ 3683 0130 00E0     		b	.L226
+ 3684              	.L225:
+ 3685 0132 0022     		movs	r2, #0
+ 3686              	.L226:
+ 3687 0134 1343     		orrs	r3, r3, r2
+ 3688 0136 FA68     		ldr	r2, [r7, #12]
+ 3689 0138 1343     		orrs	r3, r3, r2
+ 3690 013a FB60     		str	r3, [r7, #12]
+ 3691 013c 7B68     		ldr	r3, [r7, #4]
+ 3692 013e 1B68     		ldr	r3, [r3]
+ 3693 0140 FA68     		ldr	r2, [r7, #12]
+ 3694 0142 9A61     		str	r2, [r3, #24]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 64
+
+
+ 3695 0144 7B68     		ldr	r3, [r7, #4]
+ 3696 0146 1B68     		ldr	r3, [r3]
+ 3697 0148 9B69     		ldr	r3, [r3, #24]
+ 3698 014a FB60     		str	r3, [r7, #12]
+ 3699 014c 0120     		movs	r0, #1
+ 3700 014e FFF7FEFF 		bl	HAL_Delay
+ 3701 0152 7B68     		ldr	r3, [r7, #4]
+ 3702 0154 1B68     		ldr	r3, [r3]
+ 3703 0156 FA68     		ldr	r2, [r7, #12]
+ 3704 0158 9A61     		str	r2, [r3, #24]
+ 3705 015a 00BF     		nop
+ 3706 015c 1037     		adds	r7, r7, #16
+ 3707 015e BD46     		mov	sp, r7
+ 3708              		@ sp needed
+ 3709 0160 80BD     		pop	{r7, pc}
+ 3710              	.L228:
+ 3711 0162 00BF     		.align	2
+ 3712              	.L227:
+ 3713 0164 0F8120FD 		.word	-48201457
+ 3715              		.section	.text.ETH_SetDMAConfig,"ax",%progbits
+ 3716              		.align	1
+ 3717              		.syntax unified
+ 3718              		.thumb
+ 3719              		.thumb_func
+ 3721              	ETH_SetDMAConfig:
+ 3722              		@ args = 0, pretend = 0, frame = 16
+ 3723              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3724 0000 80B5     		push	{r7, lr}
+ 3725 0002 84B0     		sub	sp, sp, #16
+ 3726 0004 00AF     		add	r7, sp, #0
+ 3727 0006 7860     		str	r0, [r7, #4]
+ 3728 0008 3960     		str	r1, [r7]
+ 3729 000a 7B68     		ldr	r3, [r7, #4]
+ 3730 000c 1B68     		ldr	r3, [r3]
+ 3731 000e 03F58053 		add	r3, r3, #4096
+ 3732 0012 9B69     		ldr	r3, [r3, #24]
+ 3733 0014 FB60     		str	r3, [r7, #12]
+ 3734 0016 FA68     		ldr	r2, [r7, #12]
+ 3735 0018 3D4B     		ldr	r3, .L234
+ 3736 001a 1340     		ands	r3, r3, r2
+ 3737 001c FB60     		str	r3, [r7, #12]
+ 3738 001e 3B68     		ldr	r3, [r7]
+ 3739 0020 1B7B     		ldrb	r3, [r3, #12]	@ zero_extendqisi2
+ 3740 0022 002B     		cmp	r3, #0
+ 3741 0024 02D1     		bne	.L230
+ 3742 0026 4FF08062 		mov	r2, #67108864
+ 3743 002a 00E0     		b	.L231
+ 3744              	.L230:
+ 3745 002c 0022     		movs	r2, #0
+ 3746              	.L231:
+ 3747 002e 3B68     		ldr	r3, [r7]
+ 3748 0030 5B7B     		ldrb	r3, [r3, #13]	@ zero_extendqisi2
+ 3749 0032 5B06     		lsls	r3, r3, #25
+ 3750 0034 1343     		orrs	r3, r3, r2
+ 3751 0036 3A68     		ldr	r2, [r7]
+ 3752 0038 527F     		ldrb	r2, [r2, #29]	@ zero_extendqisi2
+ 3753 003a 002A     		cmp	r2, #0
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 65
+
+
+ 3754 003c 02D1     		bne	.L232
+ 3755 003e 4FF48012 		mov	r2, #1048576
+ 3756 0042 00E0     		b	.L233
+ 3757              	.L232:
+ 3758 0044 0022     		movs	r2, #0
+ 3759              	.L233:
+ 3760 0046 1A43     		orrs	r2, r2, r3
+ 3761 0048 3B68     		ldr	r3, [r7]
+ 3762 004a 9B7B     		ldrb	r3, [r3, #14]	@ zero_extendqisi2
+ 3763 004c 5B05     		lsls	r3, r3, #21
+ 3764 004e 1A43     		orrs	r2, r2, r3
+ 3765 0050 3B68     		ldr	r3, [r7]
+ 3766 0052 5B69     		ldr	r3, [r3, #20]
+ 3767 0054 1A43     		orrs	r2, r2, r3
+ 3768 0056 3B68     		ldr	r3, [r7]
+ 3769 0058 1B7F     		ldrb	r3, [r3, #28]	@ zero_extendqisi2
+ 3770 005a DB01     		lsls	r3, r3, #7
+ 3771 005c 1A43     		orrs	r2, r2, r3
+ 3772 005e 3B68     		ldr	r3, [r7]
+ 3773 0060 9B7F     		ldrb	r3, [r3, #30]	@ zero_extendqisi2
+ 3774 0062 9B01     		lsls	r3, r3, #6
+ 3775 0064 1A43     		orrs	r2, r2, r3
+ 3776 0066 3B68     		ldr	r3, [r7]
+ 3777 0068 1B6A     		ldr	r3, [r3, #32]
+ 3778 006a 1A43     		orrs	r2, r2, r3
+ 3779 006c 3B68     		ldr	r3, [r7]
+ 3780 006e 93F82430 		ldrb	r3, [r3, #36]	@ zero_extendqisi2
+ 3781 0072 9B00     		lsls	r3, r3, #2
+ 3782 0074 1343     		orrs	r3, r3, r2
+ 3783 0076 FA68     		ldr	r2, [r7, #12]
+ 3784 0078 1343     		orrs	r3, r3, r2
+ 3785 007a FB60     		str	r3, [r7, #12]
+ 3786 007c 7B68     		ldr	r3, [r7, #4]
+ 3787 007e 1B68     		ldr	r3, [r3]
+ 3788 0080 03F58053 		add	r3, r3, #4096
+ 3789 0084 1A46     		mov	r2, r3
+ 3790 0086 FB68     		ldr	r3, [r7, #12]
+ 3791 0088 9361     		str	r3, [r2, #24]
+ 3792 008a 7B68     		ldr	r3, [r7, #4]
+ 3793 008c 1B68     		ldr	r3, [r3]
+ 3794 008e 03F58053 		add	r3, r3, #4096
+ 3795 0092 9B69     		ldr	r3, [r3, #24]
+ 3796 0094 FB60     		str	r3, [r7, #12]
+ 3797 0096 0120     		movs	r0, #1
+ 3798 0098 FFF7FEFF 		bl	HAL_Delay
+ 3799 009c 7B68     		ldr	r3, [r7, #4]
+ 3800 009e 1B68     		ldr	r3, [r3]
+ 3801 00a0 03F58053 		add	r3, r3, #4096
+ 3802 00a4 1A46     		mov	r2, r3
+ 3803 00a6 FB68     		ldr	r3, [r7, #12]
+ 3804 00a8 9361     		str	r3, [r2, #24]
+ 3805 00aa 3B68     		ldr	r3, [r7]
+ 3806 00ac 1B79     		ldrb	r3, [r3, #4]	@ zero_extendqisi2
+ 3807 00ae 5A06     		lsls	r2, r3, #25
+ 3808 00b0 3B68     		ldr	r3, [r7]
+ 3809 00b2 9B68     		ldr	r3, [r3, #8]
+ 3810 00b4 1A43     		orrs	r2, r2, r3
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 66
+
+
+ 3811 00b6 3B68     		ldr	r3, [r7]
+ 3812 00b8 9B69     		ldr	r3, [r3, #24]
+ 3813 00ba 1A43     		orrs	r2, r2, r3
+ 3814 00bc 3B68     		ldr	r3, [r7]
+ 3815 00be 1B69     		ldr	r3, [r3, #16]
+ 3816 00c0 1A43     		orrs	r2, r2, r3
+ 3817 00c2 3B68     		ldr	r3, [r7]
+ 3818 00c4 93F82530 		ldrb	r3, [r3, #37]	@ zero_extendqisi2
+ 3819 00c8 DB01     		lsls	r3, r3, #7
+ 3820 00ca 1A43     		orrs	r2, r2, r3
+ 3821 00cc 3B68     		ldr	r3, [r7]
+ 3822 00ce 9B6A     		ldr	r3, [r3, #40]
+ 3823 00d0 9B00     		lsls	r3, r3, #2
+ 3824 00d2 1A43     		orrs	r2, r2, r3
+ 3825 00d4 3B68     		ldr	r3, [r7]
+ 3826 00d6 1B68     		ldr	r3, [r3]
+ 3827 00d8 1343     		orrs	r3, r3, r2
+ 3828 00da 7A68     		ldr	r2, [r7, #4]
+ 3829 00dc 1268     		ldr	r2, [r2]
+ 3830 00de 43F40003 		orr	r3, r3, #8388608
+ 3831 00e2 02F58052 		add	r2, r2, #4096
+ 3832 00e6 1360     		str	r3, [r2]
+ 3833 00e8 7B68     		ldr	r3, [r7, #4]
+ 3834 00ea 1B68     		ldr	r3, [r3]
+ 3835 00ec 03F58053 		add	r3, r3, #4096
+ 3836 00f0 1B68     		ldr	r3, [r3]
+ 3837 00f2 FB60     		str	r3, [r7, #12]
+ 3838 00f4 0120     		movs	r0, #1
+ 3839 00f6 FFF7FEFF 		bl	HAL_Delay
+ 3840 00fa 7B68     		ldr	r3, [r7, #4]
+ 3841 00fc 1B68     		ldr	r3, [r3]
+ 3842 00fe 03F58053 		add	r3, r3, #4096
+ 3843 0102 1A46     		mov	r2, r3
+ 3844 0104 FB68     		ldr	r3, [r7, #12]
+ 3845 0106 1360     		str	r3, [r2]
+ 3846 0108 00BF     		nop
+ 3847 010a 1037     		adds	r7, r7, #16
+ 3848 010c BD46     		mov	sp, r7
+ 3849              		@ sp needed
+ 3850 010e 80BD     		pop	{r7, pc}
+ 3851              	.L235:
+ 3852              		.align	2
+ 3853              	.L234:
+ 3854 0110 233FDEF8 		.word	-119652573
+ 3856              		.section	.text.ETH_MACDMAConfig,"ax",%progbits
+ 3857              		.align	1
+ 3858              		.syntax unified
+ 3859              		.thumb
+ 3860              		.thumb_func
+ 3862              	ETH_MACDMAConfig:
+ 3863              		@ args = 0, pretend = 0, frame = 152
+ 3864              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3865 0000 80B5     		push	{r7, lr}
+ 3866 0002 A6B0     		sub	sp, sp, #152
+ 3867 0004 00AF     		add	r7, sp, #0
+ 3868 0006 7860     		str	r0, [r7, #4]
+ 3869 0008 0123     		movs	r3, #1
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 67
+
+
+ 3870 000a 87F84430 		strb	r3, [r7, #68]
+ 3871 000e 0123     		movs	r3, #1
+ 3872 0010 87F84530 		strb	r3, [r7, #69]
+ 3873 0014 0023     		movs	r3, #0
+ 3874 0016 FB63     		str	r3, [r7, #60]
+ 3875 0018 0023     		movs	r3, #0
+ 3876 001a 87F85330 		strb	r3, [r7, #83]
+ 3877 001e 0123     		movs	r3, #1
+ 3878 0020 87F85230 		strb	r3, [r7, #82]
+ 3879 0024 0023     		movs	r3, #0
+ 3880 0026 87F85030 		strb	r3, [r7, #80]
+ 3881 002a 0123     		movs	r3, #1
+ 3882 002c 87F84230 		strb	r3, [r7, #66]
+ 3883 0030 0123     		movs	r3, #1
+ 3884 0032 87F83830 		strb	r3, [r7, #56]
+ 3885 0036 0023     		movs	r3, #0
+ 3886 0038 87F85430 		strb	r3, [r7, #84]
+ 3887 003c 0023     		movs	r3, #0
+ 3888 003e 87F84330 		strb	r3, [r7, #67]
+ 3889 0042 0023     		movs	r3, #0
+ 3890 0044 BB65     		str	r3, [r7, #88]
+ 3891 0046 0023     		movs	r3, #0
+ 3892 0048 87F85C30 		strb	r3, [r7, #92]
+ 3893 004c 0023     		movs	r3, #0
+ 3894 004e FB67     		str	r3, [r7, #124]
+ 3895 0050 0023     		movs	r3, #0
+ 3896 0052 87F88030 		strb	r3, [r7, #128]
+ 3897 0056 0023     		movs	r3, #0
+ 3898 0058 C7F88430 		str	r3, [r7, #132]
+ 3899 005c 0023     		movs	r3, #0
+ 3900 005e 87F88A30 		strb	r3, [r7, #138]
+ 3901 0062 0023     		movs	r3, #0
+ 3902 0064 87F88830 		strb	r3, [r7, #136]
+ 3903 0068 4FF48043 		mov	r3, #16384
+ 3904 006c BB64     		str	r3, [r7, #72]
+ 3905 006e 4FF40063 		mov	r3, #2048
+ 3906 0072 FB64     		str	r3, [r7, #76]
+ 3907 0074 0023     		movs	r3, #0
+ 3908 0076 87F88930 		strb	r3, [r7, #137]
+ 3909 007a 07F13403 		add	r3, r7, #52
+ 3910 007e 1946     		mov	r1, r3
+ 3911 0080 7868     		ldr	r0, [r7, #4]
+ 3912 0082 FFF7FEFF 		bl	ETH_SetMACConfig
+ 3913 0086 0123     		movs	r3, #1
+ 3914 0088 3B75     		strb	r3, [r7, #20]
+ 3915 008a 0123     		movs	r3, #1
+ 3916 008c 7B75     		strb	r3, [r7, #21]
+ 3917 008e 0123     		movs	r3, #1
+ 3918 0090 87F82530 		strb	r3, [r7, #37]
+ 3919 0094 0123     		movs	r3, #1
+ 3920 0096 BB75     		strb	r3, [r7, #22]
+ 3921 0098 0023     		movs	r3, #0
+ 3922 009a FB61     		str	r3, [r7, #28]
+ 3923 009c 0023     		movs	r3, #0
+ 3924 009e 87F82430 		strb	r3, [r7, #36]
+ 3925 00a2 0023     		movs	r3, #0
+ 3926 00a4 87F82630 		strb	r3, [r7, #38]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 68
+
+
+ 3927 00a8 0023     		movs	r3, #0
+ 3928 00aa BB62     		str	r3, [r7, #40]
+ 3929 00ac 0123     		movs	r3, #1
+ 3930 00ae 87F82C30 		strb	r3, [r7, #44]
+ 3931 00b2 0123     		movs	r3, #1
+ 3932 00b4 3B73     		strb	r3, [r7, #12]
+ 3933 00b6 4FF48033 		mov	r3, #65536
+ 3934 00ba 3B61     		str	r3, [r7, #16]
+ 3935 00bc 4FF48003 		mov	r3, #4194304
+ 3936 00c0 3B62     		str	r3, [r7, #32]
+ 3937 00c2 4FF40053 		mov	r3, #8192
+ 3938 00c6 BB61     		str	r3, [r7, #24]
+ 3939 00c8 0123     		movs	r3, #1
+ 3940 00ca 87F82D30 		strb	r3, [r7, #45]
+ 3941 00ce 0023     		movs	r3, #0
+ 3942 00d0 3B63     		str	r3, [r7, #48]
+ 3943 00d2 0023     		movs	r3, #0
+ 3944 00d4 BB60     		str	r3, [r7, #8]
+ 3945 00d6 07F10803 		add	r3, r7, #8
+ 3946 00da 1946     		mov	r1, r3
+ 3947 00dc 7868     		ldr	r0, [r7, #4]
+ 3948 00de FFF7FEFF 		bl	ETH_SetDMAConfig
+ 3949 00e2 00BF     		nop
+ 3950 00e4 9837     		adds	r7, r7, #152
+ 3951 00e6 BD46     		mov	sp, r7
+ 3952              		@ sp needed
+ 3953 00e8 80BD     		pop	{r7, pc}
+ 3955              		.section	.text.ETH_MACAddressConfig,"ax",%progbits
+ 3956              		.align	1
+ 3957              		.syntax unified
+ 3958              		.thumb
+ 3959              		.thumb_func
+ 3961              	ETH_MACAddressConfig:
+ 3962              		@ args = 0, pretend = 0, frame = 24
+ 3963              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3964              		@ link register save eliminated.
+ 3965 0000 80B4     		push	{r7}
+ 3966 0002 87B0     		sub	sp, sp, #28
+ 3967 0004 00AF     		add	r7, sp, #0
+ 3968 0006 F860     		str	r0, [r7, #12]
+ 3969 0008 B960     		str	r1, [r7, #8]
+ 3970 000a 7A60     		str	r2, [r7, #4]
+ 3971 000c 7B68     		ldr	r3, [r7, #4]
+ 3972 000e 0533     		adds	r3, r3, #5
+ 3973 0010 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3974 0012 1B02     		lsls	r3, r3, #8
+ 3975 0014 7A68     		ldr	r2, [r7, #4]
+ 3976 0016 0432     		adds	r2, r2, #4
+ 3977 0018 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 3978 001a 1343     		orrs	r3, r3, r2
+ 3979 001c 7B61     		str	r3, [r7, #20]
+ 3980 001e BA68     		ldr	r2, [r7, #8]
+ 3981 0020 114B     		ldr	r3, .L238
+ 3982 0022 1344     		add	r3, r3, r2
+ 3983 0024 1A46     		mov	r2, r3
+ 3984 0026 7B69     		ldr	r3, [r7, #20]
+ 3985 0028 1360     		str	r3, [r2]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 69
+
+
+ 3986 002a 7B68     		ldr	r3, [r7, #4]
+ 3987 002c 0333     		adds	r3, r3, #3
+ 3988 002e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3989 0030 1A06     		lsls	r2, r3, #24
+ 3990 0032 7B68     		ldr	r3, [r7, #4]
+ 3991 0034 0233     		adds	r3, r3, #2
+ 3992 0036 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3993 0038 1B04     		lsls	r3, r3, #16
+ 3994 003a 1A43     		orrs	r2, r2, r3
+ 3995 003c 7B68     		ldr	r3, [r7, #4]
+ 3996 003e 0133     		adds	r3, r3, #1
+ 3997 0040 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3998 0042 1B02     		lsls	r3, r3, #8
+ 3999 0044 1343     		orrs	r3, r3, r2
+ 4000 0046 7A68     		ldr	r2, [r7, #4]
+ 4001 0048 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 4002 004a 1343     		orrs	r3, r3, r2
+ 4003 004c 7B61     		str	r3, [r7, #20]
+ 4004 004e BA68     		ldr	r2, [r7, #8]
+ 4005 0050 064B     		ldr	r3, .L238+4
+ 4006 0052 1344     		add	r3, r3, r2
+ 4007 0054 1A46     		mov	r2, r3
+ 4008 0056 7B69     		ldr	r3, [r7, #20]
+ 4009 0058 1360     		str	r3, [r2]
+ 4010 005a 00BF     		nop
+ 4011 005c 1C37     		adds	r7, r7, #28
+ 4012 005e BD46     		mov	sp, r7
+ 4013              		@ sp needed
+ 4014 0060 5DF8047B 		ldr	r7, [sp], #4
+ 4015 0064 7047     		bx	lr
+ 4016              	.L239:
+ 4017 0066 00BF     		.align	2
+ 4018              	.L238:
+ 4019 0068 40800240 		.word	1073905728
+ 4020 006c 44800240 		.word	1073905732
+ 4022              		.section	.text.ETH_DMATxDescListInit,"ax",%progbits
+ 4023              		.align	1
+ 4024              		.syntax unified
+ 4025              		.thumb
+ 4026              		.thumb_func
+ 4028              	ETH_DMATxDescListInit:
+ 4029              		@ args = 0, pretend = 0, frame = 16
+ 4030              		@ frame_needed = 1, uses_anonymous_args = 0
+ 4031              		@ link register save eliminated.
+ 4032 0000 80B4     		push	{r7}
+ 4033 0002 85B0     		sub	sp, sp, #20
+ 4034 0004 00AF     		add	r7, sp, #0
+ 4035 0006 7860     		str	r0, [r7, #4]
+ 4036 0008 0023     		movs	r3, #0
+ 4037 000a FB60     		str	r3, [r7, #12]
+ 4038 000c 3EE0     		b	.L241
+ 4039              	.L244:
+ 4040 000e 7B68     		ldr	r3, [r7, #4]
+ 4041 0010 D968     		ldr	r1, [r3, #12]
+ 4042 0012 FA68     		ldr	r2, [r7, #12]
+ 4043 0014 1346     		mov	r3, r2
+ 4044 0016 9B00     		lsls	r3, r3, #2
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 70
+
+
+ 4045 0018 1344     		add	r3, r3, r2
+ 4046 001a DB00     		lsls	r3, r3, #3
+ 4047 001c 0B44     		add	r3, r3, r1
+ 4048 001e BB60     		str	r3, [r7, #8]
+ 4049 0020 BB68     		ldr	r3, [r7, #8]
+ 4050 0022 0022     		movs	r2, #0
+ 4051 0024 1A60     		str	r2, [r3]
+ 4052 0026 BB68     		ldr	r3, [r7, #8]
+ 4053 0028 0022     		movs	r2, #0
+ 4054 002a 5A60     		str	r2, [r3, #4]
+ 4055 002c BB68     		ldr	r3, [r7, #8]
+ 4056 002e 0022     		movs	r2, #0
+ 4057 0030 9A60     		str	r2, [r3, #8]
+ 4058 0032 BB68     		ldr	r3, [r7, #8]
+ 4059 0034 0022     		movs	r2, #0
+ 4060 0036 DA60     		str	r2, [r3, #12]
+ 4061 0038 B968     		ldr	r1, [r7, #8]
+ 4062 003a 7B68     		ldr	r3, [r7, #4]
+ 4063 003c FA68     		ldr	r2, [r7, #12]
+ 4064 003e 0632     		adds	r2, r2, #6
+ 4065 0040 43F82210 		str	r1, [r3, r2, lsl #2]
+ 4066 0044 BB68     		ldr	r3, [r7, #8]
+ 4067 0046 1B68     		ldr	r3, [r3]
+ 4068 0048 43F48012 		orr	r2, r3, #1048576
+ 4069 004c BB68     		ldr	r3, [r7, #8]
+ 4070 004e 1A60     		str	r2, [r3]
+ 4071 0050 FB68     		ldr	r3, [r7, #12]
+ 4072 0052 022B     		cmp	r3, #2
+ 4073 0054 0CD8     		bhi	.L242
+ 4074 0056 7B68     		ldr	r3, [r7, #4]
+ 4075 0058 D968     		ldr	r1, [r3, #12]
+ 4076 005a FB68     		ldr	r3, [r7, #12]
+ 4077 005c 5A1C     		adds	r2, r3, #1
+ 4078 005e 1346     		mov	r3, r2
+ 4079 0060 9B00     		lsls	r3, r3, #2
+ 4080 0062 1344     		add	r3, r3, r2
+ 4081 0064 DB00     		lsls	r3, r3, #3
+ 4082 0066 0B44     		add	r3, r3, r1
+ 4083 0068 1A46     		mov	r2, r3
+ 4084 006a BB68     		ldr	r3, [r7, #8]
+ 4085 006c DA60     		str	r2, [r3, #12]
+ 4086 006e 04E0     		b	.L243
+ 4087              	.L242:
+ 4088 0070 7B68     		ldr	r3, [r7, #4]
+ 4089 0072 DB68     		ldr	r3, [r3, #12]
+ 4090 0074 1A46     		mov	r2, r3
+ 4091 0076 BB68     		ldr	r3, [r7, #8]
+ 4092 0078 DA60     		str	r2, [r3, #12]
+ 4093              	.L243:
+ 4094 007a BB68     		ldr	r3, [r7, #8]
+ 4095 007c 1B68     		ldr	r3, [r3]
+ 4096 007e 43F44002 		orr	r2, r3, #12582912
+ 4097 0082 BB68     		ldr	r3, [r7, #8]
+ 4098 0084 1A60     		str	r2, [r3]
+ 4099 0086 FB68     		ldr	r3, [r7, #12]
+ 4100 0088 0133     		adds	r3, r3, #1
+ 4101 008a FB60     		str	r3, [r7, #12]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 71
+
+
+ 4102              	.L241:
+ 4103 008c FB68     		ldr	r3, [r7, #12]
+ 4104 008e 032B     		cmp	r3, #3
+ 4105 0090 BDD9     		bls	.L244
+ 4106 0092 7B68     		ldr	r3, [r7, #4]
+ 4107 0094 0022     		movs	r2, #0
+ 4108 0096 9A62     		str	r2, [r3, #40]
+ 4109 0098 7B68     		ldr	r3, [r7, #4]
+ 4110 009a DA68     		ldr	r2, [r3, #12]
+ 4111 009c 7B68     		ldr	r3, [r7, #4]
+ 4112 009e 1B68     		ldr	r3, [r3]
+ 4113 00a0 03F58053 		add	r3, r3, #4096
+ 4114 00a4 1A61     		str	r2, [r3, #16]
+ 4115 00a6 00BF     		nop
+ 4116 00a8 1437     		adds	r7, r7, #20
+ 4117 00aa BD46     		mov	sp, r7
+ 4118              		@ sp needed
+ 4119 00ac 5DF8047B 		ldr	r7, [sp], #4
+ 4120 00b0 7047     		bx	lr
+ 4122              		.section	.text.ETH_DMARxDescListInit,"ax",%progbits
+ 4123              		.align	1
+ 4124              		.syntax unified
+ 4125              		.thumb
+ 4126              		.thumb_func
+ 4128              	ETH_DMARxDescListInit:
+ 4129              		@ args = 0, pretend = 0, frame = 16
+ 4130              		@ frame_needed = 1, uses_anonymous_args = 0
+ 4131              		@ link register save eliminated.
+ 4132 0000 80B4     		push	{r7}
+ 4133 0002 85B0     		sub	sp, sp, #20
+ 4134 0004 00AF     		add	r7, sp, #0
+ 4135 0006 7860     		str	r0, [r7, #4]
+ 4136 0008 0023     		movs	r3, #0
+ 4137 000a FB60     		str	r3, [r7, #12]
+ 4138 000c 48E0     		b	.L246
+ 4139              	.L249:
+ 4140 000e 7B68     		ldr	r3, [r7, #4]
+ 4141 0010 1969     		ldr	r1, [r3, #16]
+ 4142 0012 FA68     		ldr	r2, [r7, #12]
+ 4143 0014 1346     		mov	r3, r2
+ 4144 0016 9B00     		lsls	r3, r3, #2
+ 4145 0018 1344     		add	r3, r3, r2
+ 4146 001a DB00     		lsls	r3, r3, #3
+ 4147 001c 0B44     		add	r3, r3, r1
+ 4148 001e BB60     		str	r3, [r7, #8]
+ 4149 0020 BB68     		ldr	r3, [r7, #8]
+ 4150 0022 0022     		movs	r2, #0
+ 4151 0024 1A60     		str	r2, [r3]
+ 4152 0026 BB68     		ldr	r3, [r7, #8]
+ 4153 0028 0022     		movs	r2, #0
+ 4154 002a 5A60     		str	r2, [r3, #4]
+ 4155 002c BB68     		ldr	r3, [r7, #8]
+ 4156 002e 0022     		movs	r2, #0
+ 4157 0030 9A60     		str	r2, [r3, #8]
+ 4158 0032 BB68     		ldr	r3, [r7, #8]
+ 4159 0034 0022     		movs	r2, #0
+ 4160 0036 DA60     		str	r2, [r3, #12]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 72
+
+
+ 4161 0038 BB68     		ldr	r3, [r7, #8]
+ 4162 003a 0022     		movs	r2, #0
+ 4163 003c 1A62     		str	r2, [r3, #32]
+ 4164 003e BB68     		ldr	r3, [r7, #8]
+ 4165 0040 0022     		movs	r2, #0
+ 4166 0042 5A62     		str	r2, [r3, #36]
+ 4167 0044 BB68     		ldr	r3, [r7, #8]
+ 4168 0046 4FF00042 		mov	r2, #-2147483648
+ 4169 004a 1A60     		str	r2, [r3]
+ 4170 004c 7B68     		ldr	r3, [r7, #4]
+ 4171 004e 5B69     		ldr	r3, [r3, #20]
+ 4172 0050 43F48042 		orr	r2, r3, #16384
+ 4173 0054 BB68     		ldr	r3, [r7, #8]
+ 4174 0056 5A60     		str	r2, [r3, #4]
+ 4175 0058 BB68     		ldr	r3, [r7, #8]
+ 4176 005a 5B68     		ldr	r3, [r3, #4]
+ 4177 005c 23F00042 		bic	r2, r3, #-2147483648
+ 4178 0060 BB68     		ldr	r3, [r7, #8]
+ 4179 0062 5A60     		str	r2, [r3, #4]
+ 4180 0064 B968     		ldr	r1, [r7, #8]
+ 4181 0066 7B68     		ldr	r3, [r7, #4]
+ 4182 0068 FA68     		ldr	r2, [r7, #12]
+ 4183 006a 1232     		adds	r2, r2, #18
+ 4184 006c 43F82210 		str	r1, [r3, r2, lsl #2]
+ 4185 0070 FB68     		ldr	r3, [r7, #12]
+ 4186 0072 022B     		cmp	r3, #2
+ 4187 0074 0CD8     		bhi	.L247
+ 4188 0076 7B68     		ldr	r3, [r7, #4]
+ 4189 0078 1969     		ldr	r1, [r3, #16]
+ 4190 007a FB68     		ldr	r3, [r7, #12]
+ 4191 007c 5A1C     		adds	r2, r3, #1
+ 4192 007e 1346     		mov	r3, r2
+ 4193 0080 9B00     		lsls	r3, r3, #2
+ 4194 0082 1344     		add	r3, r3, r2
+ 4195 0084 DB00     		lsls	r3, r3, #3
+ 4196 0086 0B44     		add	r3, r3, r1
+ 4197 0088 1A46     		mov	r2, r3
+ 4198 008a BB68     		ldr	r3, [r7, #8]
+ 4199 008c DA60     		str	r2, [r3, #12]
+ 4200 008e 04E0     		b	.L248
+ 4201              	.L247:
+ 4202 0090 7B68     		ldr	r3, [r7, #4]
+ 4203 0092 1B69     		ldr	r3, [r3, #16]
+ 4204 0094 1A46     		mov	r2, r3
+ 4205 0096 BB68     		ldr	r3, [r7, #8]
+ 4206 0098 DA60     		str	r2, [r3, #12]
+ 4207              	.L248:
+ 4208 009a FB68     		ldr	r3, [r7, #12]
+ 4209 009c 0133     		adds	r3, r3, #1
+ 4210 009e FB60     		str	r3, [r7, #12]
+ 4211              	.L246:
+ 4212 00a0 FB68     		ldr	r3, [r7, #12]
+ 4213 00a2 032B     		cmp	r3, #3
+ 4214 00a4 B3D9     		bls	.L249
+ 4215 00a6 7B68     		ldr	r3, [r7, #4]
+ 4216 00a8 0022     		movs	r2, #0
+ 4217 00aa DA65     		str	r2, [r3, #92]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 73
+
+
+ 4218 00ac 7B68     		ldr	r3, [r7, #4]
+ 4219 00ae 0022     		movs	r2, #0
+ 4220 00b0 1A66     		str	r2, [r3, #96]
+ 4221 00b2 7B68     		ldr	r3, [r7, #4]
+ 4222 00b4 0022     		movs	r2, #0
+ 4223 00b6 9A66     		str	r2, [r3, #104]
+ 4224 00b8 7B68     		ldr	r3, [r7, #4]
+ 4225 00ba 0022     		movs	r2, #0
+ 4226 00bc DA66     		str	r2, [r3, #108]
+ 4227 00be 7B68     		ldr	r3, [r7, #4]
+ 4228 00c0 0022     		movs	r2, #0
+ 4229 00c2 9A65     		str	r2, [r3, #88]
+ 4230 00c4 7B68     		ldr	r3, [r7, #4]
+ 4231 00c6 1A69     		ldr	r2, [r3, #16]
+ 4232 00c8 7B68     		ldr	r3, [r7, #4]
+ 4233 00ca 1B68     		ldr	r3, [r3]
+ 4234 00cc 03F58053 		add	r3, r3, #4096
+ 4235 00d0 DA60     		str	r2, [r3, #12]
+ 4236 00d2 00BF     		nop
+ 4237 00d4 1437     		adds	r7, r7, #20
+ 4238 00d6 BD46     		mov	sp, r7
+ 4239              		@ sp needed
+ 4240 00d8 5DF8047B 		ldr	r7, [sp], #4
+ 4241 00dc 7047     		bx	lr
+ 4243              		.section	.text.ETH_Prepare_Tx_Descriptors,"ax",%progbits
+ 4244              		.align	1
+ 4245              		.syntax unified
+ 4246              		.thumb
+ 4247              		.thumb_func
+ 4249              	ETH_Prepare_Tx_Descriptors:
+ 4250              		@ args = 0, pretend = 0, frame = 64
+ 4251              		@ frame_needed = 1, uses_anonymous_args = 0
+ 4252              		@ link register save eliminated.
+ 4253 0000 80B4     		push	{r7}
+ 4254 0002 91B0     		sub	sp, sp, #68
+ 4255 0004 00AF     		add	r7, sp, #0
+ 4256 0006 F860     		str	r0, [r7, #12]
+ 4257 0008 B960     		str	r1, [r7, #8]
+ 4258 000a 7A60     		str	r2, [r7, #4]
+ 4259 000c FB68     		ldr	r3, [r7, #12]
+ 4260 000e 1833     		adds	r3, r3, #24
+ 4261 0010 7B62     		str	r3, [r7, #36]
+ 4262 0012 7B6A     		ldr	r3, [r7, #36]
+ 4263 0014 1B69     		ldr	r3, [r3, #16]
+ 4264 0016 FB63     		str	r3, [r7, #60]
+ 4265 0018 7B6A     		ldr	r3, [r7, #36]
+ 4266 001a 1B69     		ldr	r3, [r3, #16]
+ 4267 001c 3B62     		str	r3, [r7, #32]
+ 4268 001e 0023     		movs	r3, #0
+ 4269 0020 7B63     		str	r3, [r7, #52]
+ 4270 0022 7B6A     		ldr	r3, [r7, #36]
+ 4271 0024 FA6B     		ldr	r2, [r7, #60]
+ 4272 0026 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 4273 002a 3B63     		str	r3, [r7, #48]
+ 4274 002c BB68     		ldr	r3, [r7, #8]
+ 4275 002e 9B68     		ldr	r3, [r3, #8]
+ 4276 0030 FB62     		str	r3, [r7, #44]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 74
+
+
+ 4277 0032 0023     		movs	r3, #0
+ 4278 0034 BB62     		str	r3, [r7, #40]
+ 4279 0036 3B6B     		ldr	r3, [r7, #48]
+ 4280 0038 1B68     		ldr	r3, [r3]
+ 4281 003a 03F00043 		and	r3, r3, #-2147483648
+ 4282 003e B3F1004F 		cmp	r3, #-2147483648
+ 4283 0042 07D0     		beq	.L251
+ 4284 0044 7A6A     		ldr	r2, [r7, #36]
+ 4285 0046 FB6B     		ldr	r3, [r7, #60]
+ 4286 0048 0433     		adds	r3, r3, #4
+ 4287 004a 9B00     		lsls	r3, r3, #2
+ 4288 004c 1344     		add	r3, r3, r2
+ 4289 004e 5B68     		ldr	r3, [r3, #4]
+ 4290 0050 002B     		cmp	r3, #0
+ 4291 0052 01D0     		beq	.L252
+ 4292              	.L251:
+ 4293 0054 0223     		movs	r3, #2
+ 4294 0056 11E1     		b	.L253
+ 4295              	.L252:
+ 4296 0058 7B6B     		ldr	r3, [r7, #52]
+ 4297 005a 0133     		adds	r3, r3, #1
+ 4298 005c 7B63     		str	r3, [r7, #52]
+ 4299 005e FB6A     		ldr	r3, [r7, #44]
+ 4300 0060 1B68     		ldr	r3, [r3]
+ 4301 0062 1A46     		mov	r2, r3
+ 4302 0064 3B6B     		ldr	r3, [r7, #48]
+ 4303 0066 9A60     		str	r2, [r3, #8]
+ 4304 0068 3B6B     		ldr	r3, [r7, #48]
+ 4305 006a 5A68     		ldr	r2, [r3, #4]
+ 4306 006c 864B     		ldr	r3, .L270
+ 4307 006e 1340     		ands	r3, r3, r2
+ 4308 0070 FA6A     		ldr	r2, [r7, #44]
+ 4309 0072 5268     		ldr	r2, [r2, #4]
+ 4310 0074 1A43     		orrs	r2, r2, r3
+ 4311 0076 3B6B     		ldr	r3, [r7, #48]
+ 4312 0078 5A60     		str	r2, [r3, #4]
+ 4313 007a BB68     		ldr	r3, [r7, #8]
+ 4314 007c 1B68     		ldr	r3, [r3]
+ 4315 007e 03F00103 		and	r3, r3, #1
+ 4316 0082 002B     		cmp	r3, #0
+ 4317 0084 08D0     		beq	.L254
+ 4318 0086 3B6B     		ldr	r3, [r7, #48]
+ 4319 0088 1B68     		ldr	r3, [r3]
+ 4320 008a 23F44002 		bic	r2, r3, #12582912
+ 4321 008e BB68     		ldr	r3, [r7, #8]
+ 4322 0090 5B69     		ldr	r3, [r3, #20]
+ 4323 0092 1A43     		orrs	r2, r2, r3
+ 4324 0094 3B6B     		ldr	r3, [r7, #48]
+ 4325 0096 1A60     		str	r2, [r3]
+ 4326              	.L254:
+ 4327 0098 BB68     		ldr	r3, [r7, #8]
+ 4328 009a 1B68     		ldr	r3, [r3]
+ 4329 009c 03F02003 		and	r3, r3, #32
+ 4330 00a0 002B     		cmp	r3, #0
+ 4331 00a2 08D0     		beq	.L255
+ 4332 00a4 3B6B     		ldr	r3, [r7, #48]
+ 4333 00a6 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 75
+
+
+ 4334 00a8 23F04062 		bic	r2, r3, #201326592
+ 4335 00ac BB68     		ldr	r3, [r7, #8]
+ 4336 00ae 1B69     		ldr	r3, [r3, #16]
+ 4337 00b0 1A43     		orrs	r2, r2, r3
+ 4338 00b2 3B6B     		ldr	r3, [r7, #48]
+ 4339 00b4 1A60     		str	r2, [r3]
+ 4340              	.L255:
+ 4341 00b6 BB68     		ldr	r3, [r7, #8]
+ 4342 00b8 1B68     		ldr	r3, [r3]
+ 4343 00ba 03F00403 		and	r3, r3, #4
+ 4344 00be 002B     		cmp	r3, #0
+ 4345 00c0 05D0     		beq	.L256
+ 4346 00c2 3B6B     		ldr	r3, [r7, #48]
+ 4347 00c4 1B68     		ldr	r3, [r3]
+ 4348 00c6 43F08002 		orr	r2, r3, #128
+ 4349 00ca 3B6B     		ldr	r3, [r7, #48]
+ 4350 00cc 1A60     		str	r2, [r3]
+ 4351              	.L256:
+ 4352 00ce 3B6B     		ldr	r3, [r7, #48]
+ 4353 00d0 1B68     		ldr	r3, [r3]
+ 4354 00d2 43F08052 		orr	r2, r3, #268435456
+ 4355 00d6 3B6B     		ldr	r3, [r7, #48]
+ 4356 00d8 1A60     		str	r2, [r3]
+ 4357 00da 82E0     		b	.L257
+ 4358              	.L266:
+ 4359 00dc 3B6B     		ldr	r3, [r7, #48]
+ 4360 00de 1B68     		ldr	r3, [r3]
+ 4361 00e0 23F00052 		bic	r2, r3, #536870912
+ 4362 00e4 3B6B     		ldr	r3, [r7, #48]
+ 4363 00e6 1A60     		str	r2, [r3]
+ 4364 00e8 7B68     		ldr	r3, [r7, #4]
+ 4365 00ea 002B     		cmp	r3, #0
+ 4366 00ec 06D0     		beq	.L258
+ 4367 00ee 3B6B     		ldr	r3, [r7, #48]
+ 4368 00f0 1B68     		ldr	r3, [r3]
+ 4369 00f2 43F08042 		orr	r2, r3, #1073741824
+ 4370 00f6 3B6B     		ldr	r3, [r7, #48]
+ 4371 00f8 1A60     		str	r2, [r3]
+ 4372 00fa 05E0     		b	.L259
+ 4373              	.L258:
+ 4374 00fc 3B6B     		ldr	r3, [r7, #48]
+ 4375 00fe 1B68     		ldr	r3, [r3]
+ 4376 0100 23F08042 		bic	r2, r3, #1073741824
+ 4377 0104 3B6B     		ldr	r3, [r7, #48]
+ 4378 0106 1A60     		str	r2, [r3]
+ 4379              	.L259:
+ 4380 0108 FB6B     		ldr	r3, [r7, #60]
+ 4381 010a 0133     		adds	r3, r3, #1
+ 4382 010c FB63     		str	r3, [r7, #60]
+ 4383 010e FB6B     		ldr	r3, [r7, #60]
+ 4384 0110 032B     		cmp	r3, #3
+ 4385 0112 02D9     		bls	.L260
+ 4386 0114 FB6B     		ldr	r3, [r7, #60]
+ 4387 0116 043B     		subs	r3, r3, #4
+ 4388 0118 FB63     		str	r3, [r7, #60]
+ 4389              	.L260:
+ 4390 011a 7B6A     		ldr	r3, [r7, #36]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 76
+
+
+ 4391 011c FA6B     		ldr	r2, [r7, #60]
+ 4392 011e 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 4393 0122 3B63     		str	r3, [r7, #48]
+ 4394 0124 3B6B     		ldr	r3, [r7, #48]
+ 4395 0126 1B68     		ldr	r3, [r3]
+ 4396 0128 03F00043 		and	r3, r3, #-2147483648
+ 4397 012c B3F1004F 		cmp	r3, #-2147483648
+ 4398 0130 07D0     		beq	.L261
+ 4399 0132 7A6A     		ldr	r2, [r7, #36]
+ 4400 0134 FB6B     		ldr	r3, [r7, #60]
+ 4401 0136 0433     		adds	r3, r3, #4
+ 4402 0138 9B00     		lsls	r3, r3, #2
+ 4403 013a 1344     		add	r3, r3, r2
+ 4404 013c 5B68     		ldr	r3, [r3, #4]
+ 4405 013e 002B     		cmp	r3, #0
+ 4406 0140 29D0     		beq	.L262
+ 4407              	.L261:
+ 4408 0142 3B6A     		ldr	r3, [r7, #32]
+ 4409 0144 FB63     		str	r3, [r7, #60]
+ 4410 0146 7B6A     		ldr	r3, [r7, #36]
+ 4411 0148 FA6B     		ldr	r2, [r7, #60]
+ 4412 014a 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 4413 014e 3B63     		str	r3, [r7, #48]
+ 4414 0150 0023     		movs	r3, #0
+ 4415 0152 BB63     		str	r3, [r7, #56]
+ 4416 0154 19E0     		b	.L263
+ 4417              	.L265:
+ 4418              		.syntax unified
+ 4419              	@ 890 "cmsis/core/cmsis_gcc.h" 1
+ 4420 0156 BFF35F8F 		dmb 0xF
+ 4421              	@ 0 "" 2
+ 4422              		.thumb
+ 4423              		.syntax unified
+ 4424 015a 00BF     		nop
+ 4425 015c 3B6B     		ldr	r3, [r7, #48]
+ 4426 015e 1B68     		ldr	r3, [r3]
+ 4427 0160 23F00042 		bic	r2, r3, #-2147483648
+ 4428 0164 3B6B     		ldr	r3, [r7, #48]
+ 4429 0166 1A60     		str	r2, [r3]
+ 4430 0168 FB6B     		ldr	r3, [r7, #60]
+ 4431 016a 0133     		adds	r3, r3, #1
+ 4432 016c FB63     		str	r3, [r7, #60]
+ 4433 016e FB6B     		ldr	r3, [r7, #60]
+ 4434 0170 032B     		cmp	r3, #3
+ 4435 0172 02D9     		bls	.L264
+ 4436 0174 FB6B     		ldr	r3, [r7, #60]
+ 4437 0176 043B     		subs	r3, r3, #4
+ 4438 0178 FB63     		str	r3, [r7, #60]
+ 4439              	.L264:
+ 4440 017a 7B6A     		ldr	r3, [r7, #36]
+ 4441 017c FA6B     		ldr	r2, [r7, #60]
+ 4442 017e 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 4443 0182 3B63     		str	r3, [r7, #48]
+ 4444 0184 BB6B     		ldr	r3, [r7, #56]
+ 4445 0186 0133     		adds	r3, r3, #1
+ 4446 0188 BB63     		str	r3, [r7, #56]
+ 4447              	.L263:
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 77
+
+
+ 4448 018a BA6B     		ldr	r2, [r7, #56]
+ 4449 018c 7B6B     		ldr	r3, [r7, #52]
+ 4450 018e 9A42     		cmp	r2, r3
+ 4451 0190 E1D3     		bcc	.L265
+ 4452 0192 0223     		movs	r3, #2
+ 4453 0194 72E0     		b	.L253
+ 4454              	.L262:
+ 4455 0196 3B6B     		ldr	r3, [r7, #48]
+ 4456 0198 1B68     		ldr	r3, [r3]
+ 4457 019a 23F08052 		bic	r2, r3, #268435456
+ 4458 019e 3B6B     		ldr	r3, [r7, #48]
+ 4459 01a0 1A60     		str	r2, [r3]
+ 4460 01a2 7B6B     		ldr	r3, [r7, #52]
+ 4461 01a4 0133     		adds	r3, r3, #1
+ 4462 01a6 7B63     		str	r3, [r7, #52]
+ 4463 01a8 FB6A     		ldr	r3, [r7, #44]
+ 4464 01aa 9B68     		ldr	r3, [r3, #8]
+ 4465 01ac FB62     		str	r3, [r7, #44]
+ 4466 01ae FB6A     		ldr	r3, [r7, #44]
+ 4467 01b0 1B68     		ldr	r3, [r3]
+ 4468 01b2 1A46     		mov	r2, r3
+ 4469 01b4 3B6B     		ldr	r3, [r7, #48]
+ 4470 01b6 9A60     		str	r2, [r3, #8]
+ 4471 01b8 3B6B     		ldr	r3, [r7, #48]
+ 4472 01ba 5A68     		ldr	r2, [r3, #4]
+ 4473 01bc 324B     		ldr	r3, .L270
+ 4474 01be 1340     		ands	r3, r3, r2
+ 4475 01c0 FA6A     		ldr	r2, [r7, #44]
+ 4476 01c2 5268     		ldr	r2, [r2, #4]
+ 4477 01c4 1A43     		orrs	r2, r2, r3
+ 4478 01c6 3B6B     		ldr	r3, [r7, #48]
+ 4479 01c8 5A60     		str	r2, [r3, #4]
+ 4480 01ca BB6A     		ldr	r3, [r7, #40]
+ 4481 01cc 0133     		adds	r3, r3, #1
+ 4482 01ce BB62     		str	r3, [r7, #40]
+ 4483              		.syntax unified
+ 4484              	@ 890 "cmsis/core/cmsis_gcc.h" 1
+ 4485 01d0 BFF35F8F 		dmb 0xF
+ 4486              	@ 0 "" 2
+ 4487              		.thumb
+ 4488              		.syntax unified
+ 4489 01d4 00BF     		nop
+ 4490 01d6 3B6B     		ldr	r3, [r7, #48]
+ 4491 01d8 1B68     		ldr	r3, [r3]
+ 4492 01da 43F00042 		orr	r2, r3, #-2147483648
+ 4493 01de 3B6B     		ldr	r3, [r7, #48]
+ 4494 01e0 1A60     		str	r2, [r3]
+ 4495              	.L257:
+ 4496 01e2 FB6A     		ldr	r3, [r7, #44]
+ 4497 01e4 9B68     		ldr	r3, [r3, #8]
+ 4498 01e6 002B     		cmp	r3, #0
+ 4499 01e8 7FF478AF 		bne	.L266
+ 4500 01ec 7B68     		ldr	r3, [r7, #4]
+ 4501 01ee 002B     		cmp	r3, #0
+ 4502 01f0 06D0     		beq	.L267
+ 4503 01f2 3B6B     		ldr	r3, [r7, #48]
+ 4504 01f4 1B68     		ldr	r3, [r3]
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 78
+
+
+ 4505 01f6 43F08042 		orr	r2, r3, #1073741824
+ 4506 01fa 3B6B     		ldr	r3, [r7, #48]
+ 4507 01fc 1A60     		str	r2, [r3]
+ 4508 01fe 05E0     		b	.L268
+ 4509              	.L267:
+ 4510 0200 3B6B     		ldr	r3, [r7, #48]
+ 4511 0202 1B68     		ldr	r3, [r3]
+ 4512 0204 23F08042 		bic	r2, r3, #1073741824
+ 4513 0208 3B6B     		ldr	r3, [r7, #48]
+ 4514 020a 1A60     		str	r2, [r3]
+ 4515              	.L268:
+ 4516 020c 3B6B     		ldr	r3, [r7, #48]
+ 4517 020e 1B68     		ldr	r3, [r3]
+ 4518 0210 43F00052 		orr	r2, r3, #536870912
+ 4519 0214 3B6B     		ldr	r3, [r7, #48]
+ 4520 0216 1A60     		str	r2, [r3]
+ 4521 0218 7B6A     		ldr	r3, [r7, #36]
+ 4522 021a 3A6A     		ldr	r2, [r7, #32]
+ 4523 021c 53F82230 		ldr	r3, [r3, r2, lsl #2]
+ 4524 0220 3B63     		str	r3, [r7, #48]
+ 4525              		.syntax unified
+ 4526              	@ 890 "cmsis/core/cmsis_gcc.h" 1
+ 4527 0222 BFF35F8F 		dmb 0xF
+ 4528              	@ 0 "" 2
+ 4529              		.thumb
+ 4530              		.syntax unified
+ 4531 0226 00BF     		nop
+ 4532 0228 3B6B     		ldr	r3, [r7, #48]
+ 4533 022a 1B68     		ldr	r3, [r3]
+ 4534 022c 43F00042 		orr	r2, r3, #-2147483648
+ 4535 0230 3B6B     		ldr	r3, [r7, #48]
+ 4536 0232 1A60     		str	r2, [r3]
+ 4537 0234 7B6A     		ldr	r3, [r7, #36]
+ 4538 0236 5A6A     		ldr	r2, [r3, #36]
+ 4539 0238 796A     		ldr	r1, [r7, #36]
+ 4540 023a FB6B     		ldr	r3, [r7, #60]
+ 4541 023c 0433     		adds	r3, r3, #4
+ 4542 023e 9B00     		lsls	r3, r3, #2
+ 4543 0240 0B44     		add	r3, r3, r1
+ 4544 0242 5A60     		str	r2, [r3, #4]
+ 4545 0244 7B6A     		ldr	r3, [r7, #36]
+ 4546 0246 FA6B     		ldr	r2, [r7, #60]
+ 4547 0248 1A61     		str	r2, [r3, #16]
+ 4548              		.syntax unified
+ 4549              	@ 386 "cmsis/core/cmsis_gcc.h" 1
+ 4550 024a EFF31083 		MRS r3, primask
+ 4551              	@ 0 "" 2
+ 4552              		.thumb
+ 4553              		.syntax unified
+ 4554 024e 3B61     		str	r3, [r7, #16]
+ 4555 0250 3B69     		ldr	r3, [r7, #16]
+ 4556 0252 FB61     		str	r3, [r7, #28]
+ 4557 0254 0123     		movs	r3, #1
+ 4558 0256 7B61     		str	r3, [r7, #20]
+ 4559 0258 7B69     		ldr	r3, [r7, #20]
+ 4560              		.syntax unified
+ 4561              	@ 414 "cmsis/core/cmsis_gcc.h" 1
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 79
+
+
+ 4562 025a 83F31088 		MSR primask, r3
+ 4563              	@ 0 "" 2
+ 4564              		.thumb
+ 4565              		.syntax unified
+ 4566 025e 00BF     		nop
+ 4567 0260 7B6A     		ldr	r3, [r7, #36]
+ 4568 0262 9A6A     		ldr	r2, [r3, #40]
+ 4569 0264 BB6A     		ldr	r3, [r7, #40]
+ 4570 0266 1344     		add	r3, r3, r2
+ 4571 0268 5A1C     		adds	r2, r3, #1
+ 4572 026a 7B6A     		ldr	r3, [r7, #36]
+ 4573 026c 9A62     		str	r2, [r3, #40]
+ 4574 026e FB69     		ldr	r3, [r7, #28]
+ 4575 0270 BB61     		str	r3, [r7, #24]
+ 4576 0272 BB69     		ldr	r3, [r7, #24]
+ 4577              		.syntax unified
+ 4578              	@ 414 "cmsis/core/cmsis_gcc.h" 1
+ 4579 0274 83F31088 		MSR primask, r3
+ 4580              	@ 0 "" 2
+ 4581              		.thumb
+ 4582              		.syntax unified
+ 4583 0278 00BF     		nop
+ 4584 027a 0023     		movs	r3, #0
+ 4585              	.L253:
+ 4586 027c 1846     		mov	r0, r3
+ 4587 027e 4437     		adds	r7, r7, #68
+ 4588 0280 BD46     		mov	sp, r7
+ 4589              		@ sp needed
+ 4590 0282 5DF8047B 		ldr	r7, [sp], #4
+ 4591 0286 7047     		bx	lr
+ 4592              	.L271:
+ 4593              		.align	2
+ 4594              	.L270:
+ 4595 0288 00E0FFFF 		.word	-8192
+ 4597              		.ident	"GCC: (GNU) 13.3.0"
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 80
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f7xx_hal_eth.c
+C:\msys64\tmp\ccSiGF2j.s:18     .text.HAL_ETH_Init:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:24     .text.HAL_ETH_Init:00000000 HAL_ETH_Init
+C:\msys64\tmp\ccSiGF2j.s:196    .text.HAL_ETH_MspInit:00000000 HAL_ETH_MspInit
+C:\msys64\tmp\ccSiGF2j.s:3862   .text.ETH_MACDMAConfig:00000000 ETH_MACDMAConfig
+C:\msys64\tmp\ccSiGF2j.s:4028   .text.ETH_DMATxDescListInit:00000000 ETH_DMATxDescListInit
+C:\msys64\tmp\ccSiGF2j.s:4128   .text.ETH_DMARxDescListInit:00000000 ETH_DMARxDescListInit
+C:\msys64\tmp\ccSiGF2j.s:3961   .text.ETH_MACAddressConfig:00000000 ETH_MACAddressConfig
+C:\msys64\tmp\ccSiGF2j.s:156    .text.HAL_ETH_Init:00000128 $d
+C:\msys64\tmp\ccSiGF2j.s:161    .text.HAL_ETH_DeInit:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:167    .text.HAL_ETH_DeInit:00000000 HAL_ETH_DeInit
+C:\msys64\tmp\ccSiGF2j.s:218    .text.HAL_ETH_MspDeInit:00000000 HAL_ETH_MspDeInit
+C:\msys64\tmp\ccSiGF2j.s:190    .text.HAL_ETH_MspInit:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:212    .text.HAL_ETH_MspDeInit:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:234    .text.HAL_ETH_Start:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:240    .text.HAL_ETH_Start:00000000 HAL_ETH_Start
+C:\msys64\tmp\ccSiGF2j.s:1111   .text.ETH_UpdateDescriptor:00000000 ETH_UpdateDescriptor
+C:\msys64\tmp\ccSiGF2j.s:3484   .text.ETH_FlushTransmitFIFO:00000000 ETH_FlushTransmitFIFO
+C:\msys64\tmp\ccSiGF2j.s:328    .text.HAL_ETH_Start_IT:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:334    .text.HAL_ETH_Start_IT:00000000 HAL_ETH_Start_IT
+C:\msys64\tmp\ccSiGF2j.s:436    .text.HAL_ETH_Start_IT:000000dc $d
+C:\msys64\tmp\ccSiGF2j.s:439    .text.HAL_ETH_Stop:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:445    .text.HAL_ETH_Stop:00000000 HAL_ETH_Stop
+C:\msys64\tmp\ccSiGF2j.s:528    .text.HAL_ETH_Stop_IT:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:534    .text.HAL_ETH_Stop_IT:00000000 HAL_ETH_Stop_IT
+C:\msys64\tmp\ccSiGF2j.s:652    .text.HAL_ETH_Stop_IT:000000fc $d
+C:\msys64\tmp\ccSiGF2j.s:655    .text.HAL_ETH_Transmit:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:661    .text.HAL_ETH_Transmit:00000000 HAL_ETH_Transmit
+C:\msys64\tmp\ccSiGF2j.s:4249   .text.ETH_Prepare_Tx_Descriptors:00000000 ETH_Prepare_Tx_Descriptors
+C:\msys64\tmp\ccSiGF2j.s:803    .text.HAL_ETH_Transmit_IT:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:809    .text.HAL_ETH_Transmit_IT:00000000 HAL_ETH_Transmit_IT
+C:\msys64\tmp\ccSiGF2j.s:905    .text.HAL_ETH_ReadData:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:911    .text.HAL_ETH_ReadData:00000000 HAL_ETH_ReadData
+C:\msys64\tmp\ccSiGF2j.s:1348   .text.HAL_ETH_RxLinkCallback:00000000 HAL_ETH_RxLinkCallback
+C:\msys64\tmp\ccSiGF2j.s:1106   .text.ETH_UpdateDescriptor:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1326   .text.HAL_ETH_RxAllocateCallback:00000000 HAL_ETH_RxAllocateCallback
+C:\msys64\tmp\ccSiGF2j.s:1253   .text.ETH_UpdateDescriptor:00000104 $d
+C:\msys64\tmp\ccSiGF2j.s:1256   .text.HAL_ETH_RegisterRxAllocateCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1262   .text.HAL_ETH_RegisterRxAllocateCallback:00000000 HAL_ETH_RegisterRxAllocateCallback
+C:\msys64\tmp\ccSiGF2j.s:1290   .text.HAL_ETH_UnRegisterRxAllocateCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1296   .text.HAL_ETH_UnRegisterRxAllocateCallback:00000000 HAL_ETH_UnRegisterRxAllocateCallback
+C:\msys64\tmp\ccSiGF2j.s:1317   .text.HAL_ETH_UnRegisterRxAllocateCallback:00000020 $d
+C:\msys64\tmp\ccSiGF2j.s:1320   .text.HAL_ETH_RxAllocateCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1342   .text.HAL_ETH_RxLinkCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1367   .text.HAL_ETH_RegisterRxLinkCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1373   .text.HAL_ETH_RegisterRxLinkCallback:00000000 HAL_ETH_RegisterRxLinkCallback
+C:\msys64\tmp\ccSiGF2j.s:1401   .text.HAL_ETH_UnRegisterRxLinkCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1407   .text.HAL_ETH_UnRegisterRxLinkCallback:00000000 HAL_ETH_UnRegisterRxLinkCallback
+C:\msys64\tmp\ccSiGF2j.s:1428   .text.HAL_ETH_UnRegisterRxLinkCallback:00000020 $d
+C:\msys64\tmp\ccSiGF2j.s:1431   .text.HAL_ETH_GetRxDataErrorCode:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1437   .text.HAL_ETH_GetRxDataErrorCode:00000000 HAL_ETH_GetRxDataErrorCode
+C:\msys64\tmp\ccSiGF2j.s:1461   .text.HAL_ETH_RegisterTxFreeCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1467   .text.HAL_ETH_RegisterTxFreeCallback:00000000 HAL_ETH_RegisterTxFreeCallback
+C:\msys64\tmp\ccSiGF2j.s:1495   .text.HAL_ETH_UnRegisterTxFreeCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1501   .text.HAL_ETH_UnRegisterTxFreeCallback:00000000 HAL_ETH_UnRegisterTxFreeCallback
+C:\msys64\tmp\ccSiGF2j.s:1522   .text.HAL_ETH_UnRegisterTxFreeCallback:00000020 $d
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 81
+
+
+C:\msys64\tmp\ccSiGF2j.s:1531   .text.HAL_ETH_TxFreeCallback:00000000 HAL_ETH_TxFreeCallback
+C:\msys64\tmp\ccSiGF2j.s:1525   .text.HAL_ETH_TxFreeCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1547   .text.HAL_ETH_ReleaseTxPacket:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1553   .text.HAL_ETH_ReleaseTxPacket:00000000 HAL_ETH_ReleaseTxPacket
+C:\msys64\tmp\ccSiGF2j.s:1664   .text.HAL_ETH_IRQHandler:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1670   .text.HAL_ETH_IRQHandler:00000000 HAL_ETH_IRQHandler
+C:\msys64\tmp\ccSiGF2j.s:1852   .text.HAL_ETH_RxCpltCallback:00000000 HAL_ETH_RxCpltCallback
+C:\msys64\tmp\ccSiGF2j.s:1830   .text.HAL_ETH_TxCpltCallback:00000000 HAL_ETH_TxCpltCallback
+C:\msys64\tmp\ccSiGF2j.s:1874   .text.HAL_ETH_ErrorCallback:00000000 HAL_ETH_ErrorCallback
+C:\msys64\tmp\ccSiGF2j.s:1896   .text.HAL_ETH_PMTCallback:00000000 HAL_ETH_PMTCallback
+C:\msys64\tmp\ccSiGF2j.s:1918   .text.HAL_ETH_WakeUpCallback:00000000 HAL_ETH_WakeUpCallback
+C:\msys64\tmp\ccSiGF2j.s:1819   .text.HAL_ETH_IRQHandler:00000158 $d
+C:\msys64\tmp\ccSiGF2j.s:1824   .text.HAL_ETH_TxCpltCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1846   .text.HAL_ETH_RxCpltCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1868   .text.HAL_ETH_ErrorCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1890   .text.HAL_ETH_PMTCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1912   .text.HAL_ETH_WakeUpCallback:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1934   .text.HAL_ETH_ReadPHYRegister:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:1940   .text.HAL_ETH_ReadPHYRegister:00000000 HAL_ETH_ReadPHYRegister
+C:\msys64\tmp\ccSiGF2j.s:2017   .text.HAL_ETH_WritePHYRegister:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2023   .text.HAL_ETH_WritePHYRegister:00000000 HAL_ETH_WritePHYRegister
+C:\msys64\tmp\ccSiGF2j.s:2098   .text.HAL_ETH_GetMACConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2104   .text.HAL_ETH_GetMACConfig:00000000 HAL_ETH_GetMACConfig
+C:\msys64\tmp\ccSiGF2j.s:2334   .text.HAL_ETH_GetDMAConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2340   .text.HAL_ETH_GetDMAConfig:00000000 HAL_ETH_GetDMAConfig
+C:\msys64\tmp\ccSiGF2j.s:2535   .text.HAL_ETH_GetDMAConfig:000001b8 $d
+C:\msys64\tmp\ccSiGF2j.s:2538   .text.HAL_ETH_SetMACConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2544   .text.HAL_ETH_SetMACConfig:00000000 HAL_ETH_SetMACConfig
+C:\msys64\tmp\ccSiGF2j.s:3526   .text.ETH_SetMACConfig:00000000 ETH_SetMACConfig
+C:\msys64\tmp\ccSiGF2j.s:2577   .text.HAL_ETH_SetDMAConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2583   .text.HAL_ETH_SetDMAConfig:00000000 HAL_ETH_SetDMAConfig
+C:\msys64\tmp\ccSiGF2j.s:3721   .text.ETH_SetDMAConfig:00000000 ETH_SetDMAConfig
+C:\msys64\tmp\ccSiGF2j.s:2616   .text.HAL_ETH_SetMDIOClockRange:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2622   .text.HAL_ETH_SetMDIOClockRange:00000000 HAL_ETH_SetMDIOClockRange
+C:\msys64\tmp\ccSiGF2j.s:2685   .text.HAL_ETH_SetMDIOClockRange:00000074 $d
+C:\msys64\tmp\ccSiGF2j.s:2691   .text.HAL_ETH_SetMACFilterConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2697   .text.HAL_ETH_SetMACFilterConfig:00000000 HAL_ETH_SetMACFilterConfig
+C:\msys64\tmp\ccSiGF2j.s:2790   .text.HAL_ETH_SetMACFilterConfig:000000a8 $d
+C:\msys64\tmp\ccSiGF2j.s:2793   .text.HAL_ETH_GetMACFilterConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2799   .text.HAL_ETH_GetMACFilterConfig:00000000 HAL_ETH_GetMACFilterConfig
+C:\msys64\tmp\ccSiGF2j.s:2946   .text.HAL_ETH_SetSourceMACAddrMatch:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:2952   .text.HAL_ETH_SetSourceMACAddrMatch:00000000 HAL_ETH_SetSourceMACAddrMatch
+C:\msys64\tmp\ccSiGF2j.s:3028   .text.HAL_ETH_SetHashTable:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3034   .text.HAL_ETH_SetHashTable:00000000 HAL_ETH_SetHashTable
+C:\msys64\tmp\ccSiGF2j.s:3087   .text.HAL_ETH_SetRxVLANIdentifier:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3093   .text.HAL_ETH_SetRxVLANIdentifier:00000000 HAL_ETH_SetRxVLANIdentifier
+C:\msys64\tmp\ccSiGF2j.s:3150   .text.HAL_ETH_SetRxVLANIdentifier:00000068 $d
+C:\msys64\tmp\ccSiGF2j.s:3153   .text.HAL_ETH_EnterPowerDownMode:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3159   .text.HAL_ETH_EnterPowerDownMode:00000000 HAL_ETH_EnterPowerDownMode
+C:\msys64\tmp\ccSiGF2j.s:3200   .text.HAL_ETH_EnterPowerDownMode:00000048 $d
+C:\msys64\tmp\ccSiGF2j.s:3203   .text.HAL_ETH_ExitPowerDownMode:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3209   .text.HAL_ETH_ExitPowerDownMode:00000000 HAL_ETH_ExitPowerDownMode
+C:\msys64\tmp\ccSiGF2j.s:3273   .text.HAL_ETH_ExitPowerDownMode:0000007c $d
+C:\msys64\tmp\ccSiGF2j.s:3276   .text.HAL_ETH_SetWakeUpFilter:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3282   .text.HAL_ETH_SetWakeUpFilter:00000000 HAL_ETH_SetWakeUpFilter
+C:\msys64\tmp\ccSiGF2j.s:3335   .text.HAL_ETH_GetState:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3341   .text.HAL_ETH_GetState:00000000 HAL_ETH_GetState
+ARM GAS  C:\msys64\tmp\ccSiGF2j.s 			page 82
+
+
+C:\msys64\tmp\ccSiGF2j.s:3359   .text.HAL_ETH_GetError:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3365   .text.HAL_ETH_GetError:00000000 HAL_ETH_GetError
+C:\msys64\tmp\ccSiGF2j.s:3383   .text.HAL_ETH_GetDMAError:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3389   .text.HAL_ETH_GetDMAError:00000000 HAL_ETH_GetDMAError
+C:\msys64\tmp\ccSiGF2j.s:3407   .text.HAL_ETH_GetMACError:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3413   .text.HAL_ETH_GetMACError:00000000 HAL_ETH_GetMACError
+C:\msys64\tmp\ccSiGF2j.s:3431   .text.HAL_ETH_GetMACWakeUpSource:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3437   .text.HAL_ETH_GetMACWakeUpSource:00000000 HAL_ETH_GetMACWakeUpSource
+C:\msys64\tmp\ccSiGF2j.s:3455   .text.HAL_ETH_GetTxBuffersNumber:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3461   .text.HAL_ETH_GetTxBuffersNumber:00000000 HAL_ETH_GetTxBuffersNumber
+C:\msys64\tmp\ccSiGF2j.s:3479   .text.ETH_FlushTransmitFIFO:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3521   .text.ETH_SetMACConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3713   .text.ETH_SetMACConfig:00000164 $d
+C:\msys64\tmp\ccSiGF2j.s:3716   .text.ETH_SetDMAConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3854   .text.ETH_SetDMAConfig:00000110 $d
+C:\msys64\tmp\ccSiGF2j.s:3857   .text.ETH_MACDMAConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:3956   .text.ETH_MACAddressConfig:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:4019   .text.ETH_MACAddressConfig:00000068 $d
+C:\msys64\tmp\ccSiGF2j.s:4023   .text.ETH_DMATxDescListInit:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:4123   .text.ETH_DMARxDescListInit:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:4244   .text.ETH_Prepare_Tx_Descriptors:00000000 $t
+C:\msys64\tmp\ccSiGF2j.s:4595   .text.ETH_Prepare_Tx_Descriptors:00000288 $d
+
+UNDEFINED SYMBOLS
+HAL_GetTick
+HAL_Delay
+HAL_RCC_GetHCLKFreq

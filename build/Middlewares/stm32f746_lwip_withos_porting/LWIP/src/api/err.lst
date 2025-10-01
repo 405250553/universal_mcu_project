@@ -1,0 +1,95 @@
+ARM GAS  C:\msys64\tmp\ccyJlGdk.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"err.c"
+  16              		.text
+  17              		.section	.rodata.err_to_errno_table,"a"
+  18              		.align	2
+  21              	err_to_errno_table:
+  22 0000 00000000 		.word	0
+  23 0004 0C000000 		.word	12
+  24 0008 69000000 		.word	105
+  25 000c 0B000000 		.word	11
+  26 0010 71000000 		.word	113
+  27 0014 73000000 		.word	115
+  28 0018 16000000 		.word	22
+  29 001c 0B000000 		.word	11
+  30 0020 62000000 		.word	98
+  31 0024 72000000 		.word	114
+  32 0028 6A000000 		.word	106
+  33 002c 6B000000 		.word	107
+  34 0030 FFFFFFFF 		.word	-1
+  35 0034 67000000 		.word	103
+  36 0038 68000000 		.word	104
+  37 003c 6B000000 		.word	107
+  38 0040 05000000 		.word	5
+  39              		.section	.text.err_to_errno,"ax",%progbits
+  40              		.align	1
+  41              		.global	err_to_errno
+  42              		.syntax unified
+  43              		.thumb
+  44              		.thumb_func
+  46              	err_to_errno:
+  47              		@ args = 0, pretend = 0, frame = 8
+  48              		@ frame_needed = 1, uses_anonymous_args = 0
+  49              		@ link register save eliminated.
+  50 0000 80B4     		push	{r7}
+  51 0002 83B0     		sub	sp, sp, #12
+  52 0004 00AF     		add	r7, sp, #0
+  53 0006 0346     		mov	r3, r0
+  54 0008 FB71     		strb	r3, [r7, #7]
+  55 000a 97F90730 		ldrsb	r3, [r7, #7]
+  56 000e 002B     		cmp	r3, #0
+  57 0010 04DC     		bgt	.L2
+  58 0012 97F90730 		ldrsb	r3, [r7, #7]
+  59 0016 13F1100F 		cmn	r3, #16
+  60 001a 01DA     		bge	.L3
+ARM GAS  C:\msys64\tmp\ccyJlGdk.s 			page 2
+
+
+  61              	.L2:
+  62 001c 0523     		movs	r3, #5
+  63 001e 05E0     		b	.L4
+  64              	.L3:
+  65 0020 97F90730 		ldrsb	r3, [r7, #7]
+  66 0024 5B42     		rsbs	r3, r3, #0
+  67 0026 044A     		ldr	r2, .L5
+  68 0028 52F82330 		ldr	r3, [r2, r3, lsl #2]
+  69              	.L4:
+  70 002c 1846     		mov	r0, r3
+  71 002e 0C37     		adds	r7, r7, #12
+  72 0030 BD46     		mov	sp, r7
+  73              		@ sp needed
+  74 0032 5DF8047B 		ldr	r7, [sp], #4
+  75 0036 7047     		bx	lr
+  76              	.L6:
+  77              		.align	2
+  78              	.L5:
+  79 0038 00000000 		.word	err_to_errno_table
+  81              		.ident	"GCC: (GNU) 13.3.0"
+ARM GAS  C:\msys64\tmp\ccyJlGdk.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 err.c
+C:\msys64\tmp\ccyJlGdk.s:18     .rodata.err_to_errno_table:00000000 $d
+C:\msys64\tmp\ccyJlGdk.s:21     .rodata.err_to_errno_table:00000000 err_to_errno_table
+C:\msys64\tmp\ccyJlGdk.s:40     .text.err_to_errno:00000000 $t
+C:\msys64\tmp\ccyJlGdk.s:46     .text.err_to_errno:00000000 err_to_errno
+C:\msys64\tmp\ccyJlGdk.s:79     .text.err_to_errno:00000038 $d
+
+NO UNDEFINED SYMBOLS

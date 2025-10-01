@@ -1,0 +1,467 @@
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"def.c"
+  16              		.text
+  17              		.section	.text.lwip_htons,"ax",%progbits
+  18              		.align	1
+  19              		.global	lwip_htons
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	lwip_htons:
+  25              		@ args = 0, pretend = 0, frame = 8
+  26              		@ frame_needed = 1, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 80B4     		push	{r7}
+  29 0002 83B0     		sub	sp, sp, #12
+  30 0004 00AF     		add	r7, sp, #0
+  31 0006 0346     		mov	r3, r0
+  32 0008 FB80     		strh	r3, [r7, #6]	@ movhi
+  33 000a B7F90630 		ldrsh	r3, [r7, #6]
+  34 000e 1B02     		lsls	r3, r3, #8
+  35 0010 1AB2     		sxth	r2, r3
+  36 0012 FB88     		ldrh	r3, [r7, #6]
+  37 0014 1B0A     		lsrs	r3, r3, #8
+  38 0016 9BB2     		uxth	r3, r3
+  39 0018 1BB2     		sxth	r3, r3
+  40 001a 1343     		orrs	r3, r3, r2
+  41 001c 1BB2     		sxth	r3, r3
+  42 001e 9BB2     		uxth	r3, r3
+  43 0020 1846     		mov	r0, r3
+  44 0022 0C37     		adds	r7, r7, #12
+  45 0024 BD46     		mov	sp, r7
+  46              		@ sp needed
+  47 0026 5DF8047B 		ldr	r7, [sp], #4
+  48 002a 7047     		bx	lr
+  50              		.section	.text.lwip_htonl,"ax",%progbits
+  51              		.align	1
+  52              		.global	lwip_htonl
+  53              		.syntax unified
+  54              		.thumb
+  55              		.thumb_func
+  57              	lwip_htonl:
+  58              		@ args = 0, pretend = 0, frame = 8
+  59              		@ frame_needed = 1, uses_anonymous_args = 0
+  60              		@ link register save eliminated.
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 2
+
+
+  61 0000 80B4     		push	{r7}
+  62 0002 83B0     		sub	sp, sp, #12
+  63 0004 00AF     		add	r7, sp, #0
+  64 0006 7860     		str	r0, [r7, #4]
+  65 0008 7B68     		ldr	r3, [r7, #4]
+  66 000a 1A06     		lsls	r2, r3, #24
+  67 000c 7B68     		ldr	r3, [r7, #4]
+  68 000e 1B02     		lsls	r3, r3, #8
+  69 0010 03F47F03 		and	r3, r3, #16711680
+  70 0014 1A43     		orrs	r2, r2, r3
+  71 0016 7B68     		ldr	r3, [r7, #4]
+  72 0018 1B0A     		lsrs	r3, r3, #8
+  73 001a 03F47F43 		and	r3, r3, #65280
+  74 001e 1A43     		orrs	r2, r2, r3
+  75 0020 7B68     		ldr	r3, [r7, #4]
+  76 0022 1B0E     		lsrs	r3, r3, #24
+  77 0024 1343     		orrs	r3, r3, r2
+  78 0026 1846     		mov	r0, r3
+  79 0028 0C37     		adds	r7, r7, #12
+  80 002a BD46     		mov	sp, r7
+  81              		@ sp needed
+  82 002c 5DF8047B 		ldr	r7, [sp], #4
+  83 0030 7047     		bx	lr
+  85              		.section	.text.lwip_strnstr,"ax",%progbits
+  86              		.align	1
+  87              		.global	lwip_strnstr
+  88              		.syntax unified
+  89              		.thumb
+  90              		.thumb_func
+  92              	lwip_strnstr:
+  93              		@ args = 0, pretend = 0, frame = 24
+  94              		@ frame_needed = 1, uses_anonymous_args = 0
+  95 0000 80B5     		push	{r7, lr}
+  96 0002 86B0     		sub	sp, sp, #24
+  97 0004 00AF     		add	r7, sp, #0
+  98 0006 F860     		str	r0, [r7, #12]
+  99 0008 B960     		str	r1, [r7, #8]
+ 100 000a 7A60     		str	r2, [r7, #4]
+ 101 000c B868     		ldr	r0, [r7, #8]
+ 102 000e FFF7FEFF 		bl	strlen
+ 103 0012 3861     		str	r0, [r7, #16]
+ 104 0014 3B69     		ldr	r3, [r7, #16]
+ 105 0016 002B     		cmp	r3, #0
+ 106 0018 01D1     		bne	.L6
+ 107 001a FB68     		ldr	r3, [r7, #12]
+ 108 001c 22E0     		b	.L7
+ 109              	.L6:
+ 110 001e FB68     		ldr	r3, [r7, #12]
+ 111 0020 7B61     		str	r3, [r7, #20]
+ 112 0022 12E0     		b	.L8
+ 113              	.L11:
+ 114 0024 7B69     		ldr	r3, [r7, #20]
+ 115 0026 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 116 0028 BB68     		ldr	r3, [r7, #8]
+ 117 002a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 118 002c 9A42     		cmp	r2, r3
+ 119 002e 09D1     		bne	.L9
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 3
+
+
+ 120 0030 3A69     		ldr	r2, [r7, #16]
+ 121 0032 B968     		ldr	r1, [r7, #8]
+ 122 0034 7869     		ldr	r0, [r7, #20]
+ 123 0036 FFF7FEFF 		bl	strncmp
+ 124 003a 0346     		mov	r3, r0
+ 125 003c 002B     		cmp	r3, #0
+ 126 003e 01D1     		bne	.L9
+ 127 0040 7B69     		ldr	r3, [r7, #20]
+ 128 0042 0FE0     		b	.L7
+ 129              	.L9:
+ 130 0044 7B69     		ldr	r3, [r7, #20]
+ 131 0046 0133     		adds	r3, r3, #1
+ 132 0048 7B61     		str	r3, [r7, #20]
+ 133              	.L8:
+ 134 004a 7B69     		ldr	r3, [r7, #20]
+ 135 004c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 136 004e 002B     		cmp	r3, #0
+ 137 0050 07D0     		beq	.L10
+ 138 0052 7A69     		ldr	r2, [r7, #20]
+ 139 0054 3B69     		ldr	r3, [r7, #16]
+ 140 0056 1A44     		add	r2, r2, r3
+ 141 0058 F968     		ldr	r1, [r7, #12]
+ 142 005a 7B68     		ldr	r3, [r7, #4]
+ 143 005c 0B44     		add	r3, r3, r1
+ 144 005e 9A42     		cmp	r2, r3
+ 145 0060 E0D9     		bls	.L11
+ 146              	.L10:
+ 147 0062 0023     		movs	r3, #0
+ 148              	.L7:
+ 149 0064 1846     		mov	r0, r3
+ 150 0066 1837     		adds	r7, r7, #24
+ 151 0068 BD46     		mov	sp, r7
+ 152              		@ sp needed
+ 153 006a 80BD     		pop	{r7, pc}
+ 155              		.section	.text.lwip_stricmp,"ax",%progbits
+ 156              		.align	1
+ 157              		.global	lwip_stricmp
+ 158              		.syntax unified
+ 159              		.thumb
+ 160              		.thumb_func
+ 162              	lwip_stricmp:
+ 163              		@ args = 0, pretend = 0, frame = 16
+ 164              		@ frame_needed = 1, uses_anonymous_args = 0
+ 165              		@ link register save eliminated.
+ 166 0000 80B4     		push	{r7}
+ 167 0002 85B0     		sub	sp, sp, #20
+ 168 0004 00AF     		add	r7, sp, #0
+ 169 0006 7860     		str	r0, [r7, #4]
+ 170 0008 3960     		str	r1, [r7]
+ 171              	.L17:
+ 172 000a 7B68     		ldr	r3, [r7, #4]
+ 173 000c 5A1C     		adds	r2, r3, #1
+ 174 000e 7A60     		str	r2, [r7, #4]
+ 175 0010 1B78     		ldrb	r3, [r3]
+ 176 0012 FB73     		strb	r3, [r7, #15]
+ 177 0014 3B68     		ldr	r3, [r7]
+ 178 0016 5A1C     		adds	r2, r3, #1
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 4
+
+
+ 179 0018 3A60     		str	r2, [r7]
+ 180 001a 1B78     		ldrb	r3, [r3]
+ 181 001c BB73     		strb	r3, [r7, #14]
+ 182 001e FA7B     		ldrb	r2, [r7, #15]	@ zero_extendqisi2
+ 183 0020 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 184 0022 9A42     		cmp	r2, r3
+ 185 0024 16D0     		beq	.L13
+ 186 0026 FB7B     		ldrb	r3, [r7, #15]
+ 187 0028 43F02003 		orr	r3, r3, #32
+ 188 002c 7B73     		strb	r3, [r7, #13]
+ 189 002e 7B7B     		ldrb	r3, [r7, #13]	@ zero_extendqisi2
+ 190 0030 602B     		cmp	r3, #96
+ 191 0032 0CD9     		bls	.L14
+ 192 0034 7B7B     		ldrb	r3, [r7, #13]	@ zero_extendqisi2
+ 193 0036 7A2B     		cmp	r3, #122
+ 194 0038 09D8     		bhi	.L14
+ 195 003a BB7B     		ldrb	r3, [r7, #14]
+ 196 003c 43F02003 		orr	r3, r3, #32
+ 197 0040 3B73     		strb	r3, [r7, #12]
+ 198 0042 7A7B     		ldrb	r2, [r7, #13]	@ zero_extendqisi2
+ 199 0044 3B7B     		ldrb	r3, [r7, #12]	@ zero_extendqisi2
+ 200 0046 9A42     		cmp	r2, r3
+ 201 0048 03D0     		beq	.L18
+ 202 004a 0123     		movs	r3, #1
+ 203 004c 06E0     		b	.L16
+ 204              	.L14:
+ 205 004e 0123     		movs	r3, #1
+ 206 0050 04E0     		b	.L16
+ 207              	.L18:
+ 208 0052 00BF     		nop
+ 209              	.L13:
+ 210 0054 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 211 0056 002B     		cmp	r3, #0
+ 212 0058 D7D1     		bne	.L17
+ 213 005a 0023     		movs	r3, #0
+ 214              	.L16:
+ 215 005c 1846     		mov	r0, r3
+ 216 005e 1437     		adds	r7, r7, #20
+ 217 0060 BD46     		mov	sp, r7
+ 218              		@ sp needed
+ 219 0062 5DF8047B 		ldr	r7, [sp], #4
+ 220 0066 7047     		bx	lr
+ 222              		.section	.text.lwip_strnicmp,"ax",%progbits
+ 223              		.align	1
+ 224              		.global	lwip_strnicmp
+ 225              		.syntax unified
+ 226              		.thumb
+ 227              		.thumb_func
+ 229              	lwip_strnicmp:
+ 230              		@ args = 0, pretend = 0, frame = 24
+ 231              		@ frame_needed = 1, uses_anonymous_args = 0
+ 232              		@ link register save eliminated.
+ 233 0000 80B4     		push	{r7}
+ 234 0002 87B0     		sub	sp, sp, #28
+ 235 0004 00AF     		add	r7, sp, #0
+ 236 0006 F860     		str	r0, [r7, #12]
+ 237 0008 B960     		str	r1, [r7, #8]
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 5
+
+
+ 238 000a 7A60     		str	r2, [r7, #4]
+ 239              	.L25:
+ 240 000c FB68     		ldr	r3, [r7, #12]
+ 241 000e 5A1C     		adds	r2, r3, #1
+ 242 0010 FA60     		str	r2, [r7, #12]
+ 243 0012 1B78     		ldrb	r3, [r3]
+ 244 0014 FB75     		strb	r3, [r7, #23]
+ 245 0016 BB68     		ldr	r3, [r7, #8]
+ 246 0018 5A1C     		adds	r2, r3, #1
+ 247 001a BA60     		str	r2, [r7, #8]
+ 248 001c 1B78     		ldrb	r3, [r3]
+ 249 001e BB75     		strb	r3, [r7, #22]
+ 250 0020 FA7D     		ldrb	r2, [r7, #23]	@ zero_extendqisi2
+ 251 0022 BB7D     		ldrb	r3, [r7, #22]	@ zero_extendqisi2
+ 252 0024 9A42     		cmp	r2, r3
+ 253 0026 16D0     		beq	.L20
+ 254 0028 FB7D     		ldrb	r3, [r7, #23]
+ 255 002a 43F02003 		orr	r3, r3, #32
+ 256 002e 7B75     		strb	r3, [r7, #21]
+ 257 0030 7B7D     		ldrb	r3, [r7, #21]	@ zero_extendqisi2
+ 258 0032 602B     		cmp	r3, #96
+ 259 0034 0CD9     		bls	.L21
+ 260 0036 7B7D     		ldrb	r3, [r7, #21]	@ zero_extendqisi2
+ 261 0038 7A2B     		cmp	r3, #122
+ 262 003a 09D8     		bhi	.L21
+ 263 003c BB7D     		ldrb	r3, [r7, #22]
+ 264 003e 43F02003 		orr	r3, r3, #32
+ 265 0042 3B75     		strb	r3, [r7, #20]
+ 266 0044 7A7D     		ldrb	r2, [r7, #21]	@ zero_extendqisi2
+ 267 0046 3B7D     		ldrb	r3, [r7, #20]	@ zero_extendqisi2
+ 268 0048 9A42     		cmp	r2, r3
+ 269 004a 03D0     		beq	.L26
+ 270 004c 0123     		movs	r3, #1
+ 271 004e 0CE0     		b	.L23
+ 272              	.L21:
+ 273 0050 0123     		movs	r3, #1
+ 274 0052 0AE0     		b	.L23
+ 275              	.L26:
+ 276 0054 00BF     		nop
+ 277              	.L20:
+ 278 0056 7B68     		ldr	r3, [r7, #4]
+ 279 0058 013B     		subs	r3, r3, #1
+ 280 005a 7B60     		str	r3, [r7, #4]
+ 281 005c 7B68     		ldr	r3, [r7, #4]
+ 282 005e 002B     		cmp	r3, #0
+ 283 0060 02D0     		beq	.L24
+ 284 0062 FB7D     		ldrb	r3, [r7, #23]	@ zero_extendqisi2
+ 285 0064 002B     		cmp	r3, #0
+ 286 0066 D1D1     		bne	.L25
+ 287              	.L24:
+ 288 0068 0023     		movs	r3, #0
+ 289              	.L23:
+ 290 006a 1846     		mov	r0, r3
+ 291 006c 1C37     		adds	r7, r7, #28
+ 292 006e BD46     		mov	sp, r7
+ 293              		@ sp needed
+ 294 0070 5DF8047B 		ldr	r7, [sp], #4
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 6
+
+
+ 295 0074 7047     		bx	lr
+ 297              		.section	.text.lwip_itoa,"ax",%progbits
+ 298              		.align	1
+ 299              		.global	lwip_itoa
+ 300              		.syntax unified
+ 301              		.thumb
+ 302              		.thumb_func
+ 304              	lwip_itoa:
+ 305              		@ args = 0, pretend = 0, frame = 32
+ 306              		@ frame_needed = 1, uses_anonymous_args = 0
+ 307 0000 80B5     		push	{r7, lr}
+ 308 0002 88B0     		sub	sp, sp, #32
+ 309 0004 00AF     		add	r7, sp, #0
+ 310 0006 F860     		str	r0, [r7, #12]
+ 311 0008 B960     		str	r1, [r7, #8]
+ 312 000a 7A60     		str	r2, [r7, #4]
+ 313 000c FB68     		ldr	r3, [r7, #12]
+ 314 000e FB61     		str	r3, [r7, #28]
+ 315 0010 BB68     		ldr	r3, [r7, #8]
+ 316 0012 013B     		subs	r3, r3, #1
+ 317 0014 FA68     		ldr	r2, [r7, #12]
+ 318 0016 1344     		add	r3, r3, r2
+ 319 0018 BB61     		str	r3, [r7, #24]
+ 320 001a 7B68     		ldr	r3, [r7, #4]
+ 321 001c 002B     		cmp	r3, #0
+ 322 001e B8BF     		it	lt
+ 323 0020 5B42     		rsblt	r3, r3, #0
+ 324 0022 7B61     		str	r3, [r7, #20]
+ 325 0024 BB68     		ldr	r3, [r7, #8]
+ 326 0026 012B     		cmp	r3, #1
+ 327 0028 06D8     		bhi	.L28
+ 328 002a BB68     		ldr	r3, [r7, #8]
+ 329 002c 012B     		cmp	r3, #1
+ 330 002e 54D1     		bne	.L37
+ 331 0030 FB68     		ldr	r3, [r7, #12]
+ 332 0032 0022     		movs	r2, #0
+ 333 0034 1A70     		strb	r2, [r3]
+ 334 0036 50E0     		b	.L37
+ 335              	.L28:
+ 336 0038 7B68     		ldr	r3, [r7, #4]
+ 337 003a 002B     		cmp	r3, #0
+ 338 003c 04DA     		bge	.L31
+ 339 003e FB69     		ldr	r3, [r7, #28]
+ 340 0040 5A1C     		adds	r2, r3, #1
+ 341 0042 FA61     		str	r2, [r7, #28]
+ 342 0044 2D22     		movs	r2, #45
+ 343 0046 1A70     		strb	r2, [r3]
+ 344              	.L31:
+ 345 0048 BB69     		ldr	r3, [r7, #24]
+ 346 004a 0022     		movs	r2, #0
+ 347 004c 1A70     		strb	r2, [r3]
+ 348 004e 1CE0     		b	.L32
+ 349              	.L34:
+ 350 0050 7A69     		ldr	r2, [r7, #20]
+ 351 0052 244B     		ldr	r3, .L38
+ 352 0054 83FB0213 		smull	r1, r3, r3, r2
+ 353 0058 9910     		asrs	r1, r3, #2
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 7
+
+
+ 354 005a D317     		asrs	r3, r2, #31
+ 355 005c C91A     		subs	r1, r1, r3
+ 356 005e 0B46     		mov	r3, r1
+ 357 0060 9B00     		lsls	r3, r3, #2
+ 358 0062 0B44     		add	r3, r3, r1
+ 359 0064 5B00     		lsls	r3, r3, #1
+ 360 0066 D11A     		subs	r1, r2, r3
+ 361 0068 CBB2     		uxtb	r3, r1
+ 362 006a 3033     		adds	r3, r3, #48
+ 363 006c FB74     		strb	r3, [r7, #19]
+ 364 006e BB69     		ldr	r3, [r7, #24]
+ 365 0070 013B     		subs	r3, r3, #1
+ 366 0072 BB61     		str	r3, [r7, #24]
+ 367 0074 BB69     		ldr	r3, [r7, #24]
+ 368 0076 FA7C     		ldrb	r2, [r7, #19]
+ 369 0078 1A70     		strb	r2, [r3]
+ 370 007a 7B69     		ldr	r3, [r7, #20]
+ 371 007c 194A     		ldr	r2, .L38
+ 372 007e 82FB0312 		smull	r1, r2, r2, r3
+ 373 0082 9210     		asrs	r2, r2, #2
+ 374 0084 DB17     		asrs	r3, r3, #31
+ 375 0086 D31A     		subs	r3, r2, r3
+ 376 0088 7B61     		str	r3, [r7, #20]
+ 377              	.L32:
+ 378 008a 7B69     		ldr	r3, [r7, #20]
+ 379 008c 002B     		cmp	r3, #0
+ 380 008e 03D0     		beq	.L33
+ 381 0090 BA69     		ldr	r2, [r7, #24]
+ 382 0092 FB69     		ldr	r3, [r7, #28]
+ 383 0094 9A42     		cmp	r2, r3
+ 384 0096 DBD8     		bhi	.L34
+ 385              	.L33:
+ 386 0098 7B69     		ldr	r3, [r7, #20]
+ 387 009a 002B     		cmp	r3, #0
+ 388 009c 03D0     		beq	.L35
+ 389 009e FB68     		ldr	r3, [r7, #12]
+ 390 00a0 0022     		movs	r2, #0
+ 391 00a2 1A70     		strb	r2, [r3]
+ 392 00a4 1AE0     		b	.L27
+ 393              	.L35:
+ 394 00a6 BB69     		ldr	r3, [r7, #24]
+ 395 00a8 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 396 00aa 002B     		cmp	r3, #0
+ 397 00ac 0AD1     		bne	.L36
+ 398 00ae FB69     		ldr	r3, [r7, #28]
+ 399 00b0 5A1C     		adds	r2, r3, #1
+ 400 00b2 FA61     		str	r2, [r7, #28]
+ 401 00b4 3022     		movs	r2, #48
+ 402 00b6 1A70     		strb	r2, [r3]
+ 403 00b8 FB69     		ldr	r3, [r7, #28]
+ 404 00ba 5A1C     		adds	r2, r3, #1
+ 405 00bc FA61     		str	r2, [r7, #28]
+ 406 00be 0022     		movs	r2, #0
+ 407 00c0 1A70     		strb	r2, [r3]
+ 408 00c2 0BE0     		b	.L27
+ 409              	.L36:
+ 410 00c4 FA68     		ldr	r2, [r7, #12]
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 8
+
+
+ 411 00c6 BB68     		ldr	r3, [r7, #8]
+ 412 00c8 1A44     		add	r2, r2, r3
+ 413 00ca BB69     		ldr	r3, [r7, #24]
+ 414 00cc D31A     		subs	r3, r2, r3
+ 415 00ce 1A46     		mov	r2, r3
+ 416 00d0 B969     		ldr	r1, [r7, #24]
+ 417 00d2 F869     		ldr	r0, [r7, #28]
+ 418 00d4 FFF7FEFF 		bl	memmove
+ 419 00d8 00E0     		b	.L27
+ 420              	.L37:
+ 421 00da 00BF     		nop
+ 422              	.L27:
+ 423 00dc 2037     		adds	r7, r7, #32
+ 424 00de BD46     		mov	sp, r7
+ 425              		@ sp needed
+ 426 00e0 80BD     		pop	{r7, pc}
+ 427              	.L39:
+ 428 00e2 00BF     		.align	2
+ 429              	.L38:
+ 430 00e4 67666666 		.word	1717986919
+ 432              		.ident	"GCC: (GNU) 13.3.0"
+ARM GAS  C:\msys64\tmp\ccTszgzP.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 def.c
+C:\msys64\tmp\ccTszgzP.s:18     .text.lwip_htons:00000000 $t
+C:\msys64\tmp\ccTszgzP.s:24     .text.lwip_htons:00000000 lwip_htons
+C:\msys64\tmp\ccTszgzP.s:51     .text.lwip_htonl:00000000 $t
+C:\msys64\tmp\ccTszgzP.s:57     .text.lwip_htonl:00000000 lwip_htonl
+C:\msys64\tmp\ccTszgzP.s:86     .text.lwip_strnstr:00000000 $t
+C:\msys64\tmp\ccTszgzP.s:92     .text.lwip_strnstr:00000000 lwip_strnstr
+C:\msys64\tmp\ccTszgzP.s:156    .text.lwip_stricmp:00000000 $t
+C:\msys64\tmp\ccTszgzP.s:162    .text.lwip_stricmp:00000000 lwip_stricmp
+C:\msys64\tmp\ccTszgzP.s:223    .text.lwip_strnicmp:00000000 $t
+C:\msys64\tmp\ccTszgzP.s:229    .text.lwip_strnicmp:00000000 lwip_strnicmp
+C:\msys64\tmp\ccTszgzP.s:298    .text.lwip_itoa:00000000 $t
+C:\msys64\tmp\ccTszgzP.s:304    .text.lwip_itoa:00000000 lwip_itoa
+C:\msys64\tmp\ccTszgzP.s:430    .text.lwip_itoa:000000e4 $d
+
+UNDEFINED SYMBOLS
+strlen
+strncmp
+memmove

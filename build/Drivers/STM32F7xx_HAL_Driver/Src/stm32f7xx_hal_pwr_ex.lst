@@ -1,0 +1,791 @@
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.arch armv7e-m
+   3              		.fpu fpv5-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f7xx_hal_pwr_ex.c"
+  16              		.text
+  17              		.section	.text.HAL_PWREx_EnableBkUpReg,"ax",%progbits
+  18              		.align	1
+  19              		.global	HAL_PWREx_EnableBkUpReg
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	HAL_PWREx_EnableBkUpReg:
+  25              		@ args = 0, pretend = 0, frame = 8
+  26              		@ frame_needed = 1, uses_anonymous_args = 0
+  27 0000 80B5     		push	{r7, lr}
+  28 0002 82B0     		sub	sp, sp, #8
+  29 0004 00AF     		add	r7, sp, #0
+  30 0006 0023     		movs	r3, #0
+  31 0008 7B60     		str	r3, [r7, #4]
+  32 000a 124B     		ldr	r3, .L5
+  33 000c 5B68     		ldr	r3, [r3, #4]
+  34 000e 114A     		ldr	r2, .L5
+  35 0010 43F40073 		orr	r3, r3, #512
+  36 0014 5360     		str	r3, [r2, #4]
+  37 0016 0F4B     		ldr	r3, .L5
+  38 0018 5B68     		ldr	r3, [r3, #4]
+  39 001a 0E4A     		ldr	r2, .L5
+  40 001c 43F48073 		orr	r3, r3, #256
+  41 0020 5360     		str	r3, [r2, #4]
+  42 0022 FFF7FEFF 		bl	HAL_GetTick
+  43 0026 7860     		str	r0, [r7, #4]
+  44 0028 09E0     		b	.L2
+  45              	.L4:
+  46 002a FFF7FEFF 		bl	HAL_GetTick
+  47 002e 0246     		mov	r2, r0
+  48 0030 7B68     		ldr	r3, [r7, #4]
+  49 0032 D31A     		subs	r3, r2, r3
+  50 0034 B3F57A7F 		cmp	r3, #1000
+  51 0038 01D9     		bls	.L2
+  52 003a 0323     		movs	r3, #3
+  53 003c 06E0     		b	.L3
+  54              	.L2:
+  55 003e 054B     		ldr	r3, .L5
+  56 0040 5B68     		ldr	r3, [r3, #4]
+  57 0042 03F00803 		and	r3, r3, #8
+  58 0046 082B     		cmp	r3, #8
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 2
+
+
+  59 0048 EFD1     		bne	.L4
+  60 004a 0023     		movs	r3, #0
+  61              	.L3:
+  62 004c 1846     		mov	r0, r3
+  63 004e 0837     		adds	r7, r7, #8
+  64 0050 BD46     		mov	sp, r7
+  65              		@ sp needed
+  66 0052 80BD     		pop	{r7, pc}
+  67              	.L6:
+  68              		.align	2
+  69              	.L5:
+  70 0054 00700040 		.word	1073770496
+  72              		.section	.text.HAL_PWREx_DisableBkUpReg,"ax",%progbits
+  73              		.align	1
+  74              		.global	HAL_PWREx_DisableBkUpReg
+  75              		.syntax unified
+  76              		.thumb
+  77              		.thumb_func
+  79              	HAL_PWREx_DisableBkUpReg:
+  80              		@ args = 0, pretend = 0, frame = 8
+  81              		@ frame_needed = 1, uses_anonymous_args = 0
+  82 0000 80B5     		push	{r7, lr}
+  83 0002 82B0     		sub	sp, sp, #8
+  84 0004 00AF     		add	r7, sp, #0
+  85 0006 0023     		movs	r3, #0
+  86 0008 7B60     		str	r3, [r7, #4]
+  87 000a 124B     		ldr	r3, .L11
+  88 000c 5B68     		ldr	r3, [r3, #4]
+  89 000e 114A     		ldr	r2, .L11
+  90 0010 23F40073 		bic	r3, r3, #512
+  91 0014 5360     		str	r3, [r2, #4]
+  92 0016 0F4B     		ldr	r3, .L11
+  93 0018 5B68     		ldr	r3, [r3, #4]
+  94 001a 0E4A     		ldr	r2, .L11
+  95 001c 43F48073 		orr	r3, r3, #256
+  96 0020 5360     		str	r3, [r2, #4]
+  97 0022 FFF7FEFF 		bl	HAL_GetTick
+  98 0026 7860     		str	r0, [r7, #4]
+  99 0028 09E0     		b	.L8
+ 100              	.L10:
+ 101 002a FFF7FEFF 		bl	HAL_GetTick
+ 102 002e 0246     		mov	r2, r0
+ 103 0030 7B68     		ldr	r3, [r7, #4]
+ 104 0032 D31A     		subs	r3, r2, r3
+ 105 0034 B3F57A7F 		cmp	r3, #1000
+ 106 0038 01D9     		bls	.L8
+ 107 003a 0323     		movs	r3, #3
+ 108 003c 06E0     		b	.L9
+ 109              	.L8:
+ 110 003e 054B     		ldr	r3, .L11
+ 111 0040 5B68     		ldr	r3, [r3, #4]
+ 112 0042 03F00803 		and	r3, r3, #8
+ 113 0046 082B     		cmp	r3, #8
+ 114 0048 EFD0     		beq	.L10
+ 115 004a 0023     		movs	r3, #0
+ 116              	.L9:
+ 117 004c 1846     		mov	r0, r3
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 3
+
+
+ 118 004e 0837     		adds	r7, r7, #8
+ 119 0050 BD46     		mov	sp, r7
+ 120              		@ sp needed
+ 121 0052 80BD     		pop	{r7, pc}
+ 122              	.L12:
+ 123              		.align	2
+ 124              	.L11:
+ 125 0054 00700040 		.word	1073770496
+ 127              		.section	.text.HAL_PWREx_EnableFlashPowerDown,"ax",%progbits
+ 128              		.align	1
+ 129              		.global	HAL_PWREx_EnableFlashPowerDown
+ 130              		.syntax unified
+ 131              		.thumb
+ 132              		.thumb_func
+ 134              	HAL_PWREx_EnableFlashPowerDown:
+ 135              		@ args = 0, pretend = 0, frame = 0
+ 136              		@ frame_needed = 1, uses_anonymous_args = 0
+ 137              		@ link register save eliminated.
+ 138 0000 80B4     		push	{r7}
+ 139 0002 00AF     		add	r7, sp, #0
+ 140 0004 054B     		ldr	r3, .L14
+ 141 0006 1B68     		ldr	r3, [r3]
+ 142 0008 044A     		ldr	r2, .L14
+ 143 000a 43F40073 		orr	r3, r3, #512
+ 144 000e 1360     		str	r3, [r2]
+ 145 0010 00BF     		nop
+ 146 0012 BD46     		mov	sp, r7
+ 147              		@ sp needed
+ 148 0014 5DF8047B 		ldr	r7, [sp], #4
+ 149 0018 7047     		bx	lr
+ 150              	.L15:
+ 151 001a 00BF     		.align	2
+ 152              	.L14:
+ 153 001c 00700040 		.word	1073770496
+ 155              		.section	.text.HAL_PWREx_DisableFlashPowerDown,"ax",%progbits
+ 156              		.align	1
+ 157              		.global	HAL_PWREx_DisableFlashPowerDown
+ 158              		.syntax unified
+ 159              		.thumb
+ 160              		.thumb_func
+ 162              	HAL_PWREx_DisableFlashPowerDown:
+ 163              		@ args = 0, pretend = 0, frame = 0
+ 164              		@ frame_needed = 1, uses_anonymous_args = 0
+ 165              		@ link register save eliminated.
+ 166 0000 80B4     		push	{r7}
+ 167 0002 00AF     		add	r7, sp, #0
+ 168 0004 054B     		ldr	r3, .L17
+ 169 0006 1B68     		ldr	r3, [r3]
+ 170 0008 044A     		ldr	r2, .L17
+ 171 000a 23F40073 		bic	r3, r3, #512
+ 172 000e 1360     		str	r3, [r2]
+ 173 0010 00BF     		nop
+ 174 0012 BD46     		mov	sp, r7
+ 175              		@ sp needed
+ 176 0014 5DF8047B 		ldr	r7, [sp], #4
+ 177 0018 7047     		bx	lr
+ 178              	.L18:
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 4
+
+
+ 179 001a 00BF     		.align	2
+ 180              	.L17:
+ 181 001c 00700040 		.word	1073770496
+ 183              		.section	.text.HAL_PWREx_EnableMainRegulatorLowVoltage,"ax",%progbits
+ 184              		.align	1
+ 185              		.global	HAL_PWREx_EnableMainRegulatorLowVoltage
+ 186              		.syntax unified
+ 187              		.thumb
+ 188              		.thumb_func
+ 190              	HAL_PWREx_EnableMainRegulatorLowVoltage:
+ 191              		@ args = 0, pretend = 0, frame = 0
+ 192              		@ frame_needed = 1, uses_anonymous_args = 0
+ 193              		@ link register save eliminated.
+ 194 0000 80B4     		push	{r7}
+ 195 0002 00AF     		add	r7, sp, #0
+ 196 0004 054B     		ldr	r3, .L20
+ 197 0006 1B68     		ldr	r3, [r3]
+ 198 0008 044A     		ldr	r2, .L20
+ 199 000a 43F40063 		orr	r3, r3, #2048
+ 200 000e 1360     		str	r3, [r2]
+ 201 0010 00BF     		nop
+ 202 0012 BD46     		mov	sp, r7
+ 203              		@ sp needed
+ 204 0014 5DF8047B 		ldr	r7, [sp], #4
+ 205 0018 7047     		bx	lr
+ 206              	.L21:
+ 207 001a 00BF     		.align	2
+ 208              	.L20:
+ 209 001c 00700040 		.word	1073770496
+ 211              		.section	.text.HAL_PWREx_DisableMainRegulatorLowVoltage,"ax",%progbits
+ 212              		.align	1
+ 213              		.global	HAL_PWREx_DisableMainRegulatorLowVoltage
+ 214              		.syntax unified
+ 215              		.thumb
+ 216              		.thumb_func
+ 218              	HAL_PWREx_DisableMainRegulatorLowVoltage:
+ 219              		@ args = 0, pretend = 0, frame = 0
+ 220              		@ frame_needed = 1, uses_anonymous_args = 0
+ 221              		@ link register save eliminated.
+ 222 0000 80B4     		push	{r7}
+ 223 0002 00AF     		add	r7, sp, #0
+ 224 0004 054B     		ldr	r3, .L23
+ 225 0006 1B68     		ldr	r3, [r3]
+ 226 0008 044A     		ldr	r2, .L23
+ 227 000a 23F40063 		bic	r3, r3, #2048
+ 228 000e 1360     		str	r3, [r2]
+ 229 0010 00BF     		nop
+ 230 0012 BD46     		mov	sp, r7
+ 231              		@ sp needed
+ 232 0014 5DF8047B 		ldr	r7, [sp], #4
+ 233 0018 7047     		bx	lr
+ 234              	.L24:
+ 235 001a 00BF     		.align	2
+ 236              	.L23:
+ 237 001c 00700040 		.word	1073770496
+ 239              		.section	.text.HAL_PWREx_EnableLowRegulatorLowVoltage,"ax",%progbits
+ 240              		.align	1
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 5
+
+
+ 241              		.global	HAL_PWREx_EnableLowRegulatorLowVoltage
+ 242              		.syntax unified
+ 243              		.thumb
+ 244              		.thumb_func
+ 246              	HAL_PWREx_EnableLowRegulatorLowVoltage:
+ 247              		@ args = 0, pretend = 0, frame = 0
+ 248              		@ frame_needed = 1, uses_anonymous_args = 0
+ 249              		@ link register save eliminated.
+ 250 0000 80B4     		push	{r7}
+ 251 0002 00AF     		add	r7, sp, #0
+ 252 0004 054B     		ldr	r3, .L26
+ 253 0006 1B68     		ldr	r3, [r3]
+ 254 0008 044A     		ldr	r2, .L26
+ 255 000a 43F48063 		orr	r3, r3, #1024
+ 256 000e 1360     		str	r3, [r2]
+ 257 0010 00BF     		nop
+ 258 0012 BD46     		mov	sp, r7
+ 259              		@ sp needed
+ 260 0014 5DF8047B 		ldr	r7, [sp], #4
+ 261 0018 7047     		bx	lr
+ 262              	.L27:
+ 263 001a 00BF     		.align	2
+ 264              	.L26:
+ 265 001c 00700040 		.word	1073770496
+ 267              		.section	.text.HAL_PWREx_DisableLowRegulatorLowVoltage,"ax",%progbits
+ 268              		.align	1
+ 269              		.global	HAL_PWREx_DisableLowRegulatorLowVoltage
+ 270              		.syntax unified
+ 271              		.thumb
+ 272              		.thumb_func
+ 274              	HAL_PWREx_DisableLowRegulatorLowVoltage:
+ 275              		@ args = 0, pretend = 0, frame = 0
+ 276              		@ frame_needed = 1, uses_anonymous_args = 0
+ 277              		@ link register save eliminated.
+ 278 0000 80B4     		push	{r7}
+ 279 0002 00AF     		add	r7, sp, #0
+ 280 0004 054B     		ldr	r3, .L29
+ 281 0006 1B68     		ldr	r3, [r3]
+ 282 0008 044A     		ldr	r2, .L29
+ 283 000a 23F48063 		bic	r3, r3, #1024
+ 284 000e 1360     		str	r3, [r2]
+ 285 0010 00BF     		nop
+ 286 0012 BD46     		mov	sp, r7
+ 287              		@ sp needed
+ 288 0014 5DF8047B 		ldr	r7, [sp], #4
+ 289 0018 7047     		bx	lr
+ 290              	.L30:
+ 291 001a 00BF     		.align	2
+ 292              	.L29:
+ 293 001c 00700040 		.word	1073770496
+ 295              		.section	.text.HAL_PWREx_EnableOverDrive,"ax",%progbits
+ 296              		.align	1
+ 297              		.global	HAL_PWREx_EnableOverDrive
+ 298              		.syntax unified
+ 299              		.thumb
+ 300              		.thumb_func
+ 302              	HAL_PWREx_EnableOverDrive:
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 6
+
+
+ 303              		@ args = 0, pretend = 0, frame = 8
+ 304              		@ frame_needed = 1, uses_anonymous_args = 0
+ 305 0000 80B5     		push	{r7, lr}
+ 306 0002 82B0     		sub	sp, sp, #8
+ 307 0004 00AF     		add	r7, sp, #0
+ 308 0006 0023     		movs	r3, #0
+ 309 0008 7B60     		str	r3, [r7, #4]
+ 310 000a 234B     		ldr	r3, .L37
+ 311 000c 1B6C     		ldr	r3, [r3, #64]
+ 312 000e 224A     		ldr	r2, .L37
+ 313 0010 43F08053 		orr	r3, r3, #268435456
+ 314 0014 1364     		str	r3, [r2, #64]
+ 315 0016 204B     		ldr	r3, .L37
+ 316 0018 1B6C     		ldr	r3, [r3, #64]
+ 317 001a 03F08053 		and	r3, r3, #268435456
+ 318 001e 3B60     		str	r3, [r7]
+ 319 0020 3B68     		ldr	r3, [r7]
+ 320 0022 1E4B     		ldr	r3, .L37+4
+ 321 0024 1B68     		ldr	r3, [r3]
+ 322 0026 1D4A     		ldr	r2, .L37+4
+ 323 0028 43F48033 		orr	r3, r3, #65536
+ 324 002c 1360     		str	r3, [r2]
+ 325 002e FFF7FEFF 		bl	HAL_GetTick
+ 326 0032 7860     		str	r0, [r7, #4]
+ 327 0034 09E0     		b	.L32
+ 328              	.L34:
+ 329 0036 FFF7FEFF 		bl	HAL_GetTick
+ 330 003a 0246     		mov	r2, r0
+ 331 003c 7B68     		ldr	r3, [r7, #4]
+ 332 003e D31A     		subs	r3, r2, r3
+ 333 0040 B3F57A7F 		cmp	r3, #1000
+ 334 0044 01D9     		bls	.L32
+ 335 0046 0323     		movs	r3, #3
+ 336 0048 22E0     		b	.L33
+ 337              	.L32:
+ 338 004a 144B     		ldr	r3, .L37+4
+ 339 004c 5B68     		ldr	r3, [r3, #4]
+ 340 004e 03F48033 		and	r3, r3, #65536
+ 341 0052 B3F5803F 		cmp	r3, #65536
+ 342 0056 EED1     		bne	.L34
+ 343 0058 104B     		ldr	r3, .L37+4
+ 344 005a 1B68     		ldr	r3, [r3]
+ 345 005c 0F4A     		ldr	r2, .L37+4
+ 346 005e 43F40033 		orr	r3, r3, #131072
+ 347 0062 1360     		str	r3, [r2]
+ 348 0064 FFF7FEFF 		bl	HAL_GetTick
+ 349 0068 7860     		str	r0, [r7, #4]
+ 350 006a 09E0     		b	.L35
+ 351              	.L36:
+ 352 006c FFF7FEFF 		bl	HAL_GetTick
+ 353 0070 0246     		mov	r2, r0
+ 354 0072 7B68     		ldr	r3, [r7, #4]
+ 355 0074 D31A     		subs	r3, r2, r3
+ 356 0076 B3F57A7F 		cmp	r3, #1000
+ 357 007a 01D9     		bls	.L35
+ 358 007c 0323     		movs	r3, #3
+ 359 007e 07E0     		b	.L33
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 7
+
+
+ 360              	.L35:
+ 361 0080 064B     		ldr	r3, .L37+4
+ 362 0082 5B68     		ldr	r3, [r3, #4]
+ 363 0084 03F40033 		and	r3, r3, #131072
+ 364 0088 B3F5003F 		cmp	r3, #131072
+ 365 008c EED1     		bne	.L36
+ 366 008e 0023     		movs	r3, #0
+ 367              	.L33:
+ 368 0090 1846     		mov	r0, r3
+ 369 0092 0837     		adds	r7, r7, #8
+ 370 0094 BD46     		mov	sp, r7
+ 371              		@ sp needed
+ 372 0096 80BD     		pop	{r7, pc}
+ 373              	.L38:
+ 374              		.align	2
+ 375              	.L37:
+ 376 0098 00380240 		.word	1073887232
+ 377 009c 00700040 		.word	1073770496
+ 379              		.section	.text.HAL_PWREx_DisableOverDrive,"ax",%progbits
+ 380              		.align	1
+ 381              		.global	HAL_PWREx_DisableOverDrive
+ 382              		.syntax unified
+ 383              		.thumb
+ 384              		.thumb_func
+ 386              	HAL_PWREx_DisableOverDrive:
+ 387              		@ args = 0, pretend = 0, frame = 8
+ 388              		@ frame_needed = 1, uses_anonymous_args = 0
+ 389 0000 80B5     		push	{r7, lr}
+ 390 0002 82B0     		sub	sp, sp, #8
+ 391 0004 00AF     		add	r7, sp, #0
+ 392 0006 0023     		movs	r3, #0
+ 393 0008 7B60     		str	r3, [r7, #4]
+ 394 000a 234B     		ldr	r3, .L45
+ 395 000c 1B6C     		ldr	r3, [r3, #64]
+ 396 000e 224A     		ldr	r2, .L45
+ 397 0010 43F08053 		orr	r3, r3, #268435456
+ 398 0014 1364     		str	r3, [r2, #64]
+ 399 0016 204B     		ldr	r3, .L45
+ 400 0018 1B6C     		ldr	r3, [r3, #64]
+ 401 001a 03F08053 		and	r3, r3, #268435456
+ 402 001e 3B60     		str	r3, [r7]
+ 403 0020 3B68     		ldr	r3, [r7]
+ 404 0022 1E4B     		ldr	r3, .L45+4
+ 405 0024 1B68     		ldr	r3, [r3]
+ 406 0026 1D4A     		ldr	r2, .L45+4
+ 407 0028 23F40033 		bic	r3, r3, #131072
+ 408 002c 1360     		str	r3, [r2]
+ 409 002e FFF7FEFF 		bl	HAL_GetTick
+ 410 0032 7860     		str	r0, [r7, #4]
+ 411 0034 09E0     		b	.L40
+ 412              	.L42:
+ 413 0036 FFF7FEFF 		bl	HAL_GetTick
+ 414 003a 0246     		mov	r2, r0
+ 415 003c 7B68     		ldr	r3, [r7, #4]
+ 416 003e D31A     		subs	r3, r2, r3
+ 417 0040 B3F57A7F 		cmp	r3, #1000
+ 418 0044 01D9     		bls	.L40
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 8
+
+
+ 419 0046 0323     		movs	r3, #3
+ 420 0048 22E0     		b	.L41
+ 421              	.L40:
+ 422 004a 144B     		ldr	r3, .L45+4
+ 423 004c 5B68     		ldr	r3, [r3, #4]
+ 424 004e 03F40033 		and	r3, r3, #131072
+ 425 0052 B3F5003F 		cmp	r3, #131072
+ 426 0056 EED0     		beq	.L42
+ 427 0058 104B     		ldr	r3, .L45+4
+ 428 005a 1B68     		ldr	r3, [r3]
+ 429 005c 0F4A     		ldr	r2, .L45+4
+ 430 005e 23F48033 		bic	r3, r3, #65536
+ 431 0062 1360     		str	r3, [r2]
+ 432 0064 FFF7FEFF 		bl	HAL_GetTick
+ 433 0068 7860     		str	r0, [r7, #4]
+ 434 006a 09E0     		b	.L43
+ 435              	.L44:
+ 436 006c FFF7FEFF 		bl	HAL_GetTick
+ 437 0070 0246     		mov	r2, r0
+ 438 0072 7B68     		ldr	r3, [r7, #4]
+ 439 0074 D31A     		subs	r3, r2, r3
+ 440 0076 B3F57A7F 		cmp	r3, #1000
+ 441 007a 01D9     		bls	.L43
+ 442 007c 0323     		movs	r3, #3
+ 443 007e 07E0     		b	.L41
+ 444              	.L43:
+ 445 0080 064B     		ldr	r3, .L45+4
+ 446 0082 5B68     		ldr	r3, [r3, #4]
+ 447 0084 03F48033 		and	r3, r3, #65536
+ 448 0088 B3F5803F 		cmp	r3, #65536
+ 449 008c EED0     		beq	.L44
+ 450 008e 0023     		movs	r3, #0
+ 451              	.L41:
+ 452 0090 1846     		mov	r0, r3
+ 453 0092 0837     		adds	r7, r7, #8
+ 454 0094 BD46     		mov	sp, r7
+ 455              		@ sp needed
+ 456 0096 80BD     		pop	{r7, pc}
+ 457              	.L46:
+ 458              		.align	2
+ 459              	.L45:
+ 460 0098 00380240 		.word	1073887232
+ 461 009c 00700040 		.word	1073770496
+ 463              		.section	.text.HAL_PWREx_EnterUnderDriveSTOPMode,"ax",%progbits
+ 464              		.align	1
+ 465              		.global	HAL_PWREx_EnterUnderDriveSTOPMode
+ 466              		.syntax unified
+ 467              		.thumb
+ 468              		.thumb_func
+ 470              	HAL_PWREx_EnterUnderDriveSTOPMode:
+ 471              		@ args = 0, pretend = 0, frame = 24
+ 472              		@ frame_needed = 1, uses_anonymous_args = 0
+ 473 0000 80B5     		push	{r7, lr}
+ 474 0002 86B0     		sub	sp, sp, #24
+ 475 0004 00AF     		add	r7, sp, #0
+ 476 0006 7860     		str	r0, [r7, #4]
+ 477 0008 0B46     		mov	r3, r1
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 9
+
+
+ 478 000a FB70     		strb	r3, [r7, #3]
+ 479 000c 0023     		movs	r3, #0
+ 480 000e 7B61     		str	r3, [r7, #20]
+ 481 0010 0023     		movs	r3, #0
+ 482 0012 3B61     		str	r3, [r7, #16]
+ 483 0014 284B     		ldr	r3, .L53
+ 484 0016 1B6C     		ldr	r3, [r3, #64]
+ 485 0018 274A     		ldr	r2, .L53
+ 486 001a 43F08053 		orr	r3, r3, #268435456
+ 487 001e 1364     		str	r3, [r2, #64]
+ 488 0020 254B     		ldr	r3, .L53
+ 489 0022 1B6C     		ldr	r3, [r3, #64]
+ 490 0024 03F08053 		and	r3, r3, #268435456
+ 491 0028 FB60     		str	r3, [r7, #12]
+ 492 002a FB68     		ldr	r3, [r7, #12]
+ 493 002c 234B     		ldr	r3, .L53+4
+ 494 002e 5A68     		ldr	r2, [r3, #4]
+ 495 0030 2249     		ldr	r1, .L53+4
+ 496 0032 234B     		ldr	r3, .L53+8
+ 497 0034 1343     		orrs	r3, r3, r2
+ 498 0036 4B60     		str	r3, [r1, #4]
+ 499 0038 204B     		ldr	r3, .L53+4
+ 500 003a 1B68     		ldr	r3, [r3]
+ 501 003c 1F4A     		ldr	r2, .L53+4
+ 502 003e 43F44023 		orr	r3, r3, #786432
+ 503 0042 1360     		str	r3, [r2]
+ 504 0044 FFF7FEFF 		bl	HAL_GetTick
+ 505 0048 3861     		str	r0, [r7, #16]
+ 506 004a 09E0     		b	.L48
+ 507              	.L50:
+ 508 004c FFF7FEFF 		bl	HAL_GetTick
+ 509 0050 0246     		mov	r2, r0
+ 510 0052 3B69     		ldr	r3, [r7, #16]
+ 511 0054 D31A     		subs	r3, r2, r3
+ 512 0056 B3F57A7F 		cmp	r3, #1000
+ 513 005a 01D9     		bls	.L48
+ 514 005c 0323     		movs	r3, #3
+ 515 005e 27E0     		b	.L49
+ 516              	.L48:
+ 517 0060 164B     		ldr	r3, .L53+4
+ 518 0062 5B68     		ldr	r3, [r3, #4]
+ 519 0064 03F44023 		and	r3, r3, #786432
+ 520 0068 B3F5402F 		cmp	r3, #786432
+ 521 006c EED0     		beq	.L50
+ 522 006e 134B     		ldr	r3, .L53+4
+ 523 0070 1B68     		ldr	r3, [r3]
+ 524 0072 7B61     		str	r3, [r7, #20]
+ 525 0074 7A69     		ldr	r2, [r7, #20]
+ 526 0076 134B     		ldr	r3, .L53+12
+ 527 0078 1340     		ands	r3, r3, r2
+ 528 007a 7B61     		str	r3, [r7, #20]
+ 529 007c 7A69     		ldr	r2, [r7, #20]
+ 530 007e 7B68     		ldr	r3, [r7, #4]
+ 531 0080 1343     		orrs	r3, r3, r2
+ 532 0082 7B61     		str	r3, [r7, #20]
+ 533 0084 0D4A     		ldr	r2, .L53+4
+ 534 0086 7B69     		ldr	r3, [r7, #20]
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 10
+
+
+ 535 0088 1360     		str	r3, [r2]
+ 536 008a 0F4B     		ldr	r3, .L53+16
+ 537 008c 1B69     		ldr	r3, [r3, #16]
+ 538 008e 0E4A     		ldr	r2, .L53+16
+ 539 0090 43F00403 		orr	r3, r3, #4
+ 540 0094 1361     		str	r3, [r2, #16]
+ 541 0096 FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 542 0098 012B     		cmp	r3, #1
+ 543 009a 01D1     		bne	.L51
+ 544              		.syntax unified
+ 545              	@ 426 "Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pwr_ex.c" 1
+ 546 009c 30BF     		wfi
+ 547              	@ 0 "" 2
+ 548              		.thumb
+ 549              		.syntax unified
+ 550 009e 00E0     		b	.L52
+ 551              	.L51:
+ 552              		.syntax unified
+ 553              	@ 431 "Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pwr_ex.c" 1
+ 554 00a0 20BF     		wfe
+ 555              	@ 0 "" 2
+ 556              		.thumb
+ 557              		.syntax unified
+ 558              	.L52:
+ 559 00a2 094B     		ldr	r3, .L53+16
+ 560 00a4 1B69     		ldr	r3, [r3, #16]
+ 561 00a6 084A     		ldr	r2, .L53+16
+ 562 00a8 23F00403 		bic	r3, r3, #4
+ 563 00ac 1361     		str	r3, [r2, #16]
+ 564 00ae 0023     		movs	r3, #0
+ 565              	.L49:
+ 566 00b0 1846     		mov	r0, r3
+ 567 00b2 1837     		adds	r7, r7, #24
+ 568 00b4 BD46     		mov	sp, r7
+ 569              		@ sp needed
+ 570 00b6 80BD     		pop	{r7, pc}
+ 571              	.L54:
+ 572              		.align	2
+ 573              	.L53:
+ 574 00b8 00380240 		.word	1073887232
+ 575 00bc 00700040 		.word	1073770496
+ 576 00c0 00010C00 		.word	786688
+ 577 00c4 FCF3FFFF 		.word	-3076
+ 578 00c8 00ED00E0 		.word	-536810240
+ 580              		.section	.text.HAL_PWREx_GetVoltageRange,"ax",%progbits
+ 581              		.align	1
+ 582              		.global	HAL_PWREx_GetVoltageRange
+ 583              		.syntax unified
+ 584              		.thumb
+ 585              		.thumb_func
+ 587              	HAL_PWREx_GetVoltageRange:
+ 588              		@ args = 0, pretend = 0, frame = 0
+ 589              		@ frame_needed = 1, uses_anonymous_args = 0
+ 590              		@ link register save eliminated.
+ 591 0000 80B4     		push	{r7}
+ 592 0002 00AF     		add	r7, sp, #0
+ 593 0004 044B     		ldr	r3, .L57
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 11
+
+
+ 594 0006 1B68     		ldr	r3, [r3]
+ 595 0008 03F44043 		and	r3, r3, #49152
+ 596 000c 1846     		mov	r0, r3
+ 597 000e BD46     		mov	sp, r7
+ 598              		@ sp needed
+ 599 0010 5DF8047B 		ldr	r7, [sp], #4
+ 600 0014 7047     		bx	lr
+ 601              	.L58:
+ 602 0016 00BF     		.align	2
+ 603              	.L57:
+ 604 0018 00700040 		.word	1073770496
+ 606              		.section	.text.HAL_PWREx_ControlVoltageScaling,"ax",%progbits
+ 607              		.align	1
+ 608              		.global	HAL_PWREx_ControlVoltageScaling
+ 609              		.syntax unified
+ 610              		.thumb
+ 611              		.thumb_func
+ 613              	HAL_PWREx_ControlVoltageScaling:
+ 614              		@ args = 0, pretend = 0, frame = 24
+ 615              		@ frame_needed = 1, uses_anonymous_args = 0
+ 616 0000 80B5     		push	{r7, lr}
+ 617 0002 86B0     		sub	sp, sp, #24
+ 618 0004 00AF     		add	r7, sp, #0
+ 619 0006 7860     		str	r0, [r7, #4]
+ 620 0008 0023     		movs	r3, #0
+ 621 000a 7B61     		str	r3, [r7, #20]
+ 622 000c 374B     		ldr	r3, .L70
+ 623 000e 1B6C     		ldr	r3, [r3, #64]
+ 624 0010 364A     		ldr	r2, .L70
+ 625 0012 43F08053 		orr	r3, r3, #268435456
+ 626 0016 1364     		str	r3, [r2, #64]
+ 627 0018 344B     		ldr	r3, .L70
+ 628 001a 1B6C     		ldr	r3, [r3, #64]
+ 629 001c 03F08053 		and	r3, r3, #268435456
+ 630 0020 3B61     		str	r3, [r7, #16]
+ 631 0022 3B69     		ldr	r3, [r7, #16]
+ 632 0024 314B     		ldr	r3, .L70
+ 633 0026 9B68     		ldr	r3, [r3, #8]
+ 634 0028 03F00C03 		and	r3, r3, #12
+ 635 002c 082B     		cmp	r3, #8
+ 636 002e 55D0     		beq	.L60
+ 637 0030 2E4B     		ldr	r3, .L70
+ 638 0032 1B68     		ldr	r3, [r3]
+ 639 0034 2D4A     		ldr	r2, .L70
+ 640 0036 23F08073 		bic	r3, r3, #16777216
+ 641 003a 1360     		str	r3, [r2]
+ 642 003c FFF7FEFF 		bl	HAL_GetTick
+ 643 0040 7861     		str	r0, [r7, #20]
+ 644 0042 08E0     		b	.L61
+ 645              	.L63:
+ 646 0044 FFF7FEFF 		bl	HAL_GetTick
+ 647 0048 0246     		mov	r2, r0
+ 648 004a 7B69     		ldr	r3, [r7, #20]
+ 649 004c D31A     		subs	r3, r2, r3
+ 650 004e 022B     		cmp	r3, #2
+ 651 0050 01D9     		bls	.L61
+ 652 0052 0323     		movs	r3, #3
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 12
+
+
+ 653 0054 45E0     		b	.L62
+ 654              	.L61:
+ 655 0056 254B     		ldr	r3, .L70
+ 656 0058 1B68     		ldr	r3, [r3]
+ 657 005a 03F00073 		and	r3, r3, #33554432
+ 658 005e 002B     		cmp	r3, #0
+ 659 0060 F0D1     		bne	.L63
+ 660 0062 234B     		ldr	r3, .L70+4
+ 661 0064 1B68     		ldr	r3, [r3]
+ 662 0066 23F44042 		bic	r2, r3, #49152
+ 663 006a 2149     		ldr	r1, .L70+4
+ 664 006c 7B68     		ldr	r3, [r7, #4]
+ 665 006e 1343     		orrs	r3, r3, r2
+ 666 0070 0B60     		str	r3, [r1]
+ 667 0072 1F4B     		ldr	r3, .L70+4
+ 668 0074 1B68     		ldr	r3, [r3]
+ 669 0076 03F44043 		and	r3, r3, #49152
+ 670 007a FB60     		str	r3, [r7, #12]
+ 671 007c FB68     		ldr	r3, [r7, #12]
+ 672 007e 1B4B     		ldr	r3, .L70
+ 673 0080 1B68     		ldr	r3, [r3]
+ 674 0082 1A4A     		ldr	r2, .L70
+ 675 0084 43F08073 		orr	r3, r3, #16777216
+ 676 0088 1360     		str	r3, [r2]
+ 677 008a FFF7FEFF 		bl	HAL_GetTick
+ 678 008e 7861     		str	r0, [r7, #20]
+ 679 0090 08E0     		b	.L64
+ 680              	.L65:
+ 681 0092 FFF7FEFF 		bl	HAL_GetTick
+ 682 0096 0246     		mov	r2, r0
+ 683 0098 7B69     		ldr	r3, [r7, #20]
+ 684 009a D31A     		subs	r3, r2, r3
+ 685 009c 022B     		cmp	r3, #2
+ 686 009e 01D9     		bls	.L64
+ 687 00a0 0323     		movs	r3, #3
+ 688 00a2 1EE0     		b	.L62
+ 689              	.L64:
+ 690 00a4 114B     		ldr	r3, .L70
+ 691 00a6 1B68     		ldr	r3, [r3]
+ 692 00a8 03F00073 		and	r3, r3, #33554432
+ 693 00ac 002B     		cmp	r3, #0
+ 694 00ae F0D0     		beq	.L65
+ 695 00b0 FFF7FEFF 		bl	HAL_GetTick
+ 696 00b4 7861     		str	r0, [r7, #20]
+ 697 00b6 09E0     		b	.L66
+ 698              	.L67:
+ 699 00b8 FFF7FEFF 		bl	HAL_GetTick
+ 700 00bc 0246     		mov	r2, r0
+ 701 00be 7B69     		ldr	r3, [r7, #20]
+ 702 00c0 D31A     		subs	r3, r2, r3
+ 703 00c2 B3F57A7F 		cmp	r3, #1000
+ 704 00c6 01D9     		bls	.L66
+ 705 00c8 0323     		movs	r3, #3
+ 706 00ca 0AE0     		b	.L62
+ 707              	.L66:
+ 708 00cc 084B     		ldr	r3, .L70+4
+ 709 00ce 5B68     		ldr	r3, [r3, #4]
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 13
+
+
+ 710 00d0 03F48043 		and	r3, r3, #16384
+ 711 00d4 B3F5804F 		cmp	r3, #16384
+ 712 00d8 EED1     		bne	.L67
+ 713 00da 01E0     		b	.L69
+ 714              	.L60:
+ 715 00dc 0123     		movs	r3, #1
+ 716 00de 00E0     		b	.L62
+ 717              	.L69:
+ 718 00e0 0023     		movs	r3, #0
+ 719              	.L62:
+ 720 00e2 1846     		mov	r0, r3
+ 721 00e4 1837     		adds	r7, r7, #24
+ 722 00e6 BD46     		mov	sp, r7
+ 723              		@ sp needed
+ 724 00e8 80BD     		pop	{r7, pc}
+ 725              	.L71:
+ 726 00ea 00BF     		.align	2
+ 727              	.L70:
+ 728 00ec 00380240 		.word	1073887232
+ 729 00f0 00700040 		.word	1073770496
+ 731              		.ident	"GCC: (GNU) 13.3.0"
+ARM GAS  C:\msys64\tmp\cccHrllb.s 			page 14
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f7xx_hal_pwr_ex.c
+C:\msys64\tmp\cccHrllb.s:18     .text.HAL_PWREx_EnableBkUpReg:00000000 $t
+C:\msys64\tmp\cccHrllb.s:24     .text.HAL_PWREx_EnableBkUpReg:00000000 HAL_PWREx_EnableBkUpReg
+C:\msys64\tmp\cccHrllb.s:70     .text.HAL_PWREx_EnableBkUpReg:00000054 $d
+C:\msys64\tmp\cccHrllb.s:73     .text.HAL_PWREx_DisableBkUpReg:00000000 $t
+C:\msys64\tmp\cccHrllb.s:79     .text.HAL_PWREx_DisableBkUpReg:00000000 HAL_PWREx_DisableBkUpReg
+C:\msys64\tmp\cccHrllb.s:125    .text.HAL_PWREx_DisableBkUpReg:00000054 $d
+C:\msys64\tmp\cccHrllb.s:128    .text.HAL_PWREx_EnableFlashPowerDown:00000000 $t
+C:\msys64\tmp\cccHrllb.s:134    .text.HAL_PWREx_EnableFlashPowerDown:00000000 HAL_PWREx_EnableFlashPowerDown
+C:\msys64\tmp\cccHrllb.s:153    .text.HAL_PWREx_EnableFlashPowerDown:0000001c $d
+C:\msys64\tmp\cccHrllb.s:156    .text.HAL_PWREx_DisableFlashPowerDown:00000000 $t
+C:\msys64\tmp\cccHrllb.s:162    .text.HAL_PWREx_DisableFlashPowerDown:00000000 HAL_PWREx_DisableFlashPowerDown
+C:\msys64\tmp\cccHrllb.s:181    .text.HAL_PWREx_DisableFlashPowerDown:0000001c $d
+C:\msys64\tmp\cccHrllb.s:184    .text.HAL_PWREx_EnableMainRegulatorLowVoltage:00000000 $t
+C:\msys64\tmp\cccHrllb.s:190    .text.HAL_PWREx_EnableMainRegulatorLowVoltage:00000000 HAL_PWREx_EnableMainRegulatorLowVoltage
+C:\msys64\tmp\cccHrllb.s:209    .text.HAL_PWREx_EnableMainRegulatorLowVoltage:0000001c $d
+C:\msys64\tmp\cccHrllb.s:212    .text.HAL_PWREx_DisableMainRegulatorLowVoltage:00000000 $t
+C:\msys64\tmp\cccHrllb.s:218    .text.HAL_PWREx_DisableMainRegulatorLowVoltage:00000000 HAL_PWREx_DisableMainRegulatorLowVoltage
+C:\msys64\tmp\cccHrllb.s:237    .text.HAL_PWREx_DisableMainRegulatorLowVoltage:0000001c $d
+C:\msys64\tmp\cccHrllb.s:240    .text.HAL_PWREx_EnableLowRegulatorLowVoltage:00000000 $t
+C:\msys64\tmp\cccHrllb.s:246    .text.HAL_PWREx_EnableLowRegulatorLowVoltage:00000000 HAL_PWREx_EnableLowRegulatorLowVoltage
+C:\msys64\tmp\cccHrllb.s:265    .text.HAL_PWREx_EnableLowRegulatorLowVoltage:0000001c $d
+C:\msys64\tmp\cccHrllb.s:268    .text.HAL_PWREx_DisableLowRegulatorLowVoltage:00000000 $t
+C:\msys64\tmp\cccHrllb.s:274    .text.HAL_PWREx_DisableLowRegulatorLowVoltage:00000000 HAL_PWREx_DisableLowRegulatorLowVoltage
+C:\msys64\tmp\cccHrllb.s:293    .text.HAL_PWREx_DisableLowRegulatorLowVoltage:0000001c $d
+C:\msys64\tmp\cccHrllb.s:296    .text.HAL_PWREx_EnableOverDrive:00000000 $t
+C:\msys64\tmp\cccHrllb.s:302    .text.HAL_PWREx_EnableOverDrive:00000000 HAL_PWREx_EnableOverDrive
+C:\msys64\tmp\cccHrllb.s:376    .text.HAL_PWREx_EnableOverDrive:00000098 $d
+C:\msys64\tmp\cccHrllb.s:380    .text.HAL_PWREx_DisableOverDrive:00000000 $t
+C:\msys64\tmp\cccHrllb.s:386    .text.HAL_PWREx_DisableOverDrive:00000000 HAL_PWREx_DisableOverDrive
+C:\msys64\tmp\cccHrllb.s:460    .text.HAL_PWREx_DisableOverDrive:00000098 $d
+C:\msys64\tmp\cccHrllb.s:464    .text.HAL_PWREx_EnterUnderDriveSTOPMode:00000000 $t
+C:\msys64\tmp\cccHrllb.s:470    .text.HAL_PWREx_EnterUnderDriveSTOPMode:00000000 HAL_PWREx_EnterUnderDriveSTOPMode
+C:\msys64\tmp\cccHrllb.s:574    .text.HAL_PWREx_EnterUnderDriveSTOPMode:000000b8 $d
+C:\msys64\tmp\cccHrllb.s:581    .text.HAL_PWREx_GetVoltageRange:00000000 $t
+C:\msys64\tmp\cccHrllb.s:587    .text.HAL_PWREx_GetVoltageRange:00000000 HAL_PWREx_GetVoltageRange
+C:\msys64\tmp\cccHrllb.s:604    .text.HAL_PWREx_GetVoltageRange:00000018 $d
+C:\msys64\tmp\cccHrllb.s:607    .text.HAL_PWREx_ControlVoltageScaling:00000000 $t
+C:\msys64\tmp\cccHrllb.s:613    .text.HAL_PWREx_ControlVoltageScaling:00000000 HAL_PWREx_ControlVoltageScaling
+C:\msys64\tmp\cccHrllb.s:728    .text.HAL_PWREx_ControlVoltageScaling:000000ec $d
+
+UNDEFINED SYMBOLS
+HAL_GetTick
