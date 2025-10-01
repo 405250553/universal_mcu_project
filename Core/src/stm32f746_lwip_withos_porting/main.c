@@ -18,7 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "freertos_includes.h"
 #include "lwip.h"
+#include <string.h>
+#include <unistd.h>
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -58,7 +62,37 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void BlinkTask(void *argument) 
+{ 
+  for(;;) 
+  { 
+    HAL_GPIO_TogglePin(GPIOI, GPIO_PIN_1); 
+    vTaskDelay(pdMS_TO_TICKS(500)); 
+  } 
+}
 
+void StartLWIPInitTask(void *argument) 
+{ 
+  /* init code for LWIP */
+  MX_LWIP_Init();
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    vTaskDelay(pdMS_TO_TICKS(10)); 
+  }
+}
+
+void UART_SendString(const char* str){
+    if(!str) return;
+    HAL_UART_Transmit(&huart1,(uint8_t*)str,strlen(str),HAL_MAX_DELAY);
+}
+
+int _write(int file, char *ptr, int len)
+{
+    HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+    return len;
+}
 /* USER CODE END 0 */
 
 /**
@@ -94,8 +128,18 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-  MX_LWIP_Init();
+  //UART_SendString("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt!\r\n");
+  //MX_LWIP_Init();
+
+  // 建立 LWIP 初始化 task
+  xTaskCreate(StartLWIPInitTask, "LWIP_Init", 1024, NULL, tskIDLE_PRIORITY+1, NULL);
+
   /* USER CODE BEGIN 2 */
+  // 建立 task
+  xTaskCreate(BlinkTask, "Blink", 128, NULL, 1, NULL);
+  // 啟動 scheduler
+  vTaskStartScheduler();
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -104,7 +148,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
         //HAL_GPIO_TogglePin(GPIOI,GPIO_PIN_1);
-        MX_LWIP_Process();
+        //MX_LWIP_Process();
         //HAL_Delay(500);
     /* USER CODE BEGIN 3 */
   }
@@ -350,6 +394,28 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM6)
+  {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

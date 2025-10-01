@@ -40,17 +40,57 @@
 /* STM32CubeMX Specific Parameters (not defined in opt.h) ---------------------*/
 /* Parameters set in STM32CubeMX LwIP Configuration GUI -*/
 /*----- WITH_RTOS disabled (Since FREERTOS is not set) -----*/
-#define WITH_RTOS 0
+//#define WITH_RTOS 0
 /*----- CHECKSUM_BY_HARDWARE enabled -----*/
-#define CHECKSUM_BY_HARDWARE 1
+//#define CHECKSUM_BY_HARDWARE 1
 /*-----------------------------------------------------------------------------*/
+
+#ifdef WITH_FreeRTOS
+#include "freertos_includes.h"
+#endif
+
+/* =======================
+   lwIP opt.h minimal config
+   ======================= */
+
+/* ✅ Memory options */
+//#define MEM_SIZE                (4*1024)   /* 4 KB heap 就夠 */
+//#define MEMP_NUM_PBUF           8
+//#define MEMP_NUM_SYS_TIMEOUT    2
+
+/* ✅ Pbuf options */
+//#define PBUF_POOL_SIZE          8
+//#define PBUF_POOL_BUFSIZE       512
+
+/* ✅ Enable IPv4 */
+#define LWIP_IPV4               1
+#define LWIP_IPV6               0
+
+/* ✅ Enable ARP */
+#define LWIP_ARP                1
+
+/* ✅ Enable ICMP (for ping) */
+#define LWIP_ICMP               1
+
+/* 🚫 Disable everything else */
+#define LWIP_UDP                0
+#define LWIP_TCP                0
+#define LWIP_RAW                0
+#define LWIP_DHCP               0
+#define LWIP_DNS                0
+
+#define LWIP_FREERTOS_SYS_NOW_FROM_FREERTOS 0
+/*----- Value in opt.h for TCPIP_MBOX_SIZE: 0 -----*/
+#define TCPIP_MBOX_SIZE 10
+
+#define LWIP_TCPIP_CORE_LOCKING 0
 
 /* LwIP Stack Parameters (modified compared to initialization value in opt.h) -*/
 /* Parameters set in STM32CubeMX LwIP Configuration GUI -*/
 /*----- Value in opt.h for NO_SYS: 0 -----*/
-#define NO_SYS 1
+#define NO_SYS 0
 /*----- Value in opt.h for SYS_LIGHTWEIGHT_PROT: 1 -----*/
-#define SYS_LIGHTWEIGHT_PROT 0
+#define SYS_LIGHTWEIGHT_PROT 1
 /*----- Value in opt.h for MEM_ALIGNMENT: 1 -----*/
 #define MEM_ALIGNMENT 4
 /*----- Default Value for F7 devices: 0x20048000 -----*/

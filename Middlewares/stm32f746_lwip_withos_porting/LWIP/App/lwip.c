@@ -59,6 +59,7 @@ uint8_t GATEWAY_ADDRESS[4];
   */
 void MX_LWIP_Init(void)
 {
+
   /* IP addresses initialization */
   IP_ADDRESS[0] = 192;
   IP_ADDRESS[1] = 168;
@@ -76,8 +77,13 @@ void MX_LWIP_Init(void)
 /* USER CODE BEGIN IP_ADDRESSES */
 /* USER CODE END IP_ADDRESSES */
 
+#if !NO_SYS
+  /* Initialize the LwIP stack with RTOS */
+  tcpip_init( NULL, NULL );
+#else
   /* Initialize the LwIP stack without RTOS */
   lwip_init();
+#endif
 
   /* IP addresses initialization without DHCP (IPv4) */
   IP4_ADDR(&ipaddr, IP_ADDRESS[0], IP_ADDRESS[1], IP_ADDRESS[2], IP_ADDRESS[3]);
@@ -97,6 +103,13 @@ void MX_LWIP_Init(void)
   netif_set_link_callback(&gnetif, ethernet_link_status_updated);
 
 /* USER CODE BEGIN 3 */
+
+  xTaskCreate(ethernet_link_thread,
+              "EthLink",
+              configMINIMAL_STACK_SIZE*2,
+              &gnetif,
+              2,
+              NULL);
 
 /* USER CODE END 3 */
 }

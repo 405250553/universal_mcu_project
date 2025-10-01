@@ -36,9 +36,9 @@
 #include "ethernetif.h"
 
 /* Includes for RTOS ---------------------------------------------------------*/
-#if WITH_RTOS
+#if !NO_SYS
 #include "lwip/tcpip.h"
-#endif /* WITH_RTOS */
+#endif /* !NO_SYS */
 
 /* USER CODE BEGIN 0 */
 
@@ -50,7 +50,7 @@ extern ETH_HandleTypeDef heth;
 /* LWIP init function */
 void MX_LWIP_Init(void);
 
-#if !WITH_RTOS
+#if NO_SYS
 /* USER CODE BEGIN 1 */
 /* Function defined in lwip.c to:
  *   - Read a received packet from the Ethernet buffers
@@ -60,7 +60,7 @@ void MX_LWIP_Init(void);
 void MX_LWIP_Process(void);
 
 /* USER CODE END 1 */
-#endif /* WITH_RTOS */
+#endif /* NO_SYS */
 
 #ifdef __cplusplus
 }
