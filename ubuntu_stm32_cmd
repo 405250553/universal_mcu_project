@@ -1,1 +1,5 @@
+# 加compiler路徑到環境變數
+export PATH=/bin/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi/bin/:$PATH
+
+# 燒錄cmd
 st-flash write firmware.bin 0x8000000
