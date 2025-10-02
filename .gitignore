@@ -1,0 +1,19 @@
+# ----------------------------
+# Build output / binary files
+# ----------------------------
+build/
+*.elf
+*.hex
+*.bin
+*.map
+*.axf
+
+# ----------------------------
+# STM32CubeMX / IDE temporary files
+# ----------------------------
+*.ioc
+*.dep
+*.o
+*.d
+*.tmp
+*.svd
