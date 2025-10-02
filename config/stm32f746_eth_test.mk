@@ -49,7 +49,8 @@ C_INCLUDES = \
 	-IDrivers/STM32F7xx_HAL_Driver/Inc \
 	-IDrivers/STM32F7xx_HAL_Driver/Inc/Legacy \
 	-Icmsis/core \
-	-Icmsis/device/stm32f7
+	-Icmsis/device/stm32f7 \
+	-IDrivers/BSP/Components/lan8742
 
 # C defines
 C_DEFS =  \
@@ -66,7 +67,8 @@ C_SOURCES  += \
 	$(CORE_PATH)/src/$(PROJECT_NAME)/stm32f7xx_it.c \
 	$(CORE_PATH)/src/$(PROJECT_NAME)/stm32f7xx_hal_msp.c \
 	$(CORE_PATH)/src/$(PROJECT_NAME)/sysmem.c \
-	$(CORE_PATH)/src/$(PROJECT_NAME)/syscalls.c
+	$(CORE_PATH)/src/$(PROJECT_NAME)/syscalls.c \
+	Drivers/BSP/Components/lan8742/lan8742.c
 
 # add stm32 hal driver
 C_SOURCES += \
