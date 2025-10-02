@@ -1,0 +1,34 @@
+name: Daily Build
+
+on:
+  schedule:
+    # 每天凌晨 3 點 (UTC)
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 取得專案
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ 安裝工具鏈
+      - name: Install MCU build tools
+        run: |
+          sudo apt update
+          sudo apt install -y make gcc-arm-none-eabi
+
+      # 3️⃣ 編譯專案
+      - name: Build project
+        run: |
+          make TARGET=stm32f4_blinky
+          make clean
+          make TARGET=stm32f746_eth_test
+          make clean
+          make TARGET=stm32f746_lwip_porting
+          make clean
+          make TARGET=stm32f746_lwip_withos_porting
+          make clean
