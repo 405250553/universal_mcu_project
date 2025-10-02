@@ -46,9 +46,10 @@
 #define ETH_DMA_TRANSMIT_TIMEOUT               ( 20U )
 #define ETH_TX_BUFFER_MAX             ((ETH_TX_DESC_CNT) * 2U)
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
+/* Stack size of the interface thread */
+#define INTERFACE_THREAD_STACK_SIZE ( 350 )
+#define ETHIF_TX_TIMEOUT (2000U)
+#define TIME_WAITING_FOR_INPUT ( portMAX_DELAY )
 
 /* Private variables ---------------------------------------------------------*/
 /*
@@ -112,9 +113,8 @@ ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT] __attribute__((section(".TxDecr
 
 #endif
 
-/* USER CODE BEGIN 2 */
-
-/* USER CODE END 2 */
+SemaphoreHandle_t RxPktSemaphore = NULL;   /* Semaphore to signal incoming packets */
+SemaphoreHandle_t TxPktSemaphore = NULL;   /* Semaphore to signal transmit packet complete */
 
 /* Global Ethernet handle */
 ETH_HandleTypeDef heth;
@@ -134,16 +134,29 @@ lan8742_IOCtx_t  LAN8742_IOCtx = {ETH_PHY_IO_Init,
                                   ETH_PHY_IO_ReadReg,
                                   ETH_PHY_IO_GetTick};
 
-/* USER CODE BEGIN 3 */
-
-/* USER CODE END 3 */
-
 /* Private functions ---------------------------------------------------------*/
 void pbuf_free_custom(struct pbuf *p);
+static void ethernetif_input_task(void *arg);
 
-/* USER CODE BEGIN 4 */
+/**
+  * @brief  Ethernet Rx Transfer completed callback
+  * @param  handlerEth: ETH handler
+  * @retval None
+  */
+void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *handlerEth)
+{
+  xSemaphoreGive(RxPktSemaphore);
+}
 
-/* USER CODE END 4 */
+/**
+  * @brief  Ethernet Tx Transfer completed callback
+  * @param  handlerEth: ETH handler
+  * @retval None
+  */
+void HAL_ETH_TxCpltCallback(ETH_HandleTypeDef *handlerEth)
+{
+  xSemaphoreGive(TxPktSemaphore);
+}
 
 /*******************************************************************************
                        LL Driver Interface ( LwIP stack --> ETH)
@@ -158,6 +171,10 @@ void pbuf_free_custom(struct pbuf *p);
 static void low_level_init(struct netif *netif)
 {
   HAL_StatusTypeDef hal_eth_init_status = HAL_OK;
+  uint32_t duplex, speed = 0;
+  int32_t PHYLinkState = 0;
+  ETH_MACConfigTypeDef MACConf = {0};
+
   /* Start ETH HAL Init */
 
    uint8_t MACAddr[6] ;
@@ -214,9 +231,22 @@ static void low_level_init(struct netif *netif)
     netif->flags |= NETIF_FLAG_BROADCAST;
   #endif /* LWIP_ARP */
 
-/* USER CODE BEGIN PHY_PRE_CONFIG */
+  //sem can use mean rx packet receive, so it doesn`t need give to init val
+  RxPktSemaphore = xSemaphoreCreateBinary();
 
-/* USER CODE END PHY_PRE_CONFIG */
+  //sem can use mean tx packet send, so it doesn`t need give to init val
+  TxPktSemaphore = xSemaphoreCreateBinary();
+
+  // create rx task
+  xTaskCreate(
+      ethernetif_input_task,       // 任務函式 (有重包一層)
+      "EthIf",                     // 任務名稱 (字串)
+      INTERFACE_THREAD_STACK_SIZE, // stack size (以字為單位，通常 FreeRTOS 以「StackType_t」計算)
+      netif,                       // 任務參數
+      PRIORITY_Normal,             // 優先權 (CMSIS osPriorityRealtime 對應最高優先)
+      NULL                         // Task Handle 可選，如果不需要就 NULL
+  );
+
   /* Set PHY IO functions */
   LAN8742_RegisterBusIO(&LAN8742, &LAN8742_IOCtx);
 
@@ -230,8 +260,51 @@ static void low_level_init(struct netif *netif)
 
   if (hal_eth_init_status == HAL_OK)
   {
-  /* Get link state */
-  ethernet_link_check_state(netif);
+    PHYLinkState = LAN8742_GetLinkState(&LAN8742);
+
+    /* Get link state */
+    if(PHYLinkState <= LAN8742_STATUS_LINK_DOWN)
+    {
+      netif_set_link_down(netif);
+      netif_set_down(netif);
+    }
+    else
+    {
+      switch (PHYLinkState)
+      {
+      case LAN8742_STATUS_100MBITS_FULLDUPLEX:
+        duplex = ETH_FULLDUPLEX_MODE;
+        speed = ETH_SPEED_100M;
+        break;
+      case LAN8742_STATUS_100MBITS_HALFDUPLEX:
+        duplex = ETH_HALFDUPLEX_MODE;
+        speed = ETH_SPEED_100M;
+        break;
+      case LAN8742_STATUS_10MBITS_FULLDUPLEX:
+        duplex = ETH_FULLDUPLEX_MODE;
+        speed = ETH_SPEED_10M;
+        break;
+      case LAN8742_STATUS_10MBITS_HALFDUPLEX:
+        duplex = ETH_HALFDUPLEX_MODE;
+        speed = ETH_SPEED_10M;
+        break;
+      default:
+        duplex = ETH_FULLDUPLEX_MODE;
+        speed = ETH_SPEED_100M;
+        break;
+      }
+
+    /* Get MAC Config MAC */
+    HAL_ETH_GetMACConfig(&heth, &MACConf);
+    MACConf.DuplexMode = duplex;
+    MACConf.Speed = speed;
+    HAL_ETH_SetMACConfig(&heth, &MACConf);
+
+    HAL_ETH_Start_IT(&heth);
+    netif_set_up(netif);
+    netif_set_link_up(netif);
+    }
+
   }
   else
   {
@@ -239,10 +312,14 @@ static void low_level_init(struct netif *netif)
   }
 #endif /* LWIP_ARP || LWIP_ETHERNET */
 
-/* USER CODE BEGIN LOW_LEVEL_INIT */
-
-/* USER CODE END LOW_LEVEL_INIT */
-
+/*
+  if(HAL_GetREVID() == 0x1000)
+  {
+    //This thread will keep resetting the RMII interface until good frames are received
+    osThreadDef(RMII_Watchdog, RMII_Thread, osPriorityRealtime, 0, configMINIMAL_STACK_SIZE);
+    osThreadCreate (osThread(RMII_Watchdog), NULL);
+  }
+*/
 }
 
 /**
@@ -295,7 +372,32 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
   TxConfig.TxBuffer = Txbuffer;
   TxConfig.pData = p;
 
-  HAL_ETH_Transmit(&heth, &TxConfig, ETH_DMA_TRANSMIT_TIMEOUT);
+  pbuf_ref(p);
+
+  do
+  {
+    if(HAL_ETH_Transmit_IT(&heth, &TxConfig) == HAL_OK)
+    {
+      errval = ERR_OK;
+    }
+    else
+    {
+
+      if(HAL_ETH_GetError(&heth) & HAL_ETH_ERROR_BUSY)
+      {
+        /* Wait for descriptors to become available */
+        xSemaphoreTake(TxPktSemaphore, ETHIF_TX_TIMEOUT);
+        HAL_ETH_ReleaseTxPacket(&heth);
+        errval = ERR_BUF;
+      }
+      else
+      {
+        /* Other error */
+        pbuf_free(p);
+        errval =  ERR_IF;
+      }
+    }
+  }while(errval == ERR_BUF);
 
   return errval;
 }
@@ -320,6 +422,12 @@ static struct pbuf * low_level_input(struct netif *netif)
   return p;
 }
 
+static void ethernetif_input_task(void *arg)
+{
+    ethernetif_input((struct netif *)arg);
+}
+
+
 /**
  * @brief This function should be called when a packet is ready to be read
  * from the interface. It uses the function low_level_input() that
@@ -333,17 +441,23 @@ void ethernetif_input(struct netif *netif)
 {
   struct pbuf *p = NULL;
 
-  do
+  for( ;; )
   {
-    p = low_level_input( netif );
-    if (p != NULL)
+    if (xSemaphoreTake(RxPktSemaphore, TIME_WAITING_FOR_INPUT) == pdTRUE)
     {
-      if (netif->input( p, netif) != ERR_OK )
+      do
       {
-        pbuf_free(p);
-      }
+        p = low_level_input( netif );
+        if (p != NULL)
+        {
+          if (netif->input( p, netif) != ERR_OK )
+          {
+            pbuf_free(p);
+          }
+        }
+      } while(p!=NULL);
     }
-  } while(p!=NULL);
+  }
 }
 
 #if !LWIP_ARP
@@ -441,6 +555,7 @@ void pbuf_free_custom(struct pbuf *p)
   if (RxAllocStatus == RX_ALLOC_ERROR)
   {
     RxAllocStatus = RX_ALLOC_OK;
+    xSemaphoreGive(RxPktSemaphore);
   }
 }
 
@@ -511,9 +626,9 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
     GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN ETH_MspInit 1 */
-
-  /* USER CODE END ETH_MspInit 1 */
+    /* Peripheral interrupt init */
+    HAL_NVIC_SetPriority(ETH_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(ETH_IRQn);
   }
 }
 
@@ -544,9 +659,8 @@ void HAL_ETH_MspDeInit(ETH_HandleTypeDef* ethHandle)
 
     HAL_GPIO_DeInit(GPIOA, RMII_REF_CLK_Pin|RMII_MDIO_Pin|RMII_CRS_DV_Pin);
 
-  /* USER CODE BEGIN ETH_MspDeInit 1 */
-
-  /* USER CODE END ETH_MspDeInit 1 */
+    /* Peripheral interrupt Deinit*/
+    HAL_NVIC_DisableIRQ(ETH_IRQn);
   }
 }
 

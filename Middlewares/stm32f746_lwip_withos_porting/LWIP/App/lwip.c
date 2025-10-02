@@ -108,7 +108,7 @@ void MX_LWIP_Init(void)
               "EthLink",
               configMINIMAL_STACK_SIZE*2,
               &gnetif,
-              2,
+              PRIORITY_Normal,
               NULL);
 
 /* USER CODE END 3 */
