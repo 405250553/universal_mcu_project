@@ -145,7 +145,9 @@ static void ethernetif_input_task(void *arg);
   */
 void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *handlerEth)
 {
-  xSemaphoreGive(RxPktSemaphore);
+  //this callback is call by ETH_IRQHandler, so it can`t use xSemaphoreGive()
+  static portBASE_TYPE taskWoken = pdFALSE;
+  xSemaphoreGiveFromISR(RxPktSemaphore,&taskWoken);
 }
 
 /**
@@ -155,7 +157,9 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *handlerEth)
   */
 void HAL_ETH_TxCpltCallback(ETH_HandleTypeDef *handlerEth)
 {
-  xSemaphoreGive(TxPktSemaphore);
+  //this callback is call by ETH_IRQHandler, so it can`t use xSemaphoreGive()
+  static portBASE_TYPE taskWoken = pdFALSE;
+  xSemaphoreGiveFromISR(TxPktSemaphore,&taskWoken);
 }
 
 /*******************************************************************************
