@@ -24,6 +24,7 @@ jobs:
       # 3️⃣ 編譯專案
       - name: Build project
         run: |
+          make clean
           make TARGET=stm32f4_blinky
           make clean
           make TARGET=stm32f746_eth_test
