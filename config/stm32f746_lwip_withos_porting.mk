@@ -74,7 +74,8 @@ C_INCLUDES +=  \
 C_DEFS =  \
 	-DUSE_HAL_DRIVER \
 	-DSTM32F746xx \
-	-DWITH_FreeRTOS
+	-DWITH_FreeRTOS \
+	-DLWIP_NOASSERT
 
 ## add system file-----------------------------------------
 C_SOURCES  = \
