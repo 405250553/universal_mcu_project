@@ -143,10 +143,11 @@ static void ethernetif_input_task(void *arg);
   * @param  handlerEth: ETH handler
   * @retval None
   */
+ // it`s call by HAL_ETH_IRQHandler, means RX done (rx packet is already in cpu memory desc->buff)
 void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *handlerEth)
 {
   //this callback is call by ETH_IRQHandler, so it can`t use xSemaphoreGive()
-  static portBASE_TYPE taskWoken = pdFALSE;
+  portBASE_TYPE taskWoken = pdFALSE;
   xSemaphoreGiveFromISR(RxPktSemaphore,&taskWoken);
 }
 
@@ -155,10 +156,11 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *handlerEth)
   * @param  handlerEth: ETH handler
   * @retval None
   */
+ // it`s call by HAL_ETH_IRQHandler, means TX done (Tx packet is already send to MAC IO memory)
 void HAL_ETH_TxCpltCallback(ETH_HandleTypeDef *handlerEth)
 {
   //this callback is call by ETH_IRQHandler, so it can`t use xSemaphoreGive()
-  static portBASE_TYPE taskWoken = pdFALSE;
+  portBASE_TYPE taskWoken = pdFALSE;
   xSemaphoreGiveFromISR(TxPktSemaphore,&taskWoken);
 }
 
@@ -380,13 +382,22 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 
   do
   {
+    /*
+    tx only have HAL_ETH_Transmit (blocking)/ HAL_ETH_Transmit_IT(non-blocking), 
+    becase we don`t need to wait DMA finish transfer,
+    sp we use  HAL_ETH_Transmit_IT(non-blocking)
+    */
     if(HAL_ETH_Transmit_IT(&heth, &TxConfig) == HAL_OK)
     {
       errval = ERR_OK;
     }
     else
     {
-
+      /*
+      however, tx desc->buff release should be block by TX DONE,
+      that`s way there`s a sem before HAL_ETH_ReleaseTxPacket,
+      it`s waiting for TX DONE
+      */
       if(HAL_ETH_GetError(&heth) & HAL_ETH_ERROR_BUSY)
       {
         /* Wait for descriptors to become available */
@@ -420,6 +431,10 @@ static struct pbuf * low_level_input(struct netif *netif)
 
   if(RxAllocStatus == RX_ALLOC_OK)
   {
+    /*
+    rx only have HAL_ETH_ReadData, becase each desc is complete would trigger interrupt,
+    however,  packet may use multiple desc, so it must blocking by desc->last
+    */
     HAL_ETH_ReadData(&heth, (void **)&p);
   }
 
