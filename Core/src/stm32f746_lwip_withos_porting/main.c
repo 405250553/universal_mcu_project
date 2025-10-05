@@ -23,45 +23,100 @@
 #include <string.h>
 #include <unistd.h>
 
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart1;
 
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
+SemaphoreHandle_t RxUsart1Semaphore = NULL;
+SemaphoreHandle_t TxUsart1Semaphore = NULL;
+QueueHandle_t uart_tx_queue;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
+void UART_SendString(const char* str);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+int _write(int file, char *ptr, int len)
+{
+    HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+    return len;
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+  if (huart->Instance == USART1)
+  {
+    xSemaphoreGiveFromISR(TxUsart1Semaphore, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  }
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+  if (huart->Instance == USART1)
+  {
+    xSemaphoreGiveFromISR(RxUsart1Semaphore, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  }
+}
+
+void UsartRxTask(void *argument)
+{
+    static uint8_t tmp_data;
+    uint8_t data_buff[64];
+    uint8_t tail = 0;
+
+    HAL_UART_Receive_IT(&huart1, &tmp_data, 1);
+
+    for (;;)
+    {
+        if (xSemaphoreTake(RxUsart1Semaphore, portMAX_DELAY) == pdTRUE)
+        {
+            if (tail >= sizeof(data_buff) - 1)
+            {
+                char msg[] = "buffer overflow\r\n";
+                xQueueSend(uart_tx_queue, msg, 0);
+                tail = 0;
+            }
+            else
+            {
+                data_buff[tail++] = tmp_data;
+
+                if (tmp_data == '\n')
+                {
+                    data_buff[tail] = '\0';
+                    xQueueSend(uart_tx_queue, data_buff, 0);
+                    tail = 0;
+                    memset(data_buff, 0, sizeof(data_buff));
+                }
+            }
+
+            HAL_UART_Receive_IT(&huart1, &tmp_data, 1);
+        }
+    }
+}
+
+void UsartTxTask(void *argument)
+{
+    static char msg[128];
+
+    for (;;)
+    {
+        //block by queu data first
+        if (xQueueReceive(uart_tx_queue, msg, portMAX_DELAY) == pdTRUE)
+        {
+            xSemaphoreTake(TxUsart1Semaphore, portMAX_DELAY);
+            HAL_UART_Transmit_IT(&huart1, (uint8_t*)msg, strlen(msg));
+        }
+    }
+}
+
 void BlinkTask(void *argument) 
 { 
   for(;;) 
@@ -87,12 +142,6 @@ void UART_SendString(const char* str){
     if(!str) return;
     HAL_UART_Transmit(&huart1,(uint8_t*)str,strlen(str),HAL_MAX_DELAY);
 }
-
-int _write(int file, char *ptr, int len)
-{
-    HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
-    return len;
-}
 /* USER CODE END 0 */
 
 /**
@@ -101,11 +150,6 @@ int _write(int file, char *ptr, int len)
   */
 int main(void)
 {
-
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -128,15 +172,24 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-  //UART_SendString("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt!\r\n");
-  //MX_LWIP_Init();
+
+
+  RxUsart1Semaphore = xSemaphoreCreateBinary();
+  TxUsart1Semaphore = xSemaphoreCreateBinary();
+  xSemaphoreGive(TxUsart1Semaphore);  // 讓第一次發送可以執行
+  uart_tx_queue = xQueueCreate(16, 128); // 16條訊息，每條128 bytes
+
+  // 建立 task
+  xTaskCreate(UsartRxTask, "UsartRx", 256, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(UsartTxTask, "UsartTx", 256, NULL, PRIORITY_LOW, NULL);
 
   // 建立 LWIP 初始化 task
-  xTaskCreate(StartLWIPInitTask, "LWIP_Init", 1024, NULL, tskIDLE_PRIORITY+1, NULL);
+  xTaskCreate(StartLWIPInitTask, "LWIP_Init", 1024, NULL, PRIORITY_LOW, NULL);
 
   /* USER CODE BEGIN 2 */
   // 建立 task
-  xTaskCreate(BlinkTask, "Blink", 128, NULL, 1, NULL);
+  xTaskCreate(BlinkTask, "Blink", 128, NULL, PRIORITY_IDLE, NULL);
+
   // 啟動 scheduler
   vTaskStartScheduler();
   
