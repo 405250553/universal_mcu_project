@@ -32,6 +32,7 @@ static void cli_register_command(const char *cmd, cli_cmd_handler_t handler)
             // 建立新節點
             if (node->child_count >= CLI_MAX_CHILD) return; // 超過限制
             child = pvPortMalloc(sizeof(cli_node_t));
+            memset(child, 0, sizeof(cli_node_t));   // 初始化所有欄位
             child->c = *cmd;
             node->child[node->child_count++] = child;
         }
@@ -86,25 +87,25 @@ void cli_parse(char *input)
     if (node && *p == '\0' && node->handler) {
         node->handler();
     } else {
-        char msg[] = "Unknown command\r\n";
+        static char msg[] = "Unknown command\r\n";
         CLI_UART_SEND(msg);
     }
 }
 
 void cmd_show_ip_table()
 {
-    char msg[] = "in show ip table handler\r\n";
+    static char msg[] = "in show ip table handler\r\n";
     CLI_UART_SEND(msg);    
 }
 
 void cmd_show_arp_table()
 {
-    char msg[] = "in show arp table handler\r\n";
+    static char msg[] = "in show arp table handler\r\n";
     CLI_UART_SEND(msg);    
 }
 
 void cmd_help()
 {
-    char msg[] = "in help handler\r\n";
+    static char msg[] = "in help handler\r\n";
     CLI_UART_SEND(msg);    
 }
