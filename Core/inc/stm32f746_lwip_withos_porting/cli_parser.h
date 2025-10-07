@@ -12,16 +12,6 @@
 
 #define CLI_MAX_CHILD 16   // 每個節點最大子節點數，可調整
 
-/*
-#define CLI_UART_SEND(msg)                                       \
-    do {                                                         \
-        xSemaphoreTake(hcli_t.tx_done, portMAX_DELAY);           \
-        HAL_UART_Transmit_IT(hcli_t.huart,                       \
-                             (uint8_t *)(msg), strlen(msg));     \
-    } while (0)
-*/
-#define CLI_UART_SEND(msg) HAL_UART_Transmit(hcli_t.huart, (uint8_t*)(msg), strlen(msg), HAL_MAX_DELAY)
-
 typedef void (*cli_cmd_handler_t)(void);
 
 // 命令 table
@@ -38,6 +28,7 @@ typedef struct cli_node_s {
 } cli_node_t;
 
 void cli_parse(char *input);
+void cli_init_trie_from_table(void);
 
 #ifdef __cplusplus
 }

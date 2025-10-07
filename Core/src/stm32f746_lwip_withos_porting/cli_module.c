@@ -91,7 +91,9 @@ void Cli_uart_init( UART_HandleTypeDef *huart)
 
     HAL_UART_RegisterCallback(huart, HAL_UART_TX_COMPLETE_CB_ID , UART_TxCpltCallback);
     HAL_UART_RegisterCallback(huart, HAL_UART_RX_COMPLETE_CB_ID , UART_RxCpltCallback);
-
+    
+    cli_init_trie_from_table();
+    
     // 建立 task
     xTaskCreate(MyUsartRxTask, "UsartRx", 256, NULL, PRIORITY_LOW, NULL);
     xTaskCreate(MyUsartTxTask, "UsartTx", 256, NULL, PRIORITY_LOW, NULL);

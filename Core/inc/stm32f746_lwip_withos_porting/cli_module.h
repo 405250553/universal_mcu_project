@@ -20,6 +20,15 @@ typedef struct cli_handle_e
 
 extern cli_handle_t hcli_t;
 
+#define CLI_UART_SEND(msg)                                       \
+    do {                                                         \
+        xSemaphoreTake(hcli_t.tx_done, portMAX_DELAY);           \
+        HAL_UART_Transmit_IT(hcli_t.huart,                       \
+                             (uint8_t *)(msg), strlen(msg));     \
+    } while (0)
+
+//#define CLI_UART_SEND(msg) HAL_UART_Transmit(hcli_t.huart, (uint8_t*)(msg), strlen(msg), HAL_MAX_DELAY)
+
 void Cli_uart_init( UART_HandleTypeDef *huart);
 
 #ifdef __cplusplus
