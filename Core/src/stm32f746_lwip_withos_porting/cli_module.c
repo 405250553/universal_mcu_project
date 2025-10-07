@@ -1,7 +1,4 @@
 #include "cli_module.h"
-#include "freertos_includes.h"
-#include "stm32f7xx_hal.h"
-#include <string.h>
 
 cli_handle_t hcli_t;
 
@@ -78,8 +75,8 @@ static void MyUsartTxTask(void *argument)
         //block by queue data first
         if (xQueueReceive(hcli_t.UsartQueue, msg, portMAX_DELAY) == pdTRUE)
         {
-            xSemaphoreTake(hcli_t.tx_done, portMAX_DELAY);
-            HAL_UART_Transmit_IT(hcli_t.huart, (uint8_t*)msg, strlen(msg));
+            //CLI_UART_SEND(msg);
+            cli_parse(msg);
         }
     }
 }

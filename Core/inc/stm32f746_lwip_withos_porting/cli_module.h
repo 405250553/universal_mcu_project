@@ -7,6 +7,7 @@
 
 #include "freertos_includes.h"
 #include "stm32f7xx_hal.h"
+#include "cli_parser.h"
 #include <string.h>
 
 typedef struct cli_handle_e
@@ -16,6 +17,8 @@ typedef struct cli_handle_e
     SemaphoreHandle_t tx_done;
     QueueHandle_t UsartQueue;
 }cli_handle_t;
+
+extern cli_handle_t hcli_t;
 
 void Cli_uart_init( UART_HandleTypeDef *huart);
 

@@ -1,0 +1,110 @@
+#include "cli_module.h"
+#include "cli_parser.h"
+
+// Trie 根節點
+static cli_node_t cli_root = {0};
+void cmd_show_ip_table(void);
+void cmd_show_arp_table(void);
+void cmd_help(void);
+
+static const cli_command_table_t cli_commands[] = {
+    {"show ip table", cmd_show_ip_table},
+    {"show arp table", cmd_show_arp_table},
+    {"help", cmd_help},
+    {NULL, NULL}  // table 結尾
+};
+
+// 註冊命令到 Trie
+static void cli_register_command(const char *cmd, cli_cmd_handler_t handler)
+{
+    cli_node_t *node = &cli_root;
+    while (*cmd) {
+        // 搜尋子節點
+        cli_node_t *child = NULL;
+        for (uint8_t i = 0; i < node->child_count; i++) {
+            if (node->child[i]->c == *cmd) {
+                child = node->child[i];
+                break;
+            }
+        }
+
+        if (!child) {
+            // 建立新節點
+            if (node->child_count >= CLI_MAX_CHILD) return; // 超過限制
+            child = pvPortMalloc(sizeof(cli_node_t));
+            child->c = *cmd;
+            node->child[node->child_count++] = child;
+        }
+
+        node = child;
+        cmd++;
+    }
+    node->handler = handler;
+}
+
+// 從 table 初始化 Trie
+void cli_init_trie_from_table(void)
+{
+    const cli_command_table_t *entry = cli_commands;
+    while (entry->cmd) {
+        cli_register_command(entry->cmd, entry->handler);
+        entry++;
+    }
+}
+
+// 解析輸入
+void cli_parse(char *input)
+{
+    cli_node_t *node = &cli_root;
+    char *p = input;
+
+    // 去除前後空白（可選）
+    while (*p && isspace((unsigned char)*p)) p++;
+    char *end = p + strlen(p);
+    while (end > p && isspace((unsigned char)*(end - 1))) *(--end) = '\0';
+
+    // 一個一個字元比對 Trie
+    while (*p && node) {
+        cli_node_t *next = NULL;
+        for (uint8_t i = 0; i < node->child_count; i++) {
+            if (node->child[i]->c == *p) {
+                next = node->child[i];
+                break;
+            }
+        }
+
+        if (!next) {
+            node = NULL; // 匹配失敗
+            break;
+        }
+
+        node = next;
+        p++;
+    }
+
+    // 成功走完整串字元 + 有 handler 才算命中
+    if (node && *p == '\0' && node->handler) {
+        node->handler();
+    } else {
+        char msg[] = "Unknown command\r\n";
+        CLI_UART_SEND(msg);
+    }
+}
+
+void cmd_show_ip_table()
+{
+    char msg[] = "in show ip table handler\r\n";
+    CLI_UART_SEND(msg);    
+}
+
+void cmd_show_arp_table()
+{
+    char msg[] = "in show arp table handler\r\n";
+    CLI_UART_SEND(msg);    
+}
+
+void cmd_help()
+{
+    char msg[] = "in help handler\r\n";
+    CLI_UART_SEND(msg);    
+}
