@@ -37,6 +37,18 @@ void UART_SendString(const char* str);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+static StaticTask_t xIdleTaskTCB;
+static StackType_t  xIdleStack[configMINIMAL_STACK_SIZE];
+
+void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
+                                    StackType_t **ppxIdleTaskStackBuffer,
+                                    uint32_t *pulIdleTaskStackSize )
+{
+    *ppxIdleTaskTCBBuffer    = &xIdleTaskTCB;
+    *ppxIdleTaskStackBuffer  = xIdleStack;
+    *pulIdleTaskStackSize    = configMINIMAL_STACK_SIZE;
+}
+
 int _write(int file, char *ptr, int len)
 {
     HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);

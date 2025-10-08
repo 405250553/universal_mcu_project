@@ -1,21 +1,21 @@
 #include "cli_module.h"
 
-cli_handle_t hcli_t;
+#define RX_QUEUE_LEN 16
+#define RX_ITEM_LEN 64
+#define TX_QUEUE_LEN 32
+#define TX_ITEM_LEN 128
 
-/*
-int _write(int file, char *ptr, int len)
-{
-    HAL_UART_Transmit(hcli_t.huart, (uint8_t *)ptr, len, HAL_MAX_DELAY);
-    return len;
-}
-*/
+static uint8_t TX_QUEUE_BUFF[TX_QUEUE_LEN * TX_ITEM_LEN];
+static uint8_t RX_QUEUE_BUFF[RX_QUEUE_LEN * RX_ITEM_LEN];
+
+cli_handle_t hcli_t;
 
 static void UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if (hcli_t.huart->Instance == huart->Instance)
   {
-    xSemaphoreGiveFromISR(hcli_t.tx_done, &xHigherPriorityTaskWoken);
+    xSemaphoreGiveFromISR(hcli_t.tx_wrap.job_done, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
   }
 }
@@ -25,7 +25,7 @@ static void UART_RxCpltCallback(UART_HandleTypeDef *huart)
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   if (hcli_t.huart->Instance == huart->Instance)
   {
-    xSemaphoreGiveFromISR(hcli_t.rx_done, &xHigherPriorityTaskWoken);
+    xSemaphoreGiveFromISR(hcli_t.rx_wrap.job_done, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
   }
 }
@@ -35,17 +35,17 @@ static void MyUsartRxTask(void *argument)
     uint8_t tmp_data;
     uint8_t data_buff[64];
     uint8_t tail = 0;
+    char error_msg[] = "buffer overflow\r\n";
 
     HAL_UART_Receive_IT(hcli_t.huart, &tmp_data, 1);
 
     for (;;)
     {
-        if (xSemaphoreTake(hcli_t.rx_done, portMAX_DELAY) == pdTRUE)
+        if (xSemaphoreTake(hcli_t.rx_wrap.job_done, portMAX_DELAY) == pdTRUE)
         {
             if (tail >= sizeof(data_buff) - 1)
             {
-                char msg[] = "buffer overflow\r\n";
-                xQueueSend(hcli_t.UsartQueue, msg, portMAX_DELAY);
+                CLI_UART_SEND(error_msg);
                 tail = 0;
             }
             else
@@ -55,28 +55,39 @@ static void MyUsartRxTask(void *argument)
                 if (tmp_data == '\n')
                 {
                     data_buff[tail] = '\0';
-                    xQueueSend(hcli_t.UsartQueue, data_buff, portMAX_DELAY);
+                    xQueueSend(hcli_t.rx_wrap.handle, data_buff, portMAX_DELAY);
                     tail = 0;
                     memset(data_buff, 0, sizeof(data_buff));
                 }
             }
-
             HAL_UART_Receive_IT(hcli_t.huart, &tmp_data, 1);
+        }
+    }
+}
+
+
+static void CliParserTask(void *argument)
+{
+    char msg[RX_ITEM_LEN];
+    for (;;)
+    {
+        if (xQueueReceive(hcli_t.rx_wrap.handle, msg, portMAX_DELAY) == pdTRUE)
+        {
+            cli_parse(msg);
         }
     }
 }
 
 static void MyUsartTxTask(void *argument)
 {
-    char msg[128];
+    char show_msg[TX_ITEM_LEN];
 
     for (;;)
     {
         //block by queue data first
-        if (xQueueReceive(hcli_t.UsartQueue, msg, portMAX_DELAY) == pdTRUE)
+        if (xQueueReceive(hcli_t.tx_wrap.handle, show_msg, portMAX_DELAY) == pdTRUE)
         {
-            //CLI_UART_SEND(msg);
-            cli_parse(msg);
+            CLI_UART_SEND(show_msg);
         }
     }
 }
@@ -84,10 +95,13 @@ static void MyUsartTxTask(void *argument)
 void Cli_uart_init( UART_HandleTypeDef *huart)
 {
     hcli_t.huart=huart;
-    hcli_t.rx_done = xSemaphoreCreateBinary();
-    hcli_t.tx_done = xSemaphoreCreateBinary();
-    xSemaphoreGive(hcli_t.tx_done);  // 讓第一次發送可以執行
-    hcli_t.UsartQueue = xQueueCreate(16, 128); // 16條訊息，每條128 bytes
+    hcli_t.tx_wrap.job_done = xSemaphoreCreateBinary();
+    xSemaphoreGive(hcli_t.tx_wrap.job_done);  // 讓第一次發送可以執行
+
+    hcli_t.rx_wrap.job_done = xSemaphoreCreateBinary();
+
+    hcli_t.tx_wrap.handle = xQueueCreateStatic(TX_QUEUE_LEN, TX_ITEM_LEN, TX_QUEUE_BUFF, &hcli_t.tx_wrap.control);
+    hcli_t.rx_wrap.handle = xQueueCreateStatic(RX_QUEUE_LEN, RX_ITEM_LEN, RX_QUEUE_BUFF, &hcli_t.rx_wrap.control);
 
     HAL_UART_RegisterCallback(huart, HAL_UART_TX_COMPLETE_CB_ID , UART_TxCpltCallback);
     HAL_UART_RegisterCallback(huart, HAL_UART_RX_COMPLETE_CB_ID , UART_RxCpltCallback);
@@ -95,6 +109,7 @@ void Cli_uart_init( UART_HandleTypeDef *huart)
     cli_init_trie_from_table();
     
     // 建立 task
-    xTaskCreate(MyUsartRxTask, "UsartRx", 256, NULL, PRIORITY_LOW, NULL);
-    xTaskCreate(MyUsartTxTask, "UsartTx", 256, NULL, PRIORITY_LOW, NULL);
+    xTaskCreate(MyUsartRxTask, "UsartRxTask", 256, NULL, PRIORITY_LOW, NULL);
+    xTaskCreate(CliParserTask, "CliParserTask", 256, NULL, PRIORITY_LOW, NULL);
+    xTaskCreate(MyUsartTxTask, "UsartTxTask", 256, NULL, PRIORITY_LOW, NULL);
 }
