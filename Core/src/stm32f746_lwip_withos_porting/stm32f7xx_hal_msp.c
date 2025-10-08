@@ -201,15 +201,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-  if(huart->Instance==USART1)
+  if(huart->Instance==USART6)
   {
-    /* USER CODE BEGIN USART1_MspInit 0 */
-
-    /* USER CODE END USART1_MspInit 0 */
 
   /** Initializes the peripherals clock
   */
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1;
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART6;
     PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
@@ -217,31 +214,30 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     }
 
     /* Peripheral clock enable */
-    __HAL_RCC_USART1_CLK_ENABLE();
+    __HAL_RCC_USART6_CLK_ENABLE();
 
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
     /**USART1 GPIO Configuration
-    PB7     ------> USART1_RX
-    PA9     ------> USART1_TX
+    PC7     ------> USART6_RX
+    PC6     ------> USART6_TX
     */
-    GPIO_InitStruct.Pin = VCP_RX_Pin;
+    GPIO_InitStruct.Pin = ARDUINO_RX_D0_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-    HAL_GPIO_Init(VCP_RX_GPIO_Port, &GPIO_InitStruct);
+    GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
+    HAL_GPIO_Init(ARDUINO_RX_D0_GPIO_Port, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = VCP_TX_Pin;
+    GPIO_InitStruct.Pin = ARDUINO_TX_D1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-    HAL_GPIO_Init(VCP_TX_GPIO_Port, &GPIO_InitStruct);
+    GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
+    HAL_GPIO_Init(ARDUINO_TX_D1_GPIO_Port, &GPIO_InitStruct);
     
     /* USART1 interrupt Init */
-    HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
-    HAL_NVIC_EnableIRQ(USART1_IRQn);
+    HAL_NVIC_SetPriority(USART6_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(USART6_IRQn);
 
   }
 
