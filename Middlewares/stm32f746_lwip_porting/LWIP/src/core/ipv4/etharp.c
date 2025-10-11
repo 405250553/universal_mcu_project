@@ -1201,6 +1201,4 @@ etharp_request(struct netif *netif, const ip4_addr_t *ipaddr)
   return etharp_request_dst(netif, ipaddr, &ethbroadcast);
 }
 
-const arp_entry_t* arp_get_table_addr(int idx) { return &arp_table[idx]; }
-
 #endif /* LWIP_IPV4 && LWIP_ARP */
