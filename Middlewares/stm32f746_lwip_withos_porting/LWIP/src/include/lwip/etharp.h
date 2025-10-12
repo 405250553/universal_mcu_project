@@ -95,9 +95,6 @@ err_t etharp_remove_static_entry(const ip4_addr_t *ipaddr);
 
 void etharp_input(struct pbuf *p, struct netif *netif);
 
-typedef struct etharp_entry arp_entry_t;
-const arp_entry_t* arp_get_table_addr(int idx);
-
 #ifdef __cplusplus
 }
 #endif
