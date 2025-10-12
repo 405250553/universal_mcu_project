@@ -32,7 +32,7 @@ static void MyUsartRxTask(void *argument)
     uint8_t tail = 0;
     char error_msg[] = "buffer overflow\r\n";
 
-    HAL_UART_Receive_IT(hcli_t.huart, &tmp_data, 1);
+    HAL_UART_RECEIVE_FUNC(hcli_t.huart, &tmp_data, 1);
 
     for (;;)
     {
@@ -55,7 +55,7 @@ static void MyUsartRxTask(void *argument)
                     memset(data_buff, 0, sizeof(data_buff));
                 }
             }
-            HAL_UART_Receive_IT(hcli_t.huart, &tmp_data, 1);
+            HAL_UART_RECEIVE_FUNC(hcli_t.huart, &tmp_data, 1); 
         }
     }
 }
