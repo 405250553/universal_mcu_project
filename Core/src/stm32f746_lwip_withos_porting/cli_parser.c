@@ -1,4 +1,5 @@
 #include "cli_module.h"
+#include "lwip/etharp.h"
 #include "cli_parser.h"
 
 // Trie 根節點
@@ -87,21 +88,50 @@ void cli_parse(char *input)
     if (node && *p == '\0' && node->handler) {
         node->handler();
     } else {
-        static char msg[] = "Unknown command\r\n";
-        CLI_UART_SEND(msg);
+        char msg[] = "Unknown command\r\n";
+        TX_QUEUE_SEND(msg);
     }
 }
 
 void cmd_show_ip_table()
 {
-    static char msg[] = "in show ip table handler\r\n";
-    CLI_UART_SEND(msg);    
+    char msg[] = "in show ip table handler\r\n";
+    TX_QUEUE_SEND(msg);    
 }
 
 void cmd_show_arp_table()
 {
-    static char msg[] = "in show arp table handler\r\n";
-    CLI_UART_SEND(msg);    
+    char msg[TX_ITEM_LEN];
+
+    sprintf(msg,"IP Address            MAC Address\r\n");
+    TX_QUEUE_SEND(msg);
+    sprintf(msg,"--------------------------------------------------\r\n");
+    TX_QUEUE_SEND(msg);
+    for(int i=0;i<ARP_TABLE_SIZE;i++)
+    {
+        ip4_addr_t* ip;
+        struct netif *netif;
+        struct eth_addr *ethaddr;
+
+        // etharp_get_entry() 會依序取出 ARP table 內容
+        uint8_t res = etharp_get_entry(i, &ip, &netif ,&ethaddr);
+        if (res != 1)
+        {
+            break; // 到最後一筆時會回傳 ERR_ARG
+        }
+        sprintf(msg,"%d.%d.%d.%d        %x:%x:%x:%x:%x:%x\r\n",
+                    ip4_addr1(ip),
+                    ip4_addr2(ip),
+                    ip4_addr3(ip),
+                    ip4_addr4(ip),
+                    ethaddr->addr[0],
+                    ethaddr->addr[1],
+                    ethaddr->addr[2],
+                    ethaddr->addr[3],
+                    ethaddr->addr[4],
+                    ethaddr->addr[5]);
+        TX_QUEUE_SEND(msg);
+    }
 }
 
 void cmd_help()
