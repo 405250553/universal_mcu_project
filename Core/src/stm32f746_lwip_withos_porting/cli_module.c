@@ -1,10 +1,5 @@
 #include "cli_module.h"
 
-#define RX_QUEUE_LEN 16
-#define RX_ITEM_LEN 64
-#define TX_QUEUE_LEN 32
-#define TX_ITEM_LEN 128
-
 static uint8_t TX_QUEUE_BUFF[TX_QUEUE_LEN * TX_ITEM_LEN];
 static uint8_t RX_QUEUE_BUFF[RX_QUEUE_LEN * RX_ITEM_LEN];
 
@@ -84,8 +79,8 @@ static void MyUsartTxTask(void *argument)
 
     for (;;)
     {
-        //block by queue data first
-        if (xQueueReceive(hcli_t.tx_wrap.handle, show_msg, portMAX_DELAY) == pdTRUE)
+        if (xSemaphoreTake(hcli_t.tx_wrap.job_done, portMAX_DELAY)  == pdTRUE &&
+            xQueueReceive(hcli_t.tx_wrap.handle, show_msg, portMAX_DELAY) == pdTRUE)
         {
             CLI_UART_SEND(show_msg);
         }

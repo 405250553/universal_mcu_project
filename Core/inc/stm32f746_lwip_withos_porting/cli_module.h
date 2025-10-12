@@ -10,6 +10,11 @@
 #include "cli_parser.h"
 #include <string.h>
 
+#define RX_QUEUE_LEN 16
+#define RX_ITEM_LEN 64
+#define TX_QUEUE_LEN 32
+#define TX_ITEM_LEN 128
+
 /*
 typedef struct {
     SemaphoreHandle_t job_done;
@@ -35,9 +40,11 @@ typedef struct {
 
 extern cli_handle_t hcli_t;
 
+#define TX_QUEUE_SEND(show_msg) \
+    xQueueSend(hcli_t.tx_wrap.handle, show_msg, portMAX_DELAY);
+
 #define CLI_UART_SEND(msg)                                       \
     do {                                                         \
-        xSemaphoreTake(hcli_t.tx_wrap.job_done, portMAX_DELAY);  \
         HAL_UART_Transmit_IT(hcli_t.huart,                       \
                              (uint8_t *)(msg), strlen(msg));     \
     } while (0)
