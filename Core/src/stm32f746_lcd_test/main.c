@@ -21,6 +21,9 @@
 #include "freertos_includes.h"
 #include "lwip.h"
 #include "cli_module.h"
+#include "image_data.h"
+#include "stm32746g_discovery_sdram.h"
+#include "stm32746g_discovery_lcd.h"
 #include <string.h>
 #include <unistd.h>
 
@@ -107,6 +110,16 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
+
+    BSP_SDRAM_Init();                    // 初始化 FMC 與 SDRAM
+    BSP_LCD_Init();                      // 初始化 LCD (LTDC)
+    BSP_LCD_LayerDefaultInit(0, LCD_FB_START_ADDRESS);
+    BSP_LCD_SelectLayer(0);
+    BSP_LCD_DisplayOn();
+    BSP_LCD_Clear(LCD_COLOR_BLACK);
+
+    //BSP_LCD_DisplayStringAt(0, 100, (uint8_t *)"Hello STM32F746!", CENTER_MODE);
+    BSP_LCD_DrawBitmap(0,0,bmp_data);
   MX_USART1_UART_Init();
   Cli_uart_init(&huart1,&hdma_usart1_rx);
 

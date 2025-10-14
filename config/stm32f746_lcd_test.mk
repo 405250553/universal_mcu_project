@@ -1,8 +1,8 @@
 # -------------------------------
-# stm32f746_lwip_withos_porting 專案配置
+# stm32f746_lcd_test 專案配置
 # -------------------------------
 
-PROJECT_NAME = stm32f746_lwip_withos_porting
+PROJECT_NAME = stm32f746_lcd_test
 
 #######################################
 # MCU FLAGS
@@ -50,7 +50,8 @@ C_INCLUDES =  \
 	-IDrivers/STM32F7xx_HAL_Driver/Inc/Legacy \
 	-Icmsis/core \
 	-Icmsis/device/stm32f7 \
-	-IDrivers/BSP/Components/lan8742
+	-IDrivers/BSP/Components/lan8742 \
+	-IDrivers/BSP/stm32f746gdiscovery-bsp
 
 ## lwip includes-----------------------------------------
 C_INCLUDES +=  \
@@ -60,9 +61,6 @@ C_INCLUDES +=  \
 	-IMiddlewares/$(PROJECT_NAME)/LWIP/Target \
 	-IMiddlewares/$(PROJECT_NAME)/LWIP/src/include \
 	-IMiddlewares/$(PROJECT_NAME)/LWIP/OS_portable \
-	#-IMiddlewares/$(PROJECT_NAME)/LWIP/src/include/compat \
-	#-IMiddlewares/$(PROJECT_NAME)/LWIP/src/include/lwip \
-	#-IMiddlewares/$(PROJECT_NAME)/LWIP/src/include/netif
 
 ## FreeRTOS includes-----------------------------------------
 C_INCLUDES +=  \
@@ -83,7 +81,9 @@ C_SOURCES  = \
 
 ## add BSP driver-----------------------------------------------
 C_SOURCES += \
-	Drivers/BSP/Components/lan8742/lan8742.c
+	Drivers/BSP/Components/lan8742/lan8742.c \
+	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sdram.c \
+	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_lcd.c
 
 ## add core file & 找出該目錄下所有 .c 檔案
 C_SOURCES += \
@@ -111,7 +111,12 @@ C_SOURCES += \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart_ex.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim.c \
-	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim_ex.c
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim_ex.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sdram.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma2d.c
 
 # add lwip driver
 # -----------------------
