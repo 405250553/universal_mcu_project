@@ -3,6 +3,10 @@
 static uint8_t TX_QUEUE_BUFF[TX_QUEUE_LEN * TX_ITEM_LEN];
 static uint8_t RX_QUEUE_BUFF[RX_QUEUE_LEN * RX_ITEM_LEN];
 
+#if RX_USE_IDLE_DMA
+static uint8_t uart_rx_buff[RX_ITEM_LEN];
+#endif
+
 cli_handle_t hcli_t;
 
 static void UART_TxCpltCallback(UART_HandleTypeDef *huart)
@@ -25,10 +29,18 @@ static void UART_RxCpltCallback(UART_HandleTypeDef *huart)
   }
 }
 
+static void UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    xQueueSendFromISR(hcli_t.rx_wrap.handle, uart_rx_buff, &xHigherPriorityTaskWoken);
+    HAL_UARTEx_ReceiveToIdle_DMA(huart,uart_rx_buff,RX_ITEM_LEN);
+    __HAL_DMA_DISABLE_IT(hcli_t.hdma_rx,DMA_IT_HT);
+}
+
 static void MyUsartRxTask(void *argument)
 {
     uint8_t tmp_data;
-    uint8_t data_buff[64];
+    uint8_t data_buff[RX_ITEM_LEN];
     uint8_t tail = 0;
     char error_msg[] = "buffer overflow\r\n";
 
@@ -87,7 +99,7 @@ static void MyUsartTxTask(void *argument)
     }
 }
 
-void Cli_uart_init( UART_HandleTypeDef *huart)
+void Cli_uart_init( UART_HandleTypeDef *huart,DMA_HandleTypeDef *hdma_rx)
 {
     hcli_t.huart=huart;
     hcli_t.tx_wrap.job_done = xSemaphoreCreateBinary();
@@ -102,9 +114,15 @@ void Cli_uart_init( UART_HandleTypeDef *huart)
     HAL_UART_RegisterCallback(huart, HAL_UART_RX_COMPLETE_CB_ID , UART_RxCpltCallback);
     
     cli_init_trie_from_table();
-    
-    // 建立 task
+
+#if RX_USE_IDLE_DMA
+    hcli_t.hdma_rx=hdma_rx;
+    HAL_UART_RegisterRxEventCallback(huart, UARTEx_RxEventCallback);
+    HAL_UARTEx_ReceiveToIdle_DMA(huart,uart_rx_buff,RX_ITEM_LEN);
+    __HAL_DMA_DISABLE_IT(hcli_t.hdma_rx,DMA_IT_HT);
+#else
     xTaskCreate(MyUsartRxTask, "UsartRxTask", 256, NULL, PRIORITY_LOW, NULL);
+#endif
     xTaskCreate(CliParserTask, "CliParserTask", 256, NULL, PRIORITY_LOW, NULL);
     xTaskCreate(MyUsartTxTask, "UsartTxTask", 256, NULL, PRIORITY_LOW, NULL);
 }

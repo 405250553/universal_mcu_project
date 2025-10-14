@@ -108,7 +108,7 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART1_UART_Init();
-  Cli_uart_init(&huart1);
+  Cli_uart_init(&huart1,&hdma_usart1_rx);
 
   // 建立 LWIP 初始化 task
   xTaskCreate(StartLWIPInitTask, "LWIP_Init", 1024, NULL, PRIORITY_LOW, NULL);
