@@ -6,12 +6,14 @@
 static cli_node_t cli_root = {0};
 void cmd_show_ip_table(void);
 void cmd_show_arp_table(void);
+void cmd_newline(void);
 void cmd_help(void);
 
 static const cli_command_table_t cli_commands[] = {
     {"show ip table", cmd_show_ip_table},
     {"show arp table", cmd_show_arp_table},
     {"help", cmd_help},
+    {"", cmd_newline},
     {NULL, NULL}  // table 結尾
 };
 
@@ -134,8 +136,14 @@ void cmd_show_arp_table()
     }
 }
 
+void cmd_newline()
+{
+    char msg[] = "\r\n";
+    TX_QUEUE_SEND(msg);
+}
+
 void cmd_help()
 {
-    static char msg[] = "in help handler\r\n";
-    CLI_UART_SEND(msg);    
+    char msg[] = "in help handler\r\n";
+    TX_QUEUE_SEND(msg);
 }
