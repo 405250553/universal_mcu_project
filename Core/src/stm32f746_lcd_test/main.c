@@ -24,6 +24,7 @@
 #include "image_data.h"
 #include "stm32746g_discovery_sdram.h"
 #include "stm32746g_discovery_lcd.h"
+#include "stm32746g_discovery_camera.h"
 #include <string.h>
 #include <unistd.h>
 
@@ -80,6 +81,13 @@ void StartLWIPInitTask(void *argument)
     vTaskDelay(pdMS_TO_TICKS(10)); 
   }
 }
+
+void StartCameraTask(void *argument)
+{
+  BSP_CAMERA_Init(CAMERA_R480x272);
+  BSP_CAMERA_ContinuousStart((uint8_t *)0xC0000000);
+  vTaskDelete(NULL); // NULL 表示刪除自己
+}
 /* USER CODE END 0 */
 
 /**
@@ -88,8 +96,6 @@ void StartLWIPInitTask(void *argument)
   */
 int main(void)
 {
-  /* MCU Configuration--------------------------------------------------------*/
-
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
@@ -111,15 +117,16 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
 
-    BSP_SDRAM_Init();                    // 初始化 FMC 與 SDRAM
-    BSP_LCD_Init();                      // 初始化 LCD (LTDC)
-    BSP_LCD_LayerDefaultInit(0, LCD_FB_START_ADDRESS);
-    BSP_LCD_SelectLayer(0);
-    BSP_LCD_DisplayOn();
-    BSP_LCD_Clear(LCD_COLOR_BLACK);
+  BSP_SDRAM_Init();                    // 初始化 FMC 與 SDRAM
+  BSP_LCD_Init();                      // 初始化 LCD (LTDC)
+  //BSP_LCD_LayerDefaultInit(0, LCD_FB_START_ADDRESS);
+  BSP_LCD_LayerRgb565Init(0, LCD_FB_START_ADDRESS);
+  BSP_LCD_SelectLayer(0);
+  BSP_LCD_DisplayOn();
+  //BSP_LCD_Clear(LCD_COLOR_BLACK);
+  //BSP_LCD_DisplayStringAt(0, 100, (uint8_t *)"Hello STM32F746!", CENTER_MODE);
+  //BSP_LCD_DrawBitmap(0,0,bmp_data);
 
-    //BSP_LCD_DisplayStringAt(0, 100, (uint8_t *)"Hello STM32F746!", CENTER_MODE);
-    BSP_LCD_DrawBitmap(0,0,bmp_data);
   MX_USART1_UART_Init();
   Cli_uart_init(&huart1,&hdma_usart1_rx);
 
@@ -130,22 +137,14 @@ int main(void)
   // 建立 task
   xTaskCreate(BlinkTask, "Blink", 128, NULL, PRIORITY_IDLE, NULL);
 
+  xTaskCreate(StartCameraTask, "camera", 128, NULL, PRIORITY_LOW, NULL);
+
   // 啟動 scheduler
   vTaskStartScheduler();
   
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-        //HAL_GPIO_TogglePin(GPIOI,GPIO_PIN_1);
-        //MX_LWIP_Process();
-        //HAL_Delay(500);
-    /* USER CODE BEGIN 3 */
   }
-  /* USER CODE END 3 */
 }
 
 /**

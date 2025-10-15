@@ -82,8 +82,11 @@ C_SOURCES  = \
 ## add BSP driver-----------------------------------------------
 C_SOURCES += \
 	Drivers/BSP/Components/lan8742/lan8742.c \
+	Drivers/BSP/Components/ov9655/ov9655.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sdram.c \
-	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_lcd.c
+	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_lcd.c \
+	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_camera.c \
+	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery.c
 
 ## add core file & 找出該目錄下所有 .c 檔案
 C_SOURCES += \
@@ -116,7 +119,8 @@ C_SOURCES += \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c \
-	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma2d.c
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma2d.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dcmi.c
 
 # add lwip driver
 # -----------------------
