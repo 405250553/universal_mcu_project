@@ -107,8 +107,10 @@ EndDependencies */
   * @{
   */       
 SDRAM_HandleTypeDef sdramHandle;
+DMA_HandleTypeDef dma_handle;
 static FMC_SDRAM_TimingTypeDef Timing;
 static FMC_SDRAM_CommandTypeDef Command;
+
 /**
   * @}
   */ 
@@ -123,6 +125,11 @@ static FMC_SDRAM_CommandTypeDef Command;
 /** @defgroup STM32746G_DISCOVERY_SDRAM_Exported_Functions STM32746G_DISCOVERY_SDRAM Exported Functions
   * @{
   */ 
+
+void BSP_SDRAM_DMA_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&dma_handle);
+}
 
 /**
   * @brief  Initializes the SDRAM device.
@@ -359,7 +366,6 @@ uint8_t BSP_SDRAM_Sendcmd(FMC_SDRAM_CommandTypeDef *SdramCmd)
   */
 __weak void BSP_SDRAM_MspInit(SDRAM_HandleTypeDef  *hsdram, void *Params)
 {  
-  static DMA_HandleTypeDef dma_handle;
   GPIO_InitTypeDef gpio_init_structure;
   
   /* Enable FMC clock */

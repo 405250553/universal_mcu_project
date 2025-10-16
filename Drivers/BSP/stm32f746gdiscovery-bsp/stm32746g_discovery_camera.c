@@ -102,6 +102,7 @@ EndDependencies */
   * @{
   */ 
 DCMI_HandleTypeDef  hDcmiHandler;
+DMA_HandleTypeDef   hdma_handler;
 CAMERA_DrvTypeDef   *camera_drv;
 /* Camera current resolution naming (QQVGA, VGA, ...) */
 static uint32_t CameraCurrentResolution;
@@ -123,6 +124,16 @@ static uint32_t GetSize(uint32_t resolution);
 /** @defgroup STM32746G_DISCOVERY_CAMERA_Exported_Functions STM32746G_DISCOVERY_CAMERA Exported Functions
   * @{
   */
+
+void BSP_CAMERA_DMA_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&hdma_handler);
+}
+
+void BSP_CAMERA_IRQHandler(void)
+{
+  HAL_DCMI_IRQHandler(&hDcmiHandler);
+}
 
 /**
   * @brief  Initializes the camera.
@@ -428,7 +439,6 @@ static uint32_t GetSize(uint32_t resolution)
   */
 __weak void BSP_CAMERA_MspInit(DCMI_HandleTypeDef *hdcmi, void *Params)
 {
-  static DMA_HandleTypeDef hdma_handler;
   GPIO_InitTypeDef gpio_init_structure;
   
   /*** Enable peripherals and GPIO clocks ***/
