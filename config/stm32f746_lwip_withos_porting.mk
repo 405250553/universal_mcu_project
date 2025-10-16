@@ -50,7 +50,8 @@ C_INCLUDES =  \
 	-IDrivers/STM32F7xx_HAL_Driver/Inc/Legacy \
 	-Icmsis/core \
 	-Icmsis/device/stm32f7 \
-	-IDrivers/BSP/Components/lan8742
+	-IDrivers/BSP/Components/lan8742 \
+	-IDrivers/MY_DRIVER
 
 ## lwip includes-----------------------------------------
 C_INCLUDES +=  \
@@ -83,7 +84,9 @@ C_SOURCES  = \
 
 ## add BSP driver-----------------------------------------------
 C_SOURCES += \
-	Drivers/BSP/Components/lan8742/lan8742.c
+	Drivers/BSP/Components/lan8742/lan8742.c \
+	Drivers/MY_DRIVER/cli_module.c \
+	Drivers/MY_DRIVER/cli_parser.c
 
 ## add core file & 找出該目錄下所有 .c 檔案
 C_SOURCES += \

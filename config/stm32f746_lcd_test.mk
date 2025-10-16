@@ -51,7 +51,8 @@ C_INCLUDES =  \
 	-Icmsis/core \
 	-Icmsis/device/stm32f7 \
 	-IDrivers/BSP/Components/lan8742 \
-	-IDrivers/BSP/stm32f746gdiscovery-bsp
+	-IDrivers/BSP/stm32f746gdiscovery-bsp \
+	-IDrivers/MY_DRIVER
 
 ## lwip includes-----------------------------------------
 C_INCLUDES +=  \
@@ -83,6 +84,8 @@ C_SOURCES  = \
 C_SOURCES += \
 	Drivers/BSP/Components/lan8742/lan8742.c \
 	Drivers/BSP/Components/ov9655/ov9655.c \
+	Drivers/MY_DRIVER/cli_module.c \
+	Drivers/MY_DRIVER/cli_parser.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sdram.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_lcd.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_camera.c \
@@ -151,7 +154,7 @@ C_SOURCES  += \
 	Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/ip4_frag.c \
 	Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/ip4.c \
 	Middlewares/$(PROJECT_NAME)/LWIP/src/netif/ethernet.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src//api/err.c
+	Middlewares/$(PROJECT_NAME)/LWIP/src/api/err.c
 
 
 ## add FreeRTOS & 找出該目錄下所有 .c 檔案
