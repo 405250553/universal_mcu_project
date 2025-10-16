@@ -12,7 +12,7 @@
 
 #define CLI_MAX_CHILD 16   // 每個節點最大子節點數，可調整
 
-typedef void (*cli_cmd_handler_t)(void);
+typedef void (*cli_cmd_handler_t)(char *args);
 
 // 命令 table
 typedef struct {

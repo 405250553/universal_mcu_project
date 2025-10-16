@@ -4,11 +4,12 @@
 
 // Trie 根節點
 static cli_node_t cli_root = {0};
-void cmd_show_ip_table(void);
-void cmd_show_arp_table(void);
-void cmd_get_ip_info(void);
-void cmd_newline(void);
-void cmd_help(void);
+void cmd_show_ip_table(char *args);
+void cmd_show_arp_table(char *args);
+void cmd_get_ip_info(char *args);
+void cmd_set_ip(char *args);
+void cmd_newline(char *args);
+void cmd_help(char *args);
 
 extern struct netif gnetif;
 
@@ -16,6 +17,7 @@ static const cli_command_table_t cli_commands[] = {
     {"show ip table", cmd_show_ip_table},
     {"show ip interface", cmd_get_ip_info},
     {"show arp table", cmd_show_arp_table},
+    {"set ip", cmd_set_ip},
     {"help", cmd_help},
     {"", cmd_newline},
     {NULL, NULL}  // table 結尾
@@ -64,14 +66,17 @@ void cli_init_trie_from_table(void)
 void cli_parse(char *input)
 {
     cli_node_t *node = &cli_root;
+    cli_node_t *last_node_with_handler = NULL;
     char *p = input;
+    char *last_p_with_handler = p;
 
-    // 去除前後空白（可選）
+    // 去除前置空白
     while (*p && isspace((unsigned char)*p)) p++;
-    char *end = p + strlen(p);
-    while (end > p && isspace((unsigned char)*(end - 1))) *(--end) = '\0';
+    char *start = p;
+    char *end = start + strlen(start);
+    while (end > start && isspace((unsigned char)*(end - 1))) *(--end) = '\0';
 
-    // 一個一個字元比對 Trie
+    // 一個字元一個字元比對 Trie
     while (*p && node) {
         cli_node_t *next = NULL;
         for (uint8_t i = 0; i < node->child_count; i++) {
@@ -80,32 +85,33 @@ void cli_parse(char *input)
                 break;
             }
         }
-
-        if (!next) {
-            node = NULL; // 匹配失敗
-            break;
-        }
+        if (!next) break;
 
         node = next;
         p++;
+
+        if (node->handler) {
+            last_node_with_handler = node;
+            last_p_with_handler = p;
+        }
     }
 
-    // 成功走完整串字元 + 有 handler 才算命中
-    if (node && *p == '\0' && node->handler) {
-        node->handler();
+    if (last_node_with_handler) {
+        char *args = input + (last_p_with_handler - input);
+        while (*args && isspace((unsigned char)*args)) args++;
+        last_node_with_handler->handler(args);
     } else {
-        char msg[] = "Unknown command\r\n";
-        TX_QUEUE_SEND(msg);
+        TX_QUEUE_SEND("Unknown command\r\n");
     }
 }
 
-void cmd_show_ip_table()
+void cmd_show_ip_table(char *args)
 {
     char msg[] = "in show ip table handler\r\n";
     TX_QUEUE_SEND(msg);    
 }
 
-void cmd_show_arp_table()
+void cmd_show_arp_table(char *args)
 {
     char msg[TX_ITEM_LEN];
 
@@ -125,7 +131,7 @@ void cmd_show_arp_table()
         {
             break; // 到最後一筆時會回傳 ERR_ARG
         }
-        sprintf(msg,"%d.%d.%d.%d        %x:%x:%x:%x:%x:%x\r\n",
+        sprintf(msg,"%d.%d.%d.%d        %x:%x:%x:%x:%x:%x\r\n\r\n",
                     ip4_addr1(ip),
                     ip4_addr2(ip),
                     ip4_addr3(ip),
@@ -140,7 +146,7 @@ void cmd_show_arp_table()
     }
 }
 
-void cmd_get_ip_info(void)
+void cmd_get_ip_info(char *args)
 {
     char msg[TX_ITEM_LEN];
     uint8_t offset=0;
@@ -150,17 +156,52 @@ void cmd_get_ip_info(void)
     TX_QUEUE_SEND(msg);
     offset += sprintf(msg,"%s    ",ip4addr_ntoa(netif_ip4_addr(&gnetif)));
     offset += sprintf(msg+offset,"%s    ",ip4addr_ntoa(netif_ip4_netmask(&gnetif)));
-    offset += sprintf(msg+offset,"%s    \r\n",ip4addr_ntoa(netif_ip4_gw(&gnetif)));
+    offset += sprintf(msg+offset,"%s    \r\n\r\n",ip4addr_ntoa(netif_ip4_gw(&gnetif)));
     TX_QUEUE_SEND(msg);
 }
 
-void cmd_newline()
+void cmd_set_ip(char *args)
+{
+    char ip_str[16] = {0};
+    char mask_str[16] = {0};
+    char msg[TX_ITEM_LEN];
+
+    // 解析 args: "192.168.10.55 mask 255.255.255.0"
+    if (sscanf(args, "%15s mask %15s", ip_str, mask_str) != 2) {
+        sprintf(msg, "Usage: set ip [IP_ADDRESS] mask [NETMASK]\r\n");
+        TX_QUEUE_SEND(msg);
+        return;
+    }
+
+    ip4_addr_t ipaddr, netmask;
+
+    if (!ip4addr_aton(ip_str, &ipaddr)) {
+        sprintf(msg, "Invalid IP address: %s\r\n", ip_str);
+        TX_QUEUE_SEND(msg);
+        return;
+    }
+    if (!ip4addr_aton(mask_str, &netmask)) {
+        sprintf(msg, "Invalid Netmask: %s\r\n", mask_str);
+        TX_QUEUE_SEND(msg);
+        return;
+    }
+
+    // 設定新 IP
+    netif_set_down(&gnetif);
+    netif_set_addr(&gnetif, &ipaddr, &netmask, netif_ip4_gw(&gnetif)); // Gateway 不變
+    netif_set_up(&gnetif);
+
+    sprintf(msg, "IP configuration updated successfully!\r\n");
+    TX_QUEUE_SEND(msg);
+}
+
+void cmd_newline(char *args)
 {
     char msg[] = "\r\n";
     TX_QUEUE_SEND(msg);
 }
 
-void cmd_help()
+void cmd_help(char *args)
 {
     char msg[] = "in help handler\r\n";
     TX_QUEUE_SEND(msg);
