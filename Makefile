@@ -21,9 +21,9 @@ MAKEFLAGS += -j8
 # -------------------------------
 DEBUG ?= 0        # 預設 0，不開啟 debug
 ifeq ($(DEBUG),1)
-    CFLAGS_DEBUG = -g -O0
+    CFLAGS += -g -gdwarf-2 -O0
 else
-    CFLAGS_DEBUG = -O2
+    CFLAGS += -O2
 endif
 
 # list, clean 不需要 TARGET
