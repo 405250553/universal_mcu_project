@@ -6,11 +6,15 @@
 static cli_node_t cli_root = {0};
 void cmd_show_ip_table(void);
 void cmd_show_arp_table(void);
+void cmd_get_ip_info(void);
 void cmd_newline(void);
 void cmd_help(void);
 
+extern struct netif gnetif;
+
 static const cli_command_table_t cli_commands[] = {
     {"show ip table", cmd_show_ip_table},
+    {"show ip interface", cmd_get_ip_info},
     {"show arp table", cmd_show_arp_table},
     {"help", cmd_help},
     {"", cmd_newline},
@@ -134,6 +138,20 @@ void cmd_show_arp_table()
                     ethaddr->addr[5]);
         TX_QUEUE_SEND(msg);
     }
+}
+
+void cmd_get_ip_info(void)
+{
+    char msg[TX_ITEM_LEN];
+    uint8_t offset=0;
+    sprintf(msg,"IP Address            Mask        Gateway\r\n");
+    TX_QUEUE_SEND(msg);
+    sprintf(msg,"--------------------------------------------------\r\n");
+    TX_QUEUE_SEND(msg);
+    offset += sprintf(msg,"%s    ",ip4addr_ntoa(netif_ip4_addr(&gnetif)));
+    offset += sprintf(msg+offset,"%s    ",ip4addr_ntoa(netif_ip4_netmask(&gnetif)));
+    offset += sprintf(msg+offset,"%s    \r\n",ip4addr_ntoa(netif_ip4_gw(&gnetif)));
+    TX_QUEUE_SEND(msg);
 }
 
 void cmd_newline()
