@@ -85,7 +85,8 @@ void StartLWIPInitTask(void *argument)
 void StartCameraTask(void *argument)
 {
   BSP_CAMERA_Init(CAMERA_R480x272);
-  BSP_CAMERA_ContinuousStart((uint8_t *)0xC0000000);
+  //BSP_CAMERA_ContinuousStart((uint8_t *)(LCD_FB_START_ADDRESS+SDRAM_DEVICE_SIZE/2));
+  BSP_CAMERA_ContinuousStart((uint8_t *)(LCD_FB_START_ADDRESS));
   vTaskDelete(NULL); // NULL 表示刪除自己
 }
 /* USER CODE END 0 */
@@ -99,19 +100,11 @@ int main(void)
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
   /* Configure the system clock */
   SystemClock_Config();
 
   /* Configure the peripherals common clocks */
   PeriphCommonClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -119,13 +112,20 @@ int main(void)
 
   BSP_SDRAM_Init();                    // 初始化 FMC 與 SDRAM
   BSP_LCD_Init();                      // 初始化 LCD (LTDC)
-  //BSP_LCD_LayerDefaultInit(0, LCD_FB_START_ADDRESS);
+
+  //front layer, modify Transparency to 128
+  BSP_LCD_LayerDefaultInit(1, LCD_FB_START_ADDRESS+SDRAM_DEVICE_SIZE/2);
+  BSP_LCD_SelectLayer(1);
+  BSP_LCD_SetLayerVisible(1, ENABLE);
+  BSP_LCD_SetTransparency(1, 128);   // 半透明
+  //BSP_LCD_Clear(LCD_COLOR_BLACK);
+  BSP_LCD_DrawBitmap(0,0,bmp_data);
+
+  //back layer, output camera picture
   BSP_LCD_LayerRgb565Init(0, LCD_FB_START_ADDRESS);
   BSP_LCD_SelectLayer(0);
+  BSP_LCD_SetLayerVisible(0, ENABLE);
   BSP_LCD_DisplayOn();
-  //BSP_LCD_Clear(LCD_COLOR_BLACK);
-  //BSP_LCD_DisplayStringAt(0, 100, (uint8_t *)"Hello STM32F746!", CENTER_MODE);
-  //BSP_LCD_DrawBitmap(0,0,bmp_data);
 
   MX_USART1_UART_Init();
   Cli_uart_init(&huart1,&hdma_usart1_rx);
@@ -133,8 +133,7 @@ int main(void)
   // 建立 LWIP 初始化 task
   xTaskCreate(StartLWIPInitTask, "LWIP_Init", 1024, NULL, PRIORITY_LOW, NULL);
 
-  /* USER CODE BEGIN 2 */
-  // 建立 task
+  // 建立 Blink task
   xTaskCreate(BlinkTask, "Blink", 128, NULL, PRIORITY_IDLE, NULL);
 
   xTaskCreate(StartCameraTask, "camera", 128, NULL, PRIORITY_LOW, NULL);
