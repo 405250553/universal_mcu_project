@@ -25,6 +25,9 @@
 #include "stm32746g_discovery_sdram.h"
 #include "stm32746g_discovery_lcd.h"
 #include "stm32746g_discovery_camera.h"
+#include "stm32746g_discovery_sd.h"
+#include "fatfs.h"
+#include "jpeglib.h"
 #include <string.h>
 #include <unistd.h>
 
@@ -89,7 +92,6 @@ void StartCameraTask(void *argument)
   BSP_CAMERA_ContinuousStart((uint8_t *)(LCD_FB_START_ADDRESS));
   vTaskDelete(NULL); // NULL 表示刪除自己
 }
-/* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
@@ -110,6 +112,8 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
 
+  BSP_SD_Init();
+  BSP_SD_ITConfig();
   BSP_SDRAM_Init();                    // 初始化 FMC 與 SDRAM
   BSP_LCD_Init();                      // 初始化 LCD (LTDC)
 
@@ -129,6 +133,7 @@ int main(void)
 
   MX_USART1_UART_Init();
   Cli_uart_init(&huart1,&hdma_usart1_rx);
+  MX_FATFS_Init();
 
   // 建立 LWIP 初始化 task
   xTaskCreate(StartLWIPInitTask, "LWIP_Init", 1024, NULL, PRIORITY_LOW, NULL);

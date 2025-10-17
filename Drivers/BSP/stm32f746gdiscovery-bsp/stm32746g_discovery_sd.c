@@ -109,6 +109,8 @@ EndDependencies */
   * @{
   */
 SD_HandleTypeDef uSdHandle;
+DMA_HandleTypeDef dma_rx_handle;
+DMA_HandleTypeDef dma_tx_handle;
 
 /**
   * @}
@@ -120,6 +122,21 @@ SD_HandleTypeDef uSdHandle;
 /**
   * @}
   */ 
+
+void BSP_SDMMC_IRQHandler()
+{
+  HAL_SD_IRQHandler(&uSdHandle);
+}
+
+void BSP_SDMMC_DMA_Tx_IRQHandler()
+{
+  HAL_DMA_IRQHandler(&dma_tx_handle);
+}
+
+void BSP_SDMMC_DMA_Rx_IRQHandler()
+{
+  HAL_DMA_IRQHandler(&dma_rx_handle);
+}
   
 /** @defgroup STM32746G_DISCOVERY_SD_Exported_Functions STM32746G_DISCOVERY_SD Exported Functions
   * @{
@@ -344,8 +361,6 @@ uint8_t BSP_SD_Erase(uint32_t StartAddr, uint32_t EndAddr)
   */
 __weak void BSP_SD_MspInit(SD_HandleTypeDef *hsd, void *Params)
 {
-  static DMA_HandleTypeDef dma_rx_handle;
-  static DMA_HandleTypeDef dma_tx_handle;
   GPIO_InitTypeDef gpio_init_structure;
 
   /* Enable SDIO clock */

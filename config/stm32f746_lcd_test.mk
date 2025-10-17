@@ -69,6 +69,16 @@ C_INCLUDES +=  \
 	-IMiddlewares/$(PROJECT_NAME)/FreeRTOS/portable/GCC/ARM_CM7/r0p1 \
 	-IMiddlewares/$(PROJECT_NAME)/FreeRTOS/Core/Inc 
 
+## FatFs includes-----------------------------------------
+C_INCLUDES +=  \
+	-IMiddlewares/$(PROJECT_NAME)/FatFs/App \
+	-IMiddlewares/$(PROJECT_NAME)/FatFs/src \
+	-IMiddlewares/$(PROJECT_NAME)/FatFs/Target
+
+## LibJPEG includes-----------------------------------------
+C_INCLUDES +=  \
+	-IMiddlewares/stm32f746_lcd_test/LibJPEG/include
+
 ## C defines-----------------------------------------
 C_DEFS =  \
 	-DUSE_HAL_DRIVER \
@@ -89,6 +99,7 @@ C_SOURCES += \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sdram.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_lcd.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_camera.c \
+	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sd.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery.c
 
 ## add core file & 找出該目錄下所有 .c 檔案
@@ -119,11 +130,14 @@ C_SOURCES += \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim_ex.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sdram.c \
-	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c \
 	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma2d.c \
-	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dcmi.c
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dcmi.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sd.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_mmc.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c \
+	Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_sdmmc.c
 
 # add lwip driver
 # -----------------------
@@ -161,3 +175,43 @@ C_SOURCES  += \
 C_SOURCES += \
 	Middlewares/$(PROJECT_NAME)/FreeRTOS/portable/GCC/ARM_CM7/r0p1/port.c \
 	$(wildcard Middlewares/$(PROJECT_NAME)/FreeRTOS/Core/Src/*.c)
+
+
+## add FatFs driver
+C_SOURCES += \
+	Middlewares/$(PROJECT_NAME)/FatFs/App/fatfs.c \
+	Middlewares/stm32f746_lcd_test/FatFs/Target/sd_diskio.c \
+	Middlewares/$(PROJECT_NAME)/FatFs/src/ff_gen_drv.c \
+	Middlewares/$(PROJECT_NAME)/FatFs/src/ff.c \
+	Middlewares/$(PROJECT_NAME)/FatFs/src/diskio.c
+
+## add LibJPEG driver-----------------------------------------
+## j* 系列是共用工具（jerror.c, jutils.c）
+## jd* 系列是解壓縮核心
+
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jerror.c      # 錯誤處理
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jutils.c      # 工具函數
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jdcoefct.c    # 解壓縮係數
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jddctmgr.c    # 解壓縮 DCT 管理
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jdinput.c     # 輸入資料處理
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jdapimin.c    # 最小 API
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jdatasrc.c    # 資料來源處理
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jdmaster.c    # 解壓縮主流程
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jidctfst.c    # IDCT 演算法
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jdmarker.c    # JPEG 標記處理
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jmemmgr.c     # 記憶體管理
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jmemnobs.c    # 無檔案 I/O 支援
+C_SOURCES += \
+    Middlewares/$(PROJECT_NAME)/LibJPEG/source/jcomapi.c
