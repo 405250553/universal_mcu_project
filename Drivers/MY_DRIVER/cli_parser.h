@@ -14,10 +14,11 @@
 
 typedef void (*cli_cmd_handler_t)(char *args);
 
-// 命令 table
 typedef struct {
-    const char *cmd;
-    cli_cmd_handler_t handler;
+    const char *cmd;      // 指令名稱
+    cli_cmd_handler_t handler;  // 指令對應的處理函數
+    const char *usage;    // 用法說明，例如：set ip <addr> mask <mask>
+    const char *desc;     // 指令功能說明
 } cli_command_table_t;
 
 typedef struct cli_node_s {

@@ -9,19 +9,21 @@ void cmd_show_arp_table(char *args);
 void cmd_get_ip_info(char *args);
 void cmd_set_ip(char *args);
 void cmd_newline(char *args);
+void cmd_clear(char *args);
 void cmd_help(char *args);
 
-extern struct netif gnetif;
-
 static const cli_command_table_t cli_commands[] = {
-    {"show ip table", cmd_show_ip_table},
-    {"show ip interface", cmd_get_ip_info},
-    {"show arp table", cmd_show_arp_table},
-    {"set ip", cmd_set_ip},
-    {"help", cmd_help},
-    {"", cmd_newline},
-    {NULL, NULL}  // table 結尾
+    {"show ip table",     cmd_show_ip_table,  "show ip table",          "Display the current IP routing table"},
+    {"show ip interface", cmd_get_ip_info,    "show ip interface",      "Display IP interface information"},
+    {"show arp table",    cmd_show_arp_table, "show arp table",         "Display ARP table entries"},
+    {"set ip",            cmd_set_ip,         "set ip <addr> mask <mask>", "Set NIC static IP address"},
+    {"clear",             cmd_clear,          "clear",                  "Clear the terminal screen"},
+    {"help",              cmd_help,           "help",                   "Show available commands and usage"},
+    {"",                  cmd_newline,        "",                       ""},
+    {NULL, NULL, NULL, NULL}  // table 結尾
 };
+
+extern struct netif gnetif;
 
 // 註冊命令到 Trie
 static void cli_register_command(const char *cmd, cli_cmd_handler_t handler)
@@ -195,6 +197,12 @@ void cmd_set_ip(char *args)
     TX_QUEUE_SEND(msg);
 }
 
+void cmd_clear(char *args)
+{
+    // 常見的 VT100 終端機清屏指令：\033[2J 清畫面 + \033[H 游標移到左上角
+    TX_QUEUE_SEND("\033[2J\033[H");
+}
+
 void cmd_newline(char *args)
 {
     char msg[] = "\r\n";
@@ -203,6 +211,13 @@ void cmd_newline(char *args)
 
 void cmd_help(char *args)
 {
-    char msg[] = "in help handler\r\n";
-    TX_QUEUE_SEND(msg);
+    TX_QUEUE_SEND("Available commands:\r\n");
+    for (int i = 0; cli_commands[i].cmd != NULL; i++) {
+        if (strlen(cli_commands[i].cmd) == 0)
+            continue;
+
+        char buf[128];
+        snprintf(buf, sizeof(buf), " %-32s %s\r\n", cli_commands[i].usage, cli_commands[i].desc);
+        TX_QUEUE_SEND(buf);
+    }
 }
