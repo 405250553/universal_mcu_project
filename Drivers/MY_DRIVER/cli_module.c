@@ -29,6 +29,7 @@ static void UART_RxCpltCallback(UART_HandleTypeDef *huart)
   }
 }
 
+#if RX_USE_IDLE_DMA
 static void UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -36,6 +37,7 @@ static void UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
     HAL_UARTEx_ReceiveToIdle_DMA(huart,uart_rx_buff,RX_ITEM_LEN);
     __HAL_DMA_DISABLE_IT(hcli_t.hdma_rx,DMA_IT_HT);
 }
+#endif
 
 static void MyUsartRxTask(void *argument)
 {
