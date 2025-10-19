@@ -27,8 +27,10 @@
 #include "stm32746g_discovery_camera.h"
 #include "stm32746g_discovery_sd.h"
 #include "fatfs.h"
+#include "ff.h"
 #include "jpeglib.h"
 #include <string.h>
+#include <stdarg.h>
 #include <unistd.h>
 
 /* Private variables ---------------------------------------------------------*/
@@ -58,11 +60,23 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
     *pulIdleTaskStackSize    = configMINIMAL_STACK_SIZE;
 }
 
-int _write(int file, char *ptr, int len)
+#define UART_PRINT_BUF_SIZE 256
+
+void uart_print(const char *fmt, ...)
 {
-    HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
-    return len;
+    char buf[256];
+    va_list args;
+    va_start(args, fmt);
+    int len = vsnprintf(buf, sizeof(buf), fmt, args);
+    va_end(args);
+
+    if (len > 0)
+    {
+        if (len > 256) len = 256;
+        HAL_UART_Transmit(&huart1, (uint8_t *)buf, len, HAL_MAX_DELAY);
+    }
 }
+
 
 void BlinkTask(void *argument) 
 { 
@@ -93,6 +107,206 @@ void StartCameraTask(void *argument)
   vTaskDelete(NULL); // NULL 表示刪除自己
 }
 
+FATFS fs;
+FILINFO fno;
+DIR dir;
+FRESULT res;
+
+/* 遞迴列出目錄內容 */
+void ListFiles(const char *path)
+{
+    FILINFO fno;
+    DIR dir;
+    FRESULT res;
+    char fullPath[512];
+
+    res = f_opendir(&dir, path);
+    if (res != FR_OK) {
+        uart_print("Failed to open dir: %s (err=%d)\r\n", path, res);
+        return;
+    }
+
+    for (;;) {
+        res = f_readdir(&dir, &fno);
+        if (res != FR_OK || fno.fname[0] == 0) break;
+
+        char *fname = fno.fname;  // Cube 版本長檔名直接在 fname
+
+        if (fno.fattrib & AM_DIR) {
+            uart_print("[DIR]  %s/%s\r\n", path, fname);
+            snprintf(fullPath, sizeof(fullPath), "%s/%s", path, fname);
+            ListFiles(fullPath);
+        } else {
+            uart_print("  FILE %s/%s (%lu bytes)\r\n", path, fname, fno.fsize);
+        }
+    }
+    f_closedir(&dir);
+}
+
+// FreeRTOS Task: 掛載 SD 並列出檔案
+void StartSDListTask(void *argument)
+{
+  (void)argument;
+
+  while(BSP_SD_GetCardState() != SD_TRANSFER_OK) {
+      vTaskDelay(pdMS_TO_TICKS(10));
+  }
+
+  // 掛載 SD 卡
+  if (f_mount(&fs, "0:", 1) == FR_OK) {
+      printf("SD mounted!\r\n");
+      ListFiles("0:/"); // 列出根目錄
+  } else {
+      printf("Failed to mount SD!\r\n");
+  }
+
+  // 任務結束前卸載 SD
+  f_mount(NULL, "0:", 1);  // 卸載
+  printf("SD unmounted.\r\n");
+
+  // 任務結束，自刪除
+  vTaskDelete(NULL);
+}
+
+#define LCD_WIDTH   480
+#define LCD_HEIGHT  272
+#define FRAME_SIZE  (LCD_WIDTH*LCD_HEIGHT*4)  // ARGB8888 (= 522,240 bytes)
+#define LCD_FB      ((uint32_t*)0xC0000000)   // SDRAM 起始
+#define TEMP_BUF    ((uint8_t*)(0xC0000000 + FRAME_SIZE + 1024))  // framebuffer 後面安全位置
+
+#define FRAME_OFFSET 0x26BA       // 第一張影像資料起始位址
+
+void ShowFirstAVIFrame(const char *filename)
+{
+    FIL aviFile;
+    FRESULT res;
+    UINT br;
+    uint8_t *tmpBuf = TEMP_BUF;
+    DWORD moviOffset = 0;
+
+    while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
+        vTaskDelay(pdMS_TO_TICKS(10));
+
+    // 掛載 SD 卡
+    if (f_mount(&fs, "0:", 1) == FR_OK) {
+        printf("SD mounted!\r\n");
+        ListFiles("0:/"); // 列出根目錄
+    } else {
+        printf("Failed to mount SD!\r\n");
+    }
+
+    res = f_open(&aviFile, filename, FA_READ);
+    if(res != FR_OK) {
+        uart_print("<< Failed to open AVI file: %s (err=%d)\r\n", filename, res);
+        return;
+    }
+    uart_print("<< AVI file opened!\r\n");
+
+    f_lseek(&aviFile, FRAME_OFFSET);
+    f_read(&aviFile, tmpBuf+54, FRAME_SIZE, &br);
+
+    // 建立 BMP header
+    uint8_t header[54] = {0};
+    header[0]='B'; header[1]='M';
+    *(uint32_t*)&header[2] = 54 + FRAME_SIZE; // file size
+    *(uint32_t*)&header[10] = 54;             // pixel data offset
+    *(uint32_t*)&header[14] = 40;             // DIB header size
+    *(uint32_t*)&header[18] = LCD_WIDTH;
+    *(uint32_t*)&header[22] = LCD_HEIGHT;
+    *(uint16_t*)&header[26] = 1;              // planes
+    *(uint16_t*)&header[28] = 32;             // bit count
+    *(uint32_t*)&header[34] = FRAME_SIZE;
+
+    memcpy(tmpBuf, header, 54);
+
+    for(int i=1;i<=16*16;i++)
+    {
+      uart_print("%02x ", tmpBuf[i]);
+      if(i%16==0) uart_print("\r\n");
+    }
+    BSP_LCD_DrawBitmap(0, 0, tmpBuf);
+
+    // 找 movi 區
+    /*
+    DWORD filePos = 0;
+    char buf[12];
+    while(f_read(&aviFile, buf, 12, &br) == FR_OK && br == 12) {
+        if(memcmp(buf+8, "movi", 4) == 0) {
+            moviOffset = filePos + 12;
+            break;
+        }
+        filePos++;
+        f_lseek(&aviFile, filePos);
+    }
+
+    if(!moviOffset) {
+        uart_print("<< No 'movi' LIST found!\r\n");
+        f_close(&aviFile);
+        return;
+    }
+
+    f_lseek(&aviFile, moviOffset);
+
+    for (;;) {
+        char chunkID[4];
+        DWORD chunkSize;
+
+        if(f_read(&aviFile, chunkID, 4, &br) != FR_OK || br != 4) break;
+        if(f_read(&aviFile, &chunkSize, 4, &br) != FR_OK || br != 4) break;
+
+        if(chunkID[2] == 'd' && chunkID[3] == 'c') {
+            if(chunkSize > FRAME_SIZE) {
+                uart_print("<< chunkSize too big: %lu\r\n", chunkSize);
+                break;
+            }
+
+            uart_print("<< chunkSize=%lu\r\n", chunkSize);
+
+            res = f_read(&aviFile, tmpBuf + 54, chunkSize, &br);
+            if(res != FR_OK || br != chunkSize) {
+                uart_print("<< AVI read error %d / %u\r\n", res, br);
+                break;
+            }
+
+            if(chunkSize % 2 == 1)
+                f_lseek(&aviFile, f_tell(&aviFile) + 1);
+
+            uint8_t header[54] = {0};
+            header[0] = 'B'; header[1] = 'M';
+            *(uint32_t*)&header[2]  = 54 + LCD_WIDTH * LCD_HEIGHT * 4;
+            *(uint32_t*)&header[10] = 54;
+            *(uint32_t*)&header[14] = 40;
+            *(uint32_t*)&header[18] = LCD_WIDTH;
+            *(uint32_t*)&header[22] = LCD_HEIGHT;
+            *(uint16_t*)&header[26] = 1;
+            *(uint16_t*)&header[28] = 32;
+            *(uint32_t*)&header[34] = LCD_WIDTH * LCD_HEIGHT * 4;
+
+            memcpy(tmpBuf, header, 54);
+            BSP_LCD_DrawBitmap(0, 0, tmpBuf);
+
+            uart_print("<< First video frame displayed!\r\n");
+            break;
+        } else {
+            f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize % 2));
+        }
+    }
+    */
+    f_close(&aviFile);
+
+    // 任務結束前卸載 SD
+    f_mount(NULL, "0:", 1);  // 卸載
+    printf("SD unmounted.\r\n");
+}
+
+void ShowFirstFrameTask(void *arg)
+{
+    ShowFirstAVIFrame("0:/8_argb8888.avi");
+
+    // 任務結束，自刪除
+    vTaskDelete(NULL);
+}
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -118,21 +332,21 @@ int main(void)
   BSP_LCD_Init();                      // 初始化 LCD (LTDC)
 
   //front layer, modify Transparency to 128
-  BSP_LCD_LayerDefaultInit(1, LCD_FB_START_ADDRESS+SDRAM_DEVICE_SIZE/2);
-  BSP_LCD_SelectLayer(1);
-  BSP_LCD_SetLayerVisible(1, ENABLE);
-  BSP_LCD_SetTransparency(1, 128);   // 半透明
+  //BSP_LCD_LayerDefaultInit(1, LCD_FB_START_ADDRESS+SDRAM_DEVICE_SIZE/2);
+  //BSP_LCD_SelectLayer(1);
+  //BSP_LCD_SetLayerVisible(1, ENABLE);
+  //BSP_LCD_SetTransparency(1, 128);   // 半透明
   //BSP_LCD_Clear(LCD_COLOR_BLACK);
-  BSP_LCD_DrawBitmap(0,0,bmp_data);
 
   //back layer, output camera picture
-  BSP_LCD_LayerRgb565Init(0, LCD_FB_START_ADDRESS);
-  BSP_LCD_SelectLayer(0);
-  BSP_LCD_SetLayerVisible(0, ENABLE);
+  //BSP_LCD_LayerRgb565Init(0, LCD_FB_START_ADDRESS);
+  BSP_LCD_LayerDefaultInit(1, LCD_FB_START_ADDRESS);
+  BSP_LCD_SelectLayer(1);
+  BSP_LCD_DrawBitmap(0,0,bmp_data);
   BSP_LCD_DisplayOn();
 
   MX_USART1_UART_Init();
-  Cli_uart_init(&huart1,&hdma_usart1_rx);
+  //Cli_uart_init(&huart1,&hdma_usart1_rx);
   MX_FATFS_Init();
 
   // 建立 LWIP 初始化 task
@@ -141,7 +355,11 @@ int main(void)
   // 建立 Blink task
   xTaskCreate(BlinkTask, "Blink", 128, NULL, PRIORITY_IDLE, NULL);
 
-  xTaskCreate(StartCameraTask, "camera", 128, NULL, PRIORITY_LOW, NULL);
+  //xTaskCreate(StartCameraTask, "camera", 128, NULL, PRIORITY_LOW, NULL);
+
+  //xTaskCreate(StartSDListTask, "SDcardList", 1024, NULL, PRIORITY_LOW, NULL);
+
+  //xTaskCreate(ShowFirstFrameTask, "ShowFirstFrame", 4096, NULL, PRIORITY_LOW, NULL);
 
   // 啟動 scheduler
   vTaskStartScheduler();
