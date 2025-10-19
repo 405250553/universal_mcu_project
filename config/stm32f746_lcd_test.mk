@@ -183,7 +183,9 @@ C_SOURCES += \
 	Middlewares/stm32f746_lcd_test/FatFs/Target/sd_diskio.c \
 	Middlewares/$(PROJECT_NAME)/FatFs/src/ff_gen_drv.c \
 	Middlewares/$(PROJECT_NAME)/FatFs/src/ff.c \
-	Middlewares/$(PROJECT_NAME)/FatFs/src/diskio.c
+	Middlewares/$(PROJECT_NAME)/FatFs/src/diskio.c \
+	Middlewares/$(PROJECT_NAME)/FatFs/src/option/cc950.c \
+	Middlewares/$(PROJECT_NAME)/FatFs/src/option/syscall.c
 
 ## add LibJPEG driver-----------------------------------------
 ## j* 系列是共用工具（jerror.c, jutils.c）
