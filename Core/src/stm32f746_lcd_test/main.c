@@ -168,20 +168,18 @@ void StartSDListTask(void *argument)
   vTaskDelete(NULL);
 }
 
-#define LCD_WIDTH   480
-#define LCD_HEIGHT  272
-#define FRAME_SIZE  (LCD_WIDTH*LCD_HEIGHT*4)  // ARGB8888 (= 522,240 bytes)
-#define LCD_FB      ((uint32_t*)0xC0000000)   // SDRAM 起始
-#define TEMP_BUF    ((uint8_t*)(0xC0000000 + FRAME_SIZE + 1024))  // framebuffer 後面安全位置
+#define LCD_WIDTH   RK043FN48H_WIDTH
+#define LCD_HEIGHT  RK043FN48H_HEIGHT
+#define FRAME_SIZE  (LCD_WIDTH*LCD_HEIGHT*3)  // RGB888
+#define TEMP_BUF    ((uint8_t*)(0xC0000000 + FRAME_SIZE*2))  // framebuffer 後面安全位置
 
-#define FRAME_OFFSET 0x26BA       // 第一張影像資料起始位址
-
-void ShowFirstAVIFrame(const char *filename)
+void ShowAllAVIFrames(const char *filename)
 {
     FIL aviFile;
     FRESULT res;
     UINT br;
-    uint8_t *tmpBuf = TEMP_BUF;
+    uint8_t *tmpBuf_header = TEMP_BUF;
+    uint8_t *frame = TEMP_BUF + 54;
     DWORD moviOffset = 0;
 
     while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
@@ -189,10 +187,10 @@ void ShowFirstAVIFrame(const char *filename)
 
     // 掛載 SD 卡
     if (f_mount(&fs, "0:", 1) == FR_OK) {
-        printf("SD mounted!\r\n");
-        ListFiles("0:/"); // 列出根目錄
+        uart_print("SD mounted!\r\n");
     } else {
-        printf("Failed to mount SD!\r\n");
+        uart_print("Failed to mount SD!\r\n");
+        return;
     }
 
     res = f_open(&aviFile, filename, FA_READ);
@@ -202,32 +200,7 @@ void ShowFirstAVIFrame(const char *filename)
     }
     uart_print("<< AVI file opened!\r\n");
 
-    f_lseek(&aviFile, FRAME_OFFSET);
-    f_read(&aviFile, tmpBuf+54, FRAME_SIZE, &br);
-
-    // 建立 BMP header
-    uint8_t header[54] = {0};
-    header[0]='B'; header[1]='M';
-    *(uint32_t*)&header[2] = 54 + FRAME_SIZE; // file size
-    *(uint32_t*)&header[10] = 54;             // pixel data offset
-    *(uint32_t*)&header[14] = 40;             // DIB header size
-    *(uint32_t*)&header[18] = LCD_WIDTH;
-    *(uint32_t*)&header[22] = LCD_HEIGHT;
-    *(uint16_t*)&header[26] = 1;              // planes
-    *(uint16_t*)&header[28] = 32;             // bit count
-    *(uint32_t*)&header[34] = FRAME_SIZE;
-
-    memcpy(tmpBuf, header, 54);
-
-    for(int i=1;i<=16*16;i++)
-    {
-      uart_print("%02x ", tmpBuf[i]);
-      if(i%16==0) uart_print("\r\n");
-    }
-    BSP_LCD_DrawBitmap(0, 0, tmpBuf);
-
-    // 找 movi 區
-    /*
+    // === 找 movi 區 ===
     DWORD filePos = 0;
     char buf[12];
     while(f_read(&aviFile, buf, 12, &br) == FR_OK && br == 12) {
@@ -242,11 +215,28 @@ void ShowFirstAVIFrame(const char *filename)
     if(!moviOffset) {
         uart_print("<< No 'movi' LIST found!\r\n");
         f_close(&aviFile);
+        f_mount(NULL, "0:", 1);
         return;
     }
 
     f_lseek(&aviFile, moviOffset);
+    uart_print("<< movi offset found at %lu\r\n", moviOffset);
 
+    // === BMP header ===
+    uint8_t header[54] = {0};
+    header[0]='B'; header[1]='M';
+    *(uint32_t*)&header[2]  = 54 + FRAME_SIZE;
+    *(uint32_t*)&header[10] = 54;
+    *(uint32_t*)&header[14] = 40;
+    *(uint32_t*)&header[18] = LCD_WIDTH;
+    *(uint32_t*)&header[22] = LCD_HEIGHT;
+    *(uint16_t*)&header[26] = 1;
+    *(uint16_t*)&header[28] = 24;
+    *(uint32_t*)&header[34] = FRAME_SIZE;
+
+    memcpy(tmpBuf_header, header, 54);
+
+    // === 主播放迴圈 ===
     for (;;) {
         char chunkID[4];
         DWORD chunkSize;
@@ -254,15 +244,16 @@ void ShowFirstAVIFrame(const char *filename)
         if(f_read(&aviFile, chunkID, 4, &br) != FR_OK || br != 4) break;
         if(f_read(&aviFile, &chunkSize, 4, &br) != FR_OK || br != 4) break;
 
+        // 若是影像 frame（xxdc）
         if(chunkID[2] == 'd' && chunkID[3] == 'c') {
+
             if(chunkSize > FRAME_SIZE) {
                 uart_print("<< chunkSize too big: %lu\r\n", chunkSize);
-                break;
+                f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize % 2));
+                continue;
             }
 
-            uart_print("<< chunkSize=%lu\r\n", chunkSize);
-
-            res = f_read(&aviFile, tmpBuf + 54, chunkSize, &br);
+            res = f_read(&aviFile, frame, chunkSize, &br);
             if(res != FR_OK || br != chunkSize) {
                 uart_print("<< AVI read error %d / %u\r\n", res, br);
                 break;
@@ -271,39 +262,44 @@ void ShowFirstAVIFrame(const char *filename)
             if(chunkSize % 2 == 1)
                 f_lseek(&aviFile, f_tell(&aviFile) + 1);
 
-            uint8_t header[54] = {0};
-            header[0] = 'B'; header[1] = 'M';
-            *(uint32_t*)&header[2]  = 54 + LCD_WIDTH * LCD_HEIGHT * 4;
-            *(uint32_t*)&header[10] = 54;
-            *(uint32_t*)&header[14] = 40;
-            *(uint32_t*)&header[18] = LCD_WIDTH;
-            *(uint32_t*)&header[22] = LCD_HEIGHT;
-            *(uint16_t*)&header[26] = 1;
-            *(uint16_t*)&header[28] = 32;
-            *(uint32_t*)&header[34] = LCD_WIDTH * LCD_HEIGHT * 4;
+            // === Bottom-up 反轉 ===
+            uint8_t lineBuf[LCD_WIDTH * 3];
+            int start_line = 0;
+            int last_line  = LCD_HEIGHT - 1;
+            while (start_line < last_line) {
+                memcpy(lineBuf, &frame[start_line * LCD_WIDTH * 3], LCD_WIDTH * 3);
+                memcpy(&frame[start_line * LCD_WIDTH * 3], &frame[last_line * LCD_WIDTH * 3], LCD_WIDTH * 3);
+                memcpy(&frame[last_line * LCD_WIDTH * 3], lineBuf, LCD_WIDTH * 3);
+                start_line++;
+                last_line--;
+            }
 
-            memcpy(tmpBuf, header, 54);
-            BSP_LCD_DrawBitmap(0, 0, tmpBuf);
+            BSP_LCD_DrawBitmap(0, 0, tmpBuf_header);
 
-            uart_print("<< First video frame displayed!\r\n");
-            break;
-        } else {
+            //uart_print("<< Frame OK (chunkSize=%lu)\r\n", chunkSize);
+
+            // 播放間隔（依影片 FPS 調整）
+            //vTaskDelay(pdMS_TO_TICKS(1));  // 約 30fps
+        } 
+        else {
+            // 跳過非影像區塊
             f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize % 2));
         }
-    }
-    */
-    f_close(&aviFile);
 
-    // 任務結束前卸載 SD
-    f_mount(NULL, "0:", 1);  // 卸載
-    printf("SD unmounted.\r\n");
+        // 若到檔尾則結束
+        if(f_tell(&aviFile) >= f_size(&aviFile)) break;
+    }
+
+    f_close(&aviFile);
+    f_mount(NULL, "0:", 1);
+    uart_print("<< Playback done, SD unmounted.\r\n");
 }
 
-void ShowFirstFrameTask(void *arg)
+void ShowAllFramesTask(void *arg)
 {
-    ShowFirstAVIFrame("0:/8_argb8888.avi");
-
-    // 任務結束，自刪除
+    ShowAllAVIFrames("0:/8_rotate90_bgr888.avi");
+    ShowAllAVIFrames("0:6_rotate90_bgr888.avi");
+    ShowAllAVIFrames("0:/11_rotate90_bgr888.avi");
     vTaskDelete(NULL);
 }
 
@@ -341,8 +337,10 @@ int main(void)
   //back layer, output camera picture
   //BSP_LCD_LayerRgb565Init(0, LCD_FB_START_ADDRESS);
   BSP_LCD_LayerDefaultInit(1, LCD_FB_START_ADDRESS);
+  //BSP_LCD_LayerRgb888Init(1, LCD_FB_START_ADDRESS);
   BSP_LCD_SelectLayer(1);
-  BSP_LCD_DrawBitmap(0,0,bmp_data);
+  //BSP_LCD_Clear(LCD_COLOR_BLACK);
+  //BSP_LCD_DrawBitmap(0,0,bmp_data);
   BSP_LCD_DisplayOn();
 
   MX_USART1_UART_Init();
@@ -359,7 +357,7 @@ int main(void)
 
   //xTaskCreate(StartSDListTask, "SDcardList", 1024, NULL, PRIORITY_LOW, NULL);
 
-  //xTaskCreate(ShowFirstFrameTask, "ShowFirstFrame", 4096, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(ShowAllFramesTask, "ShowFirstFrame", 2048, NULL, PRIORITY_HIGH, NULL);
 
   // 啟動 scheduler
   vTaskStartScheduler();
