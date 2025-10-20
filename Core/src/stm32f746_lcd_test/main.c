@@ -263,13 +263,16 @@ void ShowAllAVIFrames(const char *filename)
                 f_lseek(&aviFile, f_tell(&aviFile) + 1);
 
             // === Bottom-up 反轉 ===
-            uint8_t lineBuf[LCD_WIDTH * 3];
-            int start_line = 0;
-            int last_line  = LCD_HEIGHT - 1;
-            while (start_line < last_line) {
-                memcpy(lineBuf, &frame[start_line * LCD_WIDTH * 3], LCD_WIDTH * 3);
-                memcpy(&frame[start_line * LCD_WIDTH * 3], &frame[last_line * LCD_WIDTH * 3], LCD_WIDTH * 3);
-                memcpy(&frame[last_line * LCD_WIDTH * 3], lineBuf, LCD_WIDTH * 3);
+            int start_line=0;
+            int last_line=LCD_HEIGHT-1;
+            while(start_line < last_line)
+            {
+                for(int i=0;i<LCD_WIDTH*3;i++)
+                {
+                    uint8_t tmp = frame[start_line*LCD_WIDTH*3+i];
+                    frame[start_line*LCD_WIDTH*3+i] = frame[last_line*LCD_WIDTH*3+i];
+                    frame[last_line*LCD_WIDTH*3+i] = tmp;
+                }
                 start_line++;
                 last_line--;
             }
@@ -357,7 +360,7 @@ int main(void)
 
   //xTaskCreate(StartSDListTask, "SDcardList", 1024, NULL, PRIORITY_LOW, NULL);
 
-  xTaskCreate(ShowAllFramesTask, "ShowFirstFrame", 2048, NULL, PRIORITY_HIGH, NULL);
+  xTaskCreate(ShowAllFramesTask, "ShowFirstFrame", 4096, NULL, PRIORITY_HIGH, NULL);
 
   // 啟動 scheduler
   vTaskStartScheduler();
