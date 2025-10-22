@@ -96,6 +96,7 @@ C_SOURCES += \
 	Drivers/BSP/Components/ov9655/ov9655.c \
 	Drivers/MY_DRIVER/cli_module.c \
 	Drivers/MY_DRIVER/cli_parser.c \
+	Drivers/MY_DRIVER/stream_module.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sdram.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_lcd.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_camera.c \
