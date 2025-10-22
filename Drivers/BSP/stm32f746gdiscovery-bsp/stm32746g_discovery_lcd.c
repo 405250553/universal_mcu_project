@@ -142,8 +142,6 @@ static void LL_ConvertLineToARGB8888(void * pSrc, void *pDst, uint32_t xSize, ui
   * @{
   */
 
-extern void uart_print(const char *fmt, ...);
-
 void BSP_DMA2D_ITConfig(void)
 {
   /* USART1 interrupt Init */
