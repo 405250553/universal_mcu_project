@@ -61,9 +61,11 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-  RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 256K   /* cacheable RAM */
-  RAM_NC (xrw)   : ORIGIN = 0x20040000, LENGTH = 64K    /* non-cacheable RAM for DMA */
-  FLASH (rx)     : ORIGIN = 0x8000000, LENGTH = 1024K
+  RAM (xrw)        : ORIGIN = 0x20000000, LENGTH = 256K    /* cacheable RAM */
+  RAM_NC (xrw)     : ORIGIN = 0x20040000, LENGTH = 64K     /* non-cacheable RAM for DMA */
+  FLASH (rx)       : ORIGIN = 0x8000000, LENGTH = 1024K
+  /*SDRAM_NC (xrw)   : ORIGIN = 0xC0000000, LENGTH = 8M       全部 SDRAM non-cacheable */
+  SDRAM_NC (xrw)   : ORIGIN = 0xC0200000, LENGTH = 6M
 }
 
 /* Define output sections */
@@ -200,6 +202,16 @@ SECTIONS
     *(.ram_dma)
     . = ALIGN(4);
   } >RAM_NC
+
+  /* 如果要在 SDRAM 放置大型 buffer 或數據 */
+  .sdram_data (NOLOAD) :
+  {
+    . = ALIGN(32);
+    _sdram_start = .;
+    *(.sdram*)         /* user-defined SDRAM sections */
+    . = ALIGN(32);
+    _sdram_end = .;
+  } >SDRAM_NC
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
