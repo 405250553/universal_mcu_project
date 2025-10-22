@@ -15,8 +15,8 @@
 #define TX_QUEUE_LEN 32
 #define TX_ITEM_LEN 128
 
-#define RX_USE_IDLE_DMA   1
-#define USE_UART_DMA   1    // 設 1 = 使用 DMA，設 0 = 使用中斷
+#define RX_USE_IDLE_DMA   0
+#define USE_UART_DMA   0    // 設 1 = 使用 DMA，設 0 = 使用中斷
 
 #if USE_UART_DMA
 #define HAL_UART_TRANSMIT_FUNC HAL_UART_Transmit_DMA
@@ -55,7 +55,8 @@ extern cli_handle_t hcli_t;
                                (uint8_t *)(msg), strlen(msg));    \
     } while (0)
 
-void Cli_uart_init( UART_HandleTypeDef *huart,DMA_HandleTypeDef *hdma_rx);
+void CliModuleInit(void);
+void CliModuleTaskInit(void);
 
 #ifdef __cplusplus
 }
