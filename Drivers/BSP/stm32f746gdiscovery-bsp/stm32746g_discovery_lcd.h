@@ -225,6 +225,7 @@ void     BSP_LCD_MspInit(LTDC_HandleTypeDef *hltdc, void *Params);
 void     BSP_LCD_MspDeInit(LTDC_HandleTypeDef *hltdc, void *Params);
 void     BSP_LCD_ClockConfig(LTDC_HandleTypeDef *hltdc, void *Params);
 
+void BSP_DMA2D_ITConfig(void);
 /**
   * @}
   */ 

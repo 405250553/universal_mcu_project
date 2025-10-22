@@ -1,4 +1,4 @@
-/* USER CODE BEGIN Header */
+/*
 /**
   ******************************************************************************
   * @file           : main.c
@@ -168,65 +168,37 @@ void StartSDListTask(void *argument)
   vTaskDelete(NULL);
 }
 
+#define SD_BUF_COUNT 2   // SD staging buffer 數量
 #define LCD_WIDTH   RK043FN48H_WIDTH
 #define LCD_HEIGHT  RK043FN48H_HEIGHT
 #define COLOR_BYTE  2
 #define FRAME_SIZE  (LCD_WIDTH*LCD_HEIGHT*COLOR_BYTE)
-__attribute__((section(".sdram_data"))) static uint8_t avi_frame_buf[FRAME_SIZE];
-/* 放在 SDRAM */
-/*
-#define FRAME_TOTAL_SIZE   (FRAME_SIZE + 54)
-__attribute__((section(".sdram_data"))) static uint8_t avi_frame_buf[2][FRAME_TOTAL_SIZE];
-__attribute__((section(".sdram_data"))) static uint8_t bufPlay[FRAME_TOTAL_SIZE];
-static SemaphoreHandle_t xBufReady[2];  // frame ready semaphore
-*/
+
+__attribute__((section(".sdram_data"))) static uint8_t sd_buf[SD_BUF_COUNT][FRAME_SIZE]; // SD staging buffers
+
+static SemaphoreHandle_t buf_ready[SD_BUF_COUNT];  // SD Producer -> DMA2D Consumer
+static SemaphoreHandle_t buf_free[SD_BUF_COUNT];   // DMA2D finished -> SD Producer
+
 typedef struct {
     const char *filename;
 } AVIPlayParam;
 
-// ==== Reader Task ====
-void ShowAllAVIFrames(void *param)
+void SDProducerTask(void *param)
 {
     AVIPlayParam *p = (AVIPlayParam*)param;
     FIL aviFile;
-    FRESULT res;
     UINT br;
+    FRESULT res;
     DWORD moviOffset = 0;
 
-  DMA2D_HandleTypeDef hDma2dHandler;
-  /* Configure the DMA2D Mode, Color Mode and output offset */
-  hDma2dHandler.Init.Mode         = DMA2D_M2M;
-  hDma2dHandler.Init.ColorMode    = DMA2D_RGB565;
-  hDma2dHandler.Init.OutputOffset = 0;
-
-  /* Foreground Configuration */
-  hDma2dHandler.LayerCfg[1].AlphaMode = DMA2D_NO_MODIF_ALPHA;
-  hDma2dHandler.LayerCfg[1].InputAlpha = 0xFF;
-  hDma2dHandler.LayerCfg[1].InputColorMode = CM_RGB565;
-  hDma2dHandler.LayerCfg[1].InputOffset = 0;
-
-  hDma2dHandler.Instance = DMA2D;
-
-  HAL_DMA2D_Init(&hDma2dHandler);
-  HAL_DMA2D_ConfigLayer(&hDma2dHandler, 1);
-
-    // 等 SD 卡準備好
-    while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
-        vTaskDelay(pdMS_TO_TICKS(10));
-
+    // 打開 AVI
     if(f_mount(&fs, "0:", 1) != FR_OK) {
         uart_print("Failed to mount SD!\r\n");
         return;
     }
-
-    res = f_open(&aviFile, p->filename, FA_READ);
-    if(res != FR_OK) {
-        uart_print("<< Failed to open AVI file: %s (err=%d)\r\n", p->filename, res);
-        f_mount(NULL, "0:", 1);
-        return;
-    }
-
-    uart_print("<< open AVI file: %s success\r\n", p->filename, res);
+    
+    if(f_open(&aviFile, p->filename, FA_READ) != FR_OK) return;
+    uart_print("<< open AVI file: %s success\r\n", p->filename);
 
     // 找 movi LIST
     DWORD filePos = 0;
@@ -239,45 +211,33 @@ void ShowAllAVIFrames(void *param)
         filePos++;
         f_lseek(&aviFile, filePos);
     }
-    if(!moviOffset) {
-        uart_print("<< No 'movi' LIST found!\r\n");
-        f_close(&aviFile);
-        f_mount(NULL, "0:", 1);
-        return;
-    }
     f_lseek(&aviFile, moviOffset);
     uart_print("<< movi offset found at %lu\r\n", moviOffset);
 
-    char chunkID[4];
-    DWORD chunkSize;
     int bufIndex = 0;
 
     while(1) {
-        // 讀下一個 frame
-        if(f_read(&aviFile, chunkID, 4, &br) != FR_OK || br != 4) break;
-        if(f_read(&aviFile, &chunkSize, 4, &br) != FR_OK || br != 4) break;
+        char chunkID[4];
+        DWORD chunkSize;
+        if(f_read(&aviFile, chunkID, 4, &br) != FR_OK || br!=4) break;
+        if(f_read(&aviFile, &chunkSize, 4, &br) != FR_OK || br!=4) break;
 
-        //uart_print("<< chunkID chunkSize read success\r\n");
+        if(chunkID[2]=='d' && chunkID[3]=='c' && chunkSize <= FRAME_SIZE) {
 
-        if(chunkID[2]=='d' && chunkID[3]=='c') {
-            if(chunkSize > FRAME_SIZE) {
-                f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize % 2));
-                continue;
-            }
+            // 等待 buffer 可用
+            xSemaphoreTake(buf_free[bufIndex], portMAX_DELAY);
+
             uint32_t start = HAL_GetTick();
-            res = f_read(&aviFile, (void*)avi_frame_buf, chunkSize, &br);
-            //res = f_read(&aviFile, (void*)LCD_FB_START_ADDRESS, chunkSize, &br);
+            res = f_read(&aviFile, sd_buf[bufIndex], chunkSize, &br);
             uint32_t end = HAL_GetTick();
+            //uart_print("chunkSize=%d, time=%dms\r\n", chunkSize, end - start);
+            if(res != FR_OK || br!=chunkSize) break;
 
-            if (HAL_DMA2D_Start(&hDma2dHandler, (uint32_t)avi_frame_buf, (uint32_t)LCD_FB_START_ADDRESS, LCD_WIDTH, LCD_HEIGHT) == HAL_OK)
-            {
-              /* Polling For DMA transfer */
-              HAL_DMA2D_PollForTransfer(&hDma2dHandler, 1);
-            }
-
-            if(res != FR_OK || br != chunkSize) break;
+            // 填完 buffer，通知 DMA2D Consumer
+            xSemaphoreGive(buf_ready[bufIndex]);
+            bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
         } else {
-            f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize % 2));
+            f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize%2));
         }
 
         if(f_tell(&aviFile) >= f_size(&aviFile)) break;
@@ -285,36 +245,85 @@ void ShowAllAVIFrames(void *param)
 
     f_close(&aviFile);
     f_mount(NULL, "0:", 1);
+    vTaskDelete(NULL);
 }
 
-// ==== 初始化播放 ====
-void StartAVIPlayback()
+/*
+void DMA2DConsumerTask(void *param)
 {
-    static AVIPlayParam param;
-    while(1)
-    {
-      //param.filename = "0:/1_rotate90_rgb565.avi";
-      //ShowAllAVIFrames(&param);
-      param.filename = "0:/2_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/3_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/5_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/6_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/7_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/8_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/9_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/10_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/11_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
+    DMA2D_HandleTypeDef hDma2dHandler;
+    hDma2dHandler.Init.Mode = DMA2D_M2M;
+    hDma2dHandler.Init.ColorMode = DMA2D_RGB565;
+    hDma2dHandler.Init.OutputOffset = 0;
+    hDma2dHandler.LayerCfg[1].AlphaMode = DMA2D_NO_MODIF_ALPHA;
+    hDma2dHandler.LayerCfg[1].InputAlpha = 0xFF;
+    hDma2dHandler.LayerCfg[1].InputColorMode = CM_RGB565;
+    hDma2dHandler.LayerCfg[1].InputOffset = 0;
+    hDma2dHandler.Instance = DMA2D;
+    HAL_DMA2D_Init(&hDma2dHandler);
+    HAL_DMA2D_ConfigLayer(&hDma2dHandler, 1);
+
+    int bufIndex = 0;
+    while(1) {
+        // 等 buffer ready
+        uint32_t start = HAL_GetTick();
+        xSemaphoreTake(buf_ready[bufIndex], portMAX_DELAY);
+
+        HAL_DMA2D_Start(&hDma2dHandler, (uint32_t)sd_buf[bufIndex],
+                        (uint32_t)LCD_FB_START_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
+        HAL_DMA2D_PollForTransfer(&hDma2dHandler, 1);
+        uint32_t end = HAL_GetTick();
+        uart_print("time=%dms\r\n", end - start);
+        // 拷貝完，釋放 buffer
+        xSemaphoreGive(buf_free[bufIndex]);
+        bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
     }
-    vTaskDelete(NULL);
+}
+*/
+
+DMA2D_HandleTypeDef hDma2dHandler;
+
+void Dma2DXferCpltCallback(DMA2D_HandleTypeDef *hdma2d)
+{
+  if(hdma2d->Instance == DMA2D)
+  {
+    //uart_print("Dma2DXferCpltCallback fin\r\n");
+  }
+}
+
+void DMA2D_IRQHandler(void)
+{
+  HAL_DMA2D_IRQHandler(&hDma2dHandler);
+}
+
+void DMA2DConsumerTask(void *param)
+{
+    hDma2dHandler.Init.Mode = DMA2D_M2M;
+    hDma2dHandler.Init.ColorMode = DMA2D_RGB565;
+    hDma2dHandler.Init.OutputOffset = 0;
+    hDma2dHandler.LayerCfg[1].AlphaMode = DMA2D_NO_MODIF_ALPHA;
+    hDma2dHandler.LayerCfg[1].InputAlpha = 0xFF;
+    hDma2dHandler.LayerCfg[1].InputColorMode = CM_RGB565;
+    hDma2dHandler.LayerCfg[1].InputOffset = 0;
+    hDma2dHandler.Instance = DMA2D;
+    HAL_DMA2D_Init(&hDma2dHandler);
+    HAL_DMA2D_ConfigLayer(&hDma2dHandler, 1);
+    HAL_DMA2D_RegisterCallback(&hDma2dHandler,HAL_DMA2D_TRANSFERCOMPLETE_CB_ID,Dma2DXferCpltCallback);
+
+    int bufIndex = 0;
+    while(1) {
+        // 等 buffer ready
+        uint32_t start = HAL_GetTick();
+        xSemaphoreTake(buf_ready[bufIndex], portMAX_DELAY);
+
+        HAL_DMA2D_Start_IT(&hDma2dHandler, (uint32_t)sd_buf[bufIndex],
+                        (uint32_t)LCD_FB_START_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
+        uint32_t end = HAL_GetTick();
+        uart_print("time=%dms\r\n", end - start);
+        // 拷貝完，釋放 buffer
+        xSemaphoreGive(buf_free[bufIndex]);
+        bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
+    }
 }
 
 /**
@@ -340,6 +349,7 @@ int main(void)
   BSP_SD_ITConfig();
   BSP_SDRAM_Init();                    // 初始化 FMC 與 SDRAM
   BSP_LCD_Init();                      // 初始化 LCD (LTDC)
+  BSP_DMA2D_ITConfig();
 
   //front layer, modify Transparency to 128
   //BSP_LCD_LayerDefaultInit(1, LCD_FB_START_ADDRESS+SDRAM_DEVICE_SIZE/2);
@@ -372,8 +382,17 @@ int main(void)
 
   //xTaskCreate(StartSDListTask, "SDcardList", 1024, NULL, PRIORITY_LOW, NULL);
 
-  xTaskCreate(StartAVIPlayback, "ShowFirstFrame", 4096, NULL, PRIORITY_HIGH, NULL);
+for(int i=0;i<SD_BUF_COUNT;i++) {
+    buf_ready[i] = xSemaphoreCreateBinary();   // 初始為空
+    buf_free[i] = xSemaphoreCreateBinary();    // 初始化為可用
+    xSemaphoreGive(buf_free[i]);               // SD Producer 開始就可以填
+}
 
+  static AVIPlayParam param;
+  param.filename = "0:/1_rotate90_rgb565.avi";
+
+  xTaskCreate(SDProducerTask, "SDProducer", 2048, &param, PRIORITY_HIGH, NULL);
+  xTaskCreate(DMA2DConsumerTask, "DMA2DConsumer", 2048, NULL, PRIORITY_AboveNormal, NULL);
   // 啟動 scheduler
   vTaskStartScheduler();
 
