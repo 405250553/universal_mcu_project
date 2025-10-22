@@ -78,24 +78,24 @@ void uart_print(const char *fmt, ...)
 }
 
 
-void BlinkTask(void *argument) 
-{ 
-  for(;;) 
-  { 
-    HAL_GPIO_TogglePin(GPIOI, GPIO_PIN_1); 
-    vTaskDelay(pdMS_TO_TICKS(500)); 
-  } 
+void BlinkTask(void *argument)
+{
+  for(;;)
+  {
+    HAL_GPIO_TogglePin(GPIOI, GPIO_PIN_1);
+    vTaskDelay(pdMS_TO_TICKS(500));
+  }
 }
 
-void StartLWIPInitTask(void *argument) 
-{ 
+void StartLWIPInitTask(void *argument)
+{
   /* init code for LWIP */
   MX_LWIP_Init();
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-    vTaskDelay(pdMS_TO_TICKS(10)); 
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 
@@ -170,8 +170,9 @@ void StartSDListTask(void *argument)
 
 #define LCD_WIDTH   RK043FN48H_WIDTH
 #define LCD_HEIGHT  RK043FN48H_HEIGHT
-#define FRAME_SIZE  (LCD_WIDTH*LCD_HEIGHT*3)  // RGB888
-
+#define COLOR_BYTE  2
+#define FRAME_SIZE  (LCD_WIDTH*LCD_HEIGHT*COLOR_BYTE)
+__attribute__((section(".sdram_data"))) static uint8_t avi_frame_buf[FRAME_SIZE];
 /* 放在 SDRAM */
 /*
 #define FRAME_TOTAL_SIZE   (FRAME_SIZE + 54)
@@ -191,6 +192,23 @@ void ShowAllAVIFrames(void *param)
     FRESULT res;
     UINT br;
     DWORD moviOffset = 0;
+
+  DMA2D_HandleTypeDef hDma2dHandler;
+  /* Configure the DMA2D Mode, Color Mode and output offset */
+  hDma2dHandler.Init.Mode         = DMA2D_M2M;
+  hDma2dHandler.Init.ColorMode    = DMA2D_RGB565;
+  hDma2dHandler.Init.OutputOffset = 0;
+
+  /* Foreground Configuration */
+  hDma2dHandler.LayerCfg[1].AlphaMode = DMA2D_NO_MODIF_ALPHA;
+  hDma2dHandler.LayerCfg[1].InputAlpha = 0xFF;
+  hDma2dHandler.LayerCfg[1].InputColorMode = CM_RGB565;
+  hDma2dHandler.LayerCfg[1].InputOffset = 0;
+
+  hDma2dHandler.Instance = DMA2D;
+
+  HAL_DMA2D_Init(&hDma2dHandler);
+  HAL_DMA2D_ConfigLayer(&hDma2dHandler, 1);
 
     // 等 SD 卡準備好
     while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
@@ -247,12 +265,16 @@ void ShowAllAVIFrames(void *param)
                 continue;
             }
             uint32_t start = HAL_GetTick();
-            //res = f_read(&aviFile, avi_frame_buf[bufIndex]+54, chunkSize, &br);
-            res = f_read(&aviFile, LCD_FB_START_ADDRESS, chunkSize, &br);
+            res = f_read(&aviFile, (void*)avi_frame_buf, chunkSize, &br);
+            //res = f_read(&aviFile, (void*)LCD_FB_START_ADDRESS, chunkSize, &br);
             uint32_t end = HAL_GetTick();
-            //uart_print("time %d ms\r\n",  end - start);
-            //res = f_read(&aviFile, bufPlay+54, chunkSize, &br);
-            //uart_print("<< f_read chunkSize %lu\r\n", chunkSize);
+
+            if (HAL_DMA2D_Start(&hDma2dHandler, (uint32_t)avi_frame_buf, (uint32_t)LCD_FB_START_ADDRESS, LCD_WIDTH, LCD_HEIGHT) == HAL_OK)
+            {
+              /* Polling For DMA transfer */
+              HAL_DMA2D_PollForTransfer(&hDma2dHandler, 1);
+            }
+
             if(res != FR_OK || br != chunkSize) break;
         } else {
             f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize % 2));
@@ -271,13 +293,11 @@ void StartAVIPlayback()
     static AVIPlayParam param;
     while(1)
     {
-      param.filename = "0:/1_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
+      //param.filename = "0:/1_rotate90_rgb565.avi";
+      //ShowAllAVIFrames(&param);
       param.filename = "0:/2_rotate90_rgb565.avi";
       ShowAllAVIFrames(&param);
       param.filename = "0:/3_rotate90_rgb565.avi";
-      ShowAllAVIFrames(&param);
-      param.filename = "0:/4_rotate90_rgb565.avi";
       ShowAllAVIFrames(&param);
       param.filename = "0:/5_rotate90_rgb565.avi";
       ShowAllAVIFrames(&param);
@@ -356,7 +376,7 @@ int main(void)
 
   // 啟動 scheduler
   vTaskStartScheduler();
-  
+
   while (1)
   {
   }
