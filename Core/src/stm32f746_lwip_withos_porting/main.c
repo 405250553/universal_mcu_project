@@ -20,6 +20,8 @@
 #include "main.h"
 #include "freertos_includes.h"
 #include "lwip.h"
+#include "lwip/sockets.h"
+#include "lwip/inet.h"
 #include "cli_module.h"
 #include <string.h>
 #include <unistd.h>
@@ -73,16 +75,88 @@ void BlinkTask(void *argument)
   } 
 }
 
-void StartLWIPInitTask(void *argument) 
-{ 
+#define TCP_PORT 5001
+#define UDP_PORT 5002
+#define BUF_SIZE 1024
+
+SemaphoreHandle_t lwip_ready;
+
+void StartLWIPInitTask(void *argument)
+{
   /* init code for LWIP */
   MX_LWIP_Init();
+  xSemaphoreGive(lwip_ready); // LWIP init 完成
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-    vTaskDelay(pdMS_TO_TICKS(10)); 
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
+}
+
+void tcp_server_task(void *arg) {
+    int sock = lwip_socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(TCP_PORT);
+    addr.sin_addr.s_addr = INADDR_ANY;
+
+    lwip_bind(sock, (struct sockaddr*)&addr, sizeof(addr));
+    lwip_listen(sock, 1);
+
+    int client = lwip_accept(sock, NULL, NULL);
+    uint8_t buf[BUF_SIZE];
+
+    while(1) {
+        int len = lwip_recv(client, buf, BUF_SIZE, 0);
+        if(len <= 0) break; // client disconnect
+        // 可回傳回去做 echo 或單向吞吐
+        // lwip_send(client, buf, len, 0);
+    }
+    lwip_close(client);
+    lwip_close(sock);
+}
+
+void udp_server_task(void *arg) {
+    xSemaphoreTake(lwip_ready, portMAX_DELAY); // 等 LWIP init
+    int sock = lwip_socket(AF_INET, SOCK_DGRAM, 0);
+    if(sock < 0) {
+        uart_print("UDP socket create failed!\r\n");
+        vTaskDelete(NULL);
+        return;
+    }
+    uart_print("UDP socket created: %d\r\n", sock);
+
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(UDP_PORT);
+    addr.sin_addr.s_addr = INADDR_ANY;
+
+    if(lwip_bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+        uart_print("UDP bind failed!\r\n");
+        lwip_close(sock);
+        vTaskDelete(NULL);
+        return;
+    }
+    uart_print("UDP bind OK, port %d\r\n", UDP_PORT);
+
+    uint8_t buf[BUF_SIZE];
+    struct sockaddr_in client_addr;
+
+    while(1) {
+        socklen_t addr_len = sizeof(client_addr); // 每次重置
+        int len = lwip_recvfrom(sock, buf, BUF_SIZE, 0,
+                                (struct sockaddr*)&client_addr, &addr_len);
+        if(len > 0) {
+            uart_print("Received %d bytes from %d.%d.%d.%d:%d\r\n", len,
+                       client_addr.sin_addr.s_addr & 0xFF,
+                       (client_addr.sin_addr.s_addr >> 8) & 0xFF,
+                       (client_addr.sin_addr.s_addr >> 16) & 0xFF,
+                       (client_addr.sin_addr.s_addr >> 24) & 0xFF,
+                       ntohs(client_addr.sin_port));
+            lwip_sendto(sock, buf, len, 0, (struct sockaddr*)&client_addr, addr_len);
+        }
+    }
 }
 
 /**
@@ -116,6 +190,9 @@ int main(void)
 
   // 建立 LWIP 初始化 task
   xTaskCreate(StartLWIPInitTask, "LWIP_Init", 1024, NULL, PRIORITY_LOW, NULL);
+
+  //xTaskCreate(tcp_server_task, "tcp_server_task", 2048, NULL, PRIORITY_LOW, NULL);
+  xTaskCreate(udp_server_task, "udp_server_task", 2048, NULL, PRIORITY_LOW, NULL);
 
   /* USER CODE BEGIN 2 */
   // 建立 task

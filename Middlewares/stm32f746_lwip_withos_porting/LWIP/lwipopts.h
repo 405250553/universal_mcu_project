@@ -73,8 +73,8 @@
 #define LWIP_ICMP               1
 
 /* 🚫 Disable everything else */
-#define LWIP_UDP                0
-#define LWIP_TCP                0
+#define LWIP_UDP                1
+#define LWIP_TCP                1
 #define LWIP_RAW                0
 #define LWIP_DHCP               0
 #define LWIP_DNS                0
@@ -110,9 +110,9 @@
 /*----- Value in opt.h for LWIP_NETIF_LINK_CALLBACK: 0 -----*/
 #define LWIP_NETIF_LINK_CALLBACK 1
 /*----- Value in opt.h for LWIP_NETCONN: 1 -----*/
-#define LWIP_NETCONN 0
+#define LWIP_NETCONN 1
 /*----- Value in opt.h for LWIP_SOCKET: 1 -----*/
-#define LWIP_SOCKET 0
+#define LWIP_SOCKET 1
 /*----- Value in opt.h for RECV_BUFSIZE_DEFAULT: INT_MAX -----*/
 #define RECV_BUFSIZE_DEFAULT 2000000000
 /*----- Value in opt.h for LWIP_STATS: 1 -----*/

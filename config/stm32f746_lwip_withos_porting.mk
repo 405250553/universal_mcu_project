@@ -61,9 +61,6 @@ C_INCLUDES +=  \
 	-IMiddlewares/$(PROJECT_NAME)/LWIP/Target \
 	-IMiddlewares/$(PROJECT_NAME)/LWIP/src/include \
 	-IMiddlewares/$(PROJECT_NAME)/LWIP/OS_portable \
-	#-IMiddlewares/$(PROJECT_NAME)/LWIP/src/include/compat \
-	#-IMiddlewares/$(PROJECT_NAME)/LWIP/src/include/lwip \
-	#-IMiddlewares/$(PROJECT_NAME)/LWIP/src/include/netif
 
 ## FreeRTOS includes-----------------------------------------
 C_INCLUDES +=  \
@@ -123,29 +120,37 @@ C_SOURCES += \
 
 ## add LwIP file
 C_SOURCES  += \
-	Middlewares/$(PROJECT_NAME)/LWIP/Target/ethernetif.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/App/lwip.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/OS_portable/sys_arch.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/Target/ethernetif.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/App/lwip.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/OS_portable/sys_arch.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/def.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/init.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/mem.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/memp.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/netif.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/pbuf.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/raw.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/stats.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/sys.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/timeouts.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/netif/ethernet.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/inet_chksum.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/etharp.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/icmp.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/ip4_addr.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/ip4_frag.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/ip4.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/core/ip.c \
+	Middlewares/$(PROJECT_NAME)/LWIP/src/core/tcp.c \
+	Middlewares/$(PROJECT_NAME)/LWIP/src/core/tcp_in.c \
+	Middlewares/$(PROJECT_NAME)/LWIP/src/core/tcp_out.c \
+	Middlewares/$(PROJECT_NAME)/LWIP/src/core/udp.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/api/err.c \
+    Middlewares/$(PROJECT_NAME)/LWIP/src/api/sockets.c \
+	Middlewares/$(PROJECT_NAME)/LWIP/src/api/api_lib.c \
+	Middlewares/$(PROJECT_NAME)/LWIP/src/api/api_msg.c \
+	Middlewares/$(PROJECT_NAME)/LWIP/src/api/netbuf.c \
 	Middlewares/$(PROJECT_NAME)/LWIP/src/api/tcpip.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/inet_chksum.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/init.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/ip.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/def.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/mem.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/memp.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/netif.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/pbuf.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/raw.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/stats.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/sys.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/timeouts.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/etharp.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/icmp.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/ip4_addr.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/ip4_frag.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/core/ipv4/ip4.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src/netif/ethernet.c \
-	Middlewares/$(PROJECT_NAME)/LWIP/src//api/err.c
 
 
 ## add FreeRTOS & 找出該目錄下所有 .c 檔案
