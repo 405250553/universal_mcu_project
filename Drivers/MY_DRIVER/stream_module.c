@@ -89,6 +89,9 @@ void SDProducerTask(void *param)
     uart_print("<< movi offset found at %lu\r\n", moviOffset);
 
     int bufIndex = 0;
+    int stream_count=0;
+    uint64_t total_data=0;
+    int total_time=0;
 
     while(1) {
         char chunkID[4];
@@ -100,12 +103,16 @@ void SDProducerTask(void *param)
 
             // 等待 buffer 可用
             xSemaphoreTake(buf_free[bufIndex], portMAX_DELAY);
-
+            //uart_print("chunk read start\r\n");
             uint32_t start = HAL_GetTick();
             res = f_read(&aviFile, sd_buf[bufIndex], chunkSize, &br);
             uint32_t end = HAL_GetTick();
+            //uart_print("chunk read end\r\n");
             //uart_print("chunkSize=%d, time=%dms\r\n", chunkSize, end - start);
             if(res != FR_OK || br!=chunkSize) break;
+            stream_count++;
+            total_data += chunkSize;
+            total_time += (end - start);
 
             // 填完 buffer，通知 DMA2D Consumer
             xSemaphoreGive(buf_ready[bufIndex]);
@@ -115,6 +122,13 @@ void SDProducerTask(void *param)
         }
 
         if(f_tell(&aviFile) >= f_size(&aviFile)) break;
+    }
+
+    {
+        float speed_kb = (float)total_data / 1024.0f / ((float)total_time / 1000.0f);
+        float speed_mb = (float)speed_kb / 1024.0f;
+        uart_print("Read : %lu KB/s (%.2f MB/s), Time: %.2f ms\n",
+                   (unsigned long)speed_kb, speed_mb, (float)total_time/stream_count);
     }
 
     f_close(&aviFile);
@@ -146,7 +160,6 @@ void DMA2DConsumerTaskPolling(void *param)
                         (uint32_t)LCD_FB_START_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
         HAL_DMA2D_PollForTransfer(&hDma2dHandler, 1);
         uint32_t end = HAL_GetTick();
-        uart_print("time=%dms\r\n", end - start);
         // 拷貝完，釋放 buffer
         xSemaphoreGive(buf_free[bufIndex]);
         bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
@@ -170,14 +183,11 @@ void DMA2DConsumerTask_Polling(void *param)
     int bufIndex = 0;
     while(1) {
         // 等 buffer ready
-        uint32_t start = HAL_GetTick();
         xSemaphoreTake(buf_ready[bufIndex], portMAX_DELAY);
 
         HAL_DMA2D_Start(&hDma2dHandler, (uint32_t)sd_buf[bufIndex],
                         (uint32_t)LCD_FB_START_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
         HAL_DMA2D_PollForTransfer(&hDma2dHandler, 1);
-        uint32_t end = HAL_GetTick();
-        //uart_print("time=%dms\r\n", end - start);
         // 拷貝完，釋放 buffer
         xSemaphoreGive(buf_free[bufIndex]);
         bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
@@ -201,13 +211,10 @@ void DMA2DConsumerTask_IT(void *param)
     int bufIndex = 0;
     while(1) {
         // 等 buffer ready
-        uint32_t start = HAL_GetTick();
         xSemaphoreTake(buf_ready[bufIndex], portMAX_DELAY);
 
         HAL_DMA2D_Start_IT(&hDma2dHandler, (uint32_t)sd_buf[bufIndex],
                         (uint32_t)LCD_FB_START_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
-        uint32_t end = HAL_GetTick();
-        uart_print("time=%dms\r\n", end - start);
         // 拷貝完，釋放 buffer
         xSemaphoreGive(buf_free[bufIndex]);
         bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
@@ -235,7 +242,7 @@ void AviModuleTaskInit(void)
         xSemaphoreGive(buf_free[i]);               // SD Producer 開始就可以填
     }
 
-    const char *play_filename = "0:/1_rotate90_rgb565.avi";
+    const char *play_filename = "0:/8_rotate90_rgb565.avi";
     xTaskCreate(SDProducerTask, "SDProducer", 2048, (void*)play_filename, PRIORITY_HIGH, NULL);
     xTaskCreate(DMA2DConsumerTask_IT, "DMA2DConsumer", 2048, NULL, PRIORITY_AboveNormal, NULL);
 }
