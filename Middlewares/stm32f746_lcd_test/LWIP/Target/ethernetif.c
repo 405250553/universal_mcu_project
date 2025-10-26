@@ -607,7 +607,12 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
   /* USER CODE BEGIN ETH_MspInit 0 */
 
   /* USER CODE END ETH_MspInit 0 */
-    /* Enable Peripheral clock */
+    /* Enable Peripheral clock 
+      stm32內部從cpu控制mac的ref clk 就是 AHB1 clk
+      clk src路徑
+        SYSCLK = 200MHz -> HCLK = 200MHz -> AHB = 200MHz
+      SET_BIT(RCC->AHB1ENR, RCC_AHB1ENR_ETHMACEN);
+    */
     __HAL_RCC_ETH_CLK_ENABLE();
 
     __HAL_RCC_GPIOG_CLK_ENABLE();
@@ -623,6 +628,11 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
     PA2     ------> ETH_MDIO
     PC5     ------> ETH_RXD1
     PA7     ------> ETH_CRS_DV
+
+    RMII data line 有兩條, 因此為了達到100Mbps就需要50MHz的 ETH_REF_CLK (50MHz*2bit = 100Mbps),
+    根據stm32f746 DISCO 開發版, 它是把HSE(high speed external) 25MHz 直接接通到LAN8742A-CZ-TR,
+    LAN8742A-CZ-TR 內部還有PLL可以*2倍頻 -> 產生 50 MHz RMII clock
+ 
     */
     GPIO_InitStruct.Pin = RMII_TXD1_Pin|RMII_TXD0_Pin|RMII_TX_EN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -697,7 +707,14 @@ int32_t ETH_PHY_IO_Init(void)
      in the ETH_MspInit() else it should be done here
   */
 
-  /* Configure the MDIO Clock */
+  /* Configure the MDIO Clock
+
+    HAL_ETH_SetMDIOClockRange will get HCLK speed then set divide parameter to fit PHY spec (most PHY MDIO speed <= 2.5MHz)
+    Current setting:
+      SYSCLK = 200 MHz → HCLK = 200 MHz（AHB prescaler = 1）
+      if HCLK ≥ 150 MHz → set divider to ETH_MACMIIAR_CR_Div102
+      MDC = 200 MHz / 102 ≈ 1.96 MHz → fit PHY MDC ≤ 2.5 MHz
+  */
   HAL_ETH_SetMDIOClockRange(&heth);
 
   return 0;
