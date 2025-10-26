@@ -186,9 +186,6 @@ uint8_t BSP_SD_Init(void)
     }
     else
     {
-      uSdHandle.Instance->CLKCR &= ~SDMMC_CLKCR_CLKDIV;
-      uSdHandle.Instance->CLKCR |= SDMMC_CLKCR_BYPASS;
-      uSdHandle.Instance->CLKCR |= SDMMC_CLKCR_CLKEN; // 開啟 clock
       sd_state = MSD_OK;
     }
   }
