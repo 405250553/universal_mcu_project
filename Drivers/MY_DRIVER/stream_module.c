@@ -37,20 +37,25 @@ EndDependencies */
 void BSP_DMA2D_ITConfig(void);
 
 __attribute__((section(".sdram_data"))) static uint8_t sd_buf[SD_BUF_COUNT][FRAME_SIZE]; // SD staging buffers
-__attribute__((section(".sdram_data"))) static uint8_t audio_buff[8192];
+static uint8_t audio_buff[8192];
 
 static SemaphoreHandle_t buf_ready[SD_BUF_COUNT];  // SD Producer -> DMA2D Consumer
 static SemaphoreHandle_t buf_free[SD_BUF_COUNT];   // DMA2D finished -> SD Producer
 
 static __IO uint32_t uwVolume = 50;
 
-extern void uart_print(const char *fmt, ...);
-
-
+/* This is self-define DMA2D handler */
+DMA2D_HandleTypeDef hDma2dHandler;
 /* SAI handler declared in "stm32746g_discovery_audio.c" file */
 extern SAI_HandleTypeDef haudio_out_sai;
+/* SD handler declared in "stm32746g_discovery_sd.c" file */
+extern SD_HandleTypeDef uSdHandle;
 
-DMA2D_HandleTypeDef hDma2dHandler;
+extern void uart_print(const char *fmt, ...);
+
+/*******************************************************************************
+                            Callback Functions
+*******************************************************************************/
 
 void Dma2DXferCpltCallback(DMA2D_HandleTypeDef *hdma2d)
 {
@@ -60,10 +65,9 @@ void Dma2DXferCpltCallback(DMA2D_HandleTypeDef *hdma2d)
   }
 }
 
-void DMA2D_IRQHandler(void)
-{
-  HAL_DMA2D_IRQHandler(&hDma2dHandler);
-}
+/*******************************************************************************
+                            Task Functions
+*******************************************************************************/
 
 void SDProducerTask(void *param)
 {
@@ -101,6 +105,9 @@ void SDProducerTask(void *param)
     int stream_count=0;
     uint64_t total_data=0;
     int total_time=0;
+
+    // 播放立體聲資料
+    BSP_AUDIO_OUT_Play((uint16_t*)audio_buff, 8192);
 
     while(1) {
         char chunkID[4];
@@ -141,9 +148,6 @@ void SDProducerTask(void *param)
                 uart_print("f_read fail\r\n");
                 break;
             }
-
-            // 播放立體聲資料
-            BSP_AUDIO_OUT_Play((uint16_t*)audio_buff, chunkSize);
         }
         else {
             f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize%2));
@@ -161,12 +165,12 @@ void SDProducerTask(void *param)
 
     f_close(&aviFile);
     f_mount(NULL, "0:", 1);
+    BSP_AUDIO_OUT_Stop(CODEC_PDWN_HW);
     vTaskDelete(NULL);
 }
 
 void DMA2DConsumerTaskPolling(void *param)
 {
-    DMA2D_HandleTypeDef hDma2dHandler;
     hDma2dHandler.Init.Mode = DMA2D_M2M;
     hDma2dHandler.Init.ColorMode = DMA2D_RGB565;
     hDma2dHandler.Init.OutputOffset = 0;
@@ -196,7 +200,6 @@ void DMA2DConsumerTaskPolling(void *param)
 
 void DMA2DConsumerTask_Polling(void *param)
 {
-    DMA2D_HandleTypeDef hDma2dHandler;
     hDma2dHandler.Init.Mode = DMA2D_M2M;
     hDma2dHandler.Init.ColorMode = DMA2D_RGB565;
     hDma2dHandler.Init.OutputOffset = 0;
@@ -248,14 +251,12 @@ void DMA2DConsumerTask_IT(void *param)
         bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
     }
 }
-int res;
+
 void AviModuleBspInit(void)
 {
     BSP_SD_Init();
-    BSP_SD_ITConfig();
     MX_FATFS_Init();
-    res=BSP_AUDIO_OUT_Init(OUTPUT_DEVICE_HEADPHONE, uwVolume, AUDIO_FREQUENCY_44K);
-
+    BSP_AUDIO_OUT_Init(OUTPUT_DEVICE_HEADPHONE, uwVolume, AUDIO_FREQUENCY_44K);
     /* To have an audio stream in speaker only SAI Slot 1 and Slot 3 must be activated */
     BSP_AUDIO_OUT_SetAudioFrameSlot(CODEC_AUDIOFRAME_SLOT_02);
     BSP_SDRAM_Init();                    // 初始化 FMC 與 SDRAM
@@ -273,33 +274,10 @@ void AviModuleTaskInit(void)
         buf_free[i] = xSemaphoreCreateBinary();    // 初始化為可用
         xSemaphoreGive(buf_free[i]);               // SD Producer 開始就可以填
     }
-
-    uart_print("BSP_AUDIO_OUT_Init res=%d\r\n", res);
-    const char *play_filename = "0:/8_rotate90_rgb565.avi";
+    const char *play_filename = "0:/12_rotate90_rgb565.avi";
+    //const char *play_filename = "0:/13_rgb565.avi";
     xTaskCreate(SDProducerTask, "SDProducer", 2048, (void*)play_filename, PRIORITY_HIGH, NULL);
     xTaskCreate(DMA2DConsumerTask_IT, "DMA2DConsumer", 2048, NULL, PRIORITY_AboveNormal, NULL);
-}
-
-
-
-/**
-  * @brief This function handles DMA2 Stream 4 interrupt request.
-  * @param None
-  * @retval None
-  */
-void AUDIO_OUT_SAIx_DMAx_IRQHandler(void)
-{
-  HAL_DMA_IRQHandler(haudio_out_sai.hdmatx);
-}
-
-/**
-  * @brief  Calculates the remaining file size and new position of the pointer.
-  * @param  None
-  * @retval None
-  */
-void BSP_AUDIO_OUT_TransferComplete_CallBack(void)
-{
-    BSP_AUDIO_OUT_Stop(CODEC_PDWN_SW);
 }
 
 void BSP_DMA2D_ITConfig(void)
@@ -307,4 +285,45 @@ void BSP_DMA2D_ITConfig(void)
   /* DMA2D interrupt Init */
   HAL_NVIC_SetPriority(DMA2D_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA2D_IRQn);
+}
+
+/*******************************************************************************
+                            IRQ Functions
+*******************************************************************************/
+
+void DMA2D_IRQHandler(void)
+{
+  HAL_DMA2D_IRQHandler(&hDma2dHandler);
+}
+
+/*
+     + Micro SD card operations
+        o polling mode by calling the functions BSP_SD_ReadBlocks()/BSP_SD_WriteBlocks()
+          DMA transfer by calling the functions BSP_SD_ReadBlocks_DMA()/BSP_SD_WriteBlocks_DMA()
+
+        o The DMA transfer complete is used with interrupt mode. Once the SD transfer
+          is complete, the SD interrupt is handled using the function BSP_SD_IRQHandler(),
+          the DMA Tx/Rx transfer complete are handled using the functions
+          BSP_SD_DMA_Tx_IRQHandler()/BSP_SD_DMA_Rx_IRQHandler(). The corresponding user callbacks 
+          are implemented by the user at application level. 
+*/
+
+void BSP_SDMMC_IRQHandler(void)
+{
+  HAL_SD_IRQHandler(&uSdHandle);
+}
+
+void BSP_SDMMC_DMA_Tx_IRQHandler()
+{
+  HAL_DMA_IRQHandler(uSdHandle.hdmatx);
+}
+
+void BSP_SDMMC_DMA_Rx_IRQHandler()
+{
+  HAL_DMA_IRQHandler(uSdHandle.hdmarx);
+}
+
+void AUDIO_OUT_SAIx_DMAx_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(haudio_out_sai.hdmatx);
 }
