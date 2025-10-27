@@ -591,8 +591,32 @@ static uint8_t My_BSP_SD_Init(void)
   /* uSD device interface configuration */
   uSdHandle.Instance = SDMMC1;
 
+  /*
+  根據stm32f7xx_hal_sd.c註解的manual說明,
+  在一般情況下把bypass設定成 SDMMC_CLOCK_BYPASS_DISABLE,
+  SDMMC在資料傳送state clk公式是
+
+  The SD Card frequency (SDMMC_CK) is computed as follows:
+        SDMMC_CK = SDMMCCLK / (ClockDiv + 2)
+
+  SDMMCCLK 在 PeriphCommonClock_Config() 預設會是48MHz,
+  所以ClockDiv=0, SDMMC_CK仍然只有24MHz
+
+  根據manual提到,如果希望把clk設定超過24MHz,就需要設定成bypass mode,
+  這時SDMMC_CK就會直接接到 HSE/HCLK
+
+  (#) Configure the SD Card Data transfer frequency. You can change or adapt this
+      frequency by adjusting the "ClockDiv" field.
+      In transfer mode and according to the SD Card standard, make sure that the
+      SDMMC_CK frequency doesn't exceed 25MHz and 50MHz in High-speed mode switch.
+      To be able to use a frequency higher than 24MHz, you should use the SDMMC
+      peripheral in bypass mode. Refer to the corresponding reference manual
+      for more details.
+
+  因此我在這邊同時把clk mode改成bypass mode
+  */
   uSdHandle.Init.ClockEdge           = SDMMC_CLOCK_EDGE_RISING;
-  uSdHandle.Init.ClockBypass         = SDMMC_CLOCK_BYPASS_DISABLE;
+  uSdHandle.Init.ClockBypass         = SDMMC_CLOCK_BYPASS_ENABLE;
   uSdHandle.Init.ClockPowerSave      = SDMMC_CLOCK_POWER_SAVE_DISABLE;
   uSdHandle.Init.BusWide             = SDMMC_BUS_WIDE_1B;
   uSdHandle.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
@@ -624,34 +648,6 @@ static uint8_t My_BSP_SD_Init(void)
     }
     else
     {
-      /*
-      根據stm32f7xx_hal_sd.c註解的manual說明,
-      在一般情況下把bypass設定成 SDMMC_CLOCK_BYPASS_DISABLE,
-      SDMMC在資料傳送state clk公式是
-
-      The SD Card frequency (SDMMC_CK) is computed as follows:
-           SDMMC_CK = SDMMCCLK / (ClockDiv + 2)
-
-      SDMMCCLK 在 PeriphCommonClock_Config() 預設會是48MHz,
-      所以ClockDiv=0, SDMMC_CK仍然只有24MHz
-
-      根據manual提到,如果希望把clk設定超過24MHz,就需要設定成bypass mode,
-      這時SDMMC_CK就會直接接到 HSE/HCLK
-
-      (#) Configure the SD Card Data transfer frequency. You can change or adapt this
-          frequency by adjusting the "ClockDiv" field.
-          In transfer mode and according to the SD Card standard, make sure that the
-          SDMMC_CK frequency doesn't exceed 25MHz and 50MHz in High-speed mode switch.
-          To be able to use a frequency higher than 24MHz, you should use the SDMMC
-          peripheral in bypass mode. Refer to the corresponding reference manual
-          for more details.
-
-      因此如果sd card init ok, 切換成transfor mode時會把bus mode改成 4 bits,
-      我在這邊同時把clk mode改成bypass mode
-      */
-      uSdHandle.Instance->CLKCR &= ~SDMMC_CLKCR_CLKDIV; //把 SDMMC 的分頻器歸零，準備重設或啟用 bypass。
-      uSdHandle.Instance->CLKCR |= SDMMC_CLKCR_BYPASS; //SDMMC 直接使用 HSE/HCLK 時鐘，不經 CLKDIV 分頻。
-      uSdHandle.Instance->CLKCR |= SDMMC_CLKCR_CLKEN; //開啟 SDMMC 模組的時鐘輸出，SD 卡才能收到時鐘開始傳輸。
       sd_state = MSD_OK;
     }
   }
