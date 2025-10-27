@@ -142,12 +142,6 @@ static void LL_ConvertLineToARGB8888(void * pSrc, void *pDst, uint32_t xSize, ui
   * @{
   */
 
-void BSP_DMA2D_ITConfig(void)
-{
-  /* USART1 interrupt Init */
-  HAL_NVIC_SetPriority(DMA2D_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(DMA2D_IRQn);
-}
 /**
   * @brief  Initializes the LCD.
   * @retval LCD state

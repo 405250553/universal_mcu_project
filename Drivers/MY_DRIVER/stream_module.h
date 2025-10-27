@@ -9,6 +9,7 @@
 #include "stm32746g_discovery_lcd.h"
 #include "stm32746g_discovery_camera.h"
 #include "stm32746g_discovery_sd.h"
+#include "stm32746g_discovery_audio.h"
 #include "freertos_includes.h"
 #include "fatfs.h"
 #include "ff.h"

@@ -34,12 +34,21 @@ EndDependencies */
 #include "stream_module.h"
 #include <string.h>
 
+void BSP_DMA2D_ITConfig(void);
+
 __attribute__((section(".sdram_data"))) static uint8_t sd_buf[SD_BUF_COUNT][FRAME_SIZE]; // SD staging buffers
+__attribute__((section(".sdram_data"))) static uint8_t audio_buff[8192];
 
 static SemaphoreHandle_t buf_ready[SD_BUF_COUNT];  // SD Producer -> DMA2D Consumer
 static SemaphoreHandle_t buf_free[SD_BUF_COUNT];   // DMA2D finished -> SD Producer
 
+static __IO uint32_t uwVolume = 50;
+
 extern void uart_print(const char *fmt, ...);
+
+
+/* SAI handler declared in "stm32746g_discovery_audio.c" file */
+extern SAI_HandleTypeDef haudio_out_sai;
 
 DMA2D_HandleTypeDef hDma2dHandler;
 
@@ -99,17 +108,21 @@ void SDProducerTask(void *param)
         if(f_read(&aviFile, chunkID, 4, &br) != FR_OK || br!=4) break;
         if(f_read(&aviFile, &chunkSize, 4, &br) != FR_OK || br!=4) break;
 
-        if(chunkID[2]=='d' && chunkID[3]=='c' && chunkSize <= FRAME_SIZE) {
+        if(chunkID[2]=='d' && chunkID[3]=='c' && chunkSize <= FRAME_SIZE) { //frame data
 
             // 等待 buffer 可用
             xSemaphoreTake(buf_free[bufIndex], portMAX_DELAY);
-            //uart_print("chunk read start\r\n");
+            //uart_print("frame chunk read start\r\n");
             uint32_t start = HAL_GetTick();
             res = f_read(&aviFile, sd_buf[bufIndex], chunkSize, &br);
             uint32_t end = HAL_GetTick();
-            //uart_print("chunk read end\r\n");
-            //uart_print("chunkSize=%d, time=%dms\r\n", chunkSize, end - start);
-            if(res != FR_OK || br!=chunkSize) break;
+            //uart_print("frame chunk read end\r\n");
+            //uart_print("frame chunkSize=%d, time=%dms\r\n", chunkSize, end - start);
+            if(res != FR_OK || br!=chunkSize)
+            {
+                uart_print("f_read fail\r\n");
+                break;
+            }
             stream_count++;
             total_data += chunkSize;
             total_time += (end - start);
@@ -117,7 +130,22 @@ void SDProducerTask(void *param)
             // 填完 buffer，通知 DMA2D Consumer
             xSemaphoreGive(buf_ready[bufIndex]);
             bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
-        } else {
+        }
+        else if(chunkID[2]=='w' && chunkID[3]=='b')
+        {
+            //uart_print("audio chunkSize=%d\r\n", chunkSize);
+            // 讀取音訊資料
+            res = f_read(&aviFile, audio_buff, chunkSize, &br);
+            if(res != FR_OK || br != chunkSize)
+            {
+                uart_print("f_read fail\r\n");
+                break;
+            }
+
+            // 播放立體聲資料
+            BSP_AUDIO_OUT_Play((uint16_t*)audio_buff, chunkSize);
+        }
+        else {
             f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize%2));
         }
 
@@ -220,12 +248,16 @@ void DMA2DConsumerTask_IT(void *param)
         bufIndex = (bufIndex + 1) % SD_BUF_COUNT;
     }
 }
-
+int res;
 void AviModuleBspInit(void)
 {
     BSP_SD_Init();
     BSP_SD_ITConfig();
     MX_FATFS_Init();
+    res=BSP_AUDIO_OUT_Init(OUTPUT_DEVICE_HEADPHONE, uwVolume, AUDIO_FREQUENCY_44K);
+
+    /* To have an audio stream in speaker only SAI Slot 1 and Slot 3 must be activated */
+    BSP_AUDIO_OUT_SetAudioFrameSlot(CODEC_AUDIOFRAME_SLOT_02);
     BSP_SDRAM_Init();                    // 初始化 FMC 與 SDRAM
     BSP_LCD_Init();                      // 初始化 LCD (LTDC)
     BSP_DMA2D_ITConfig();
@@ -242,7 +274,37 @@ void AviModuleTaskInit(void)
         xSemaphoreGive(buf_free[i]);               // SD Producer 開始就可以填
     }
 
+    uart_print("BSP_AUDIO_OUT_Init res=%d\r\n", res);
     const char *play_filename = "0:/8_rotate90_rgb565.avi";
     xTaskCreate(SDProducerTask, "SDProducer", 2048, (void*)play_filename, PRIORITY_HIGH, NULL);
     xTaskCreate(DMA2DConsumerTask_IT, "DMA2DConsumer", 2048, NULL, PRIORITY_AboveNormal, NULL);
+}
+
+
+
+/**
+  * @brief This function handles DMA2 Stream 4 interrupt request.
+  * @param None
+  * @retval None
+  */
+void AUDIO_OUT_SAIx_DMAx_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(haudio_out_sai.hdmatx);
+}
+
+/**
+  * @brief  Calculates the remaining file size and new position of the pointer.
+  * @param  None
+  * @retval None
+  */
+void BSP_AUDIO_OUT_TransferComplete_CallBack(void)
+{
+    BSP_AUDIO_OUT_Stop(CODEC_PDWN_SW);
+}
+
+void BSP_DMA2D_ITConfig(void)
+{
+  /* DMA2D interrupt Init */
+  HAL_NVIC_SetPriority(DMA2D_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2D_IRQn);
 }
