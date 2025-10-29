@@ -17,7 +17,8 @@
 #define TX_QUEUE_LEN 32
 #define TX_ITEM_LEN 128
 
-#define RX_USE_IDLE_DMA  1  // set 1 = DMA_RX_interrupt with idle timeout
+/*TODO: RX_USE_IDLE_DMA mode buffer will have dirty data*/
+#define RX_USE_IDLE_DMA  0  // set 1 = DMA_RX_interrupt with idle timeout
 #define USE_UART_DMA   1    // 設 1 = DMA_RX/TX_interrupt，設 0 = CPU_RX/TX_interrupt
 
 #if USE_UART_DMA
