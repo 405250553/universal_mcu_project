@@ -105,7 +105,7 @@ void cli_parse(char *input)
         while (*args && isspace((unsigned char)*args)) args++;
         last_node_with_handler->handler(args);
     } else {
-        static err_msg[TX_ITEM_LEN];
+        static char err_msg[TX_ITEM_LEN];
         sprintf(err_msg,"Unknown command %s, cmdlen=%d ",start,strlen(start));
         TX_QUEUE_SEND(err_msg);
     }
