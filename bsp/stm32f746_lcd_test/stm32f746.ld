@@ -64,8 +64,7 @@ MEMORY
   RAM (xrw)        : ORIGIN = 0x20000000, LENGTH = 256K    /* cacheable RAM */
   RAM_NC (xrw)     : ORIGIN = 0x20040000, LENGTH = 64K     /* non-cacheable RAM for DMA */
   FLASH (rx)       : ORIGIN = 0x8000000, LENGTH = 1024K
-  /*SDRAM_NC (xrw)   : ORIGIN = 0xC0000000, LENGTH = 8M       全部 SDRAM non-cacheable */
-  SDRAM_NC (xrw)   : ORIGIN = 0xC0200000, LENGTH = 6M
+  SDRAM_NC (xrw)   : ORIGIN = 0xC0000000, LENGTH = 8M      /* 全部 SDRAM non-cacheable */
 }
 
 /* Define output sections */
