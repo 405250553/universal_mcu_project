@@ -14,7 +14,9 @@
 #include "fatfs.h"
 #include "ff.h"
 
-#define SD_BUF_COUNT 2   // SD staging buffer 數量
+#define FRAME_BUFF_RING_SIZE 8
+#define AUDIO_BUFF_RING_SIZE 64
+#define AUDIO_SIZE 8192
 #define LCD_WIDTH   RK043FN48H_WIDTH
 #define LCD_HEIGHT  RK043FN48H_HEIGHT
 #define COLOR_BYTE  2
