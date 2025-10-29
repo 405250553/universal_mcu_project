@@ -78,6 +78,8 @@ void cli_parse(char *input)
     char *end = start + strlen(start);
     while (end > start && isspace((unsigned char)*(end - 1))) *(--end) = '\0';
 
+    if(strlen(start)==0) return;
+
     // 一個字元一個字元比對 Trie
     while (*p && node) {
         cli_node_t *next = NULL;
@@ -103,7 +105,9 @@ void cli_parse(char *input)
         while (*args && isspace((unsigned char)*args)) args++;
         last_node_with_handler->handler(args);
     } else {
-        TX_QUEUE_SEND("Unknown command\r\n");
+        static err_msg[TX_ITEM_LEN];
+        sprintf(err_msg,"Unknown command %s, cmdlen=%d ",start,strlen(start));
+        TX_QUEUE_SEND(err_msg);
     }
 }
 
