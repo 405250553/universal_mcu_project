@@ -13,6 +13,7 @@ void cmd_set_video_pause(char *args);
 void cmd_set_video_resume(char *args);
 void cmd_set_video_next(char *args);
 void cmd_set_video_prev(char *args);
+void cmd_set_video_reset(char *args);
 void cmd_set_ip(char *args);
 void cmd_newline(char *args);
 void cmd_clear(char *args);
@@ -27,6 +28,7 @@ static const cli_command_table_t cli_commands[] = {
     {"set video resume",  cmd_set_video_resume,"set video resume",      "Set Video display resume"},
     {"set video next",    cmd_set_video_next  ,"set video next",        "Set Video display next file"},
     {"set video prev",    cmd_set_video_prev  ,"set video prev",        "Set Video display prev file"},
+    {"set video reset",   cmd_set_video_reset, "set video reset",        "IMPORTANT!!!!! This cmd will kill & recreate video task"},
     {"set ip",            cmd_set_ip,         "set ip <addr> mask <mask>", "Set NIC static IP address"},
     {"clear",             cmd_clear,          "clear",                  "Clear the terminal screen"},
     {"help",              cmd_help,           "help",                   "Show available commands and usage"},
@@ -193,30 +195,37 @@ void cmd_get_sd_file(char *args)
 
 void cmd_set_video_pause(char *args)
 {
-    static char msg[]="set cmd_set_video_pause";
+    static char msg[]="set cmd_set_video_pause\r\n";
     AviSetPause();
     TX_QUEUE_SEND(msg);
 }
 
 void cmd_set_video_resume(char *args)
 {
-    static char msg[]="set cmd_set_video_resume";
+    static char msg[]="set cmd_set_video_resume\r\n";
     AviSetResume();
     TX_QUEUE_SEND(msg);
 }
 
 void cmd_set_video_next(char *args)
 {
-    static char msg[]="set cmd_set_video_next";
+    static char msg[]="set cmd_set_video_next\r\n";
     AviSetNext();
     TX_QUEUE_SEND(msg);
 }
 
 void cmd_set_video_prev(char *args)
 {
-    static char msg[]="set cmd_set_video_prev";
+    static char msg[]="set cmd_set_video_prev\r\n";
     AviSetPrev();
     TX_QUEUE_SEND(msg);
+}
+
+void cmd_set_video_reset(char *args)
+{
+    static char msg[]="IMPORTANT!!!!! This cmd will kill & recreate video task\r\n";
+    AviModuleTaskReset();
+    TX_QUEUE_SEND(msg);   
 }
 
 void cmd_set_ip(char *args)
