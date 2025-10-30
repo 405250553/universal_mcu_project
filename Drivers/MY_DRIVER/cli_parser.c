@@ -1,12 +1,18 @@
 #include "cli_module.h"
 #include "lwip/etharp.h"
+#include "stream_module.h"
 #include "cli_parser.h"
 
 // Trie 根節點
 static cli_node_t cli_root = {0};
 void cmd_show_ip_table(char *args);
 void cmd_show_arp_table(char *args);
+void cmd_get_sd_file(char *args);
 void cmd_get_ip_info(char *args);
+void cmd_set_video_pause(char *args);
+void cmd_set_video_resume(char *args);
+void cmd_set_video_next(char *args);
+void cmd_set_video_prev(char *args);
 void cmd_set_ip(char *args);
 void cmd_newline(char *args);
 void cmd_clear(char *args);
@@ -16,6 +22,11 @@ static const cli_command_table_t cli_commands[] = {
     {"show ip table",     cmd_show_ip_table,  "show ip table",          "Display the current IP routing table"},
     {"show ip interface", cmd_get_ip_info,    "show ip interface",      "Display IP interface information"},
     {"show arp table",    cmd_show_arp_table, "show arp table",         "Display ARP table entries"},
+    {"ls",                cmd_get_sd_file,    "ls",                     "Display SD card total files"},
+    {"set video pause",   cmd_set_video_pause,"set video pause",        "Set Video display pause"},
+    {"set video resume",  cmd_set_video_resume,"set video resume",      "Set Video display resume"},
+    {"set video next",    cmd_set_video_next  ,"set video next",        "Set Video display next file"},
+    {"set video prev",    cmd_set_video_prev  ,"set video prev",        "Set Video display prev file"},
     {"set ip",            cmd_set_ip,         "set ip <addr> mask <mask>", "Set NIC static IP address"},
     {"clear",             cmd_clear,          "clear",                  "Clear the terminal screen"},
     {"help",              cmd_help,           "help",                   "Show available commands and usage"},
@@ -24,6 +35,8 @@ static const cli_command_table_t cli_commands[] = {
 };
 
 extern struct netif gnetif;
+extern __IO AviHandle gAviHandle;
+extern __IO FileList gFileList;
 
 // 註冊命令到 Trie
 static void cli_register_command(const char *cmd, cli_cmd_handler_t handler)
@@ -125,7 +138,7 @@ void cmd_show_arp_table(char *args)
     TX_QUEUE_SEND(msg);
     sprintf(msg,"--------------------------------------------------\r\n");
     TX_QUEUE_SEND(msg);
-    for(int i=0;i<ARP_TABLE_SIZE;i++)
+    for(uint8_t i=0;i<ARP_TABLE_SIZE;i++)
     {
         ip4_addr_t* ip;
         struct netif *netif;
@@ -163,6 +176,46 @@ void cmd_get_ip_info(char *args)
     offset += sprintf(msg,"%s    ",ip4addr_ntoa(netif_ip4_addr(&gnetif)));
     offset += sprintf(msg+offset,"%s    ",ip4addr_ntoa(netif_ip4_netmask(&gnetif)));
     offset += sprintf(msg+offset,"%s    \r\n\r\n",ip4addr_ntoa(netif_ip4_gw(&gnetif)));
+    TX_QUEUE_SEND(msg);
+}
+
+void cmd_get_sd_file(char *args)
+{
+    char msg[TX_ITEM_LEN];
+    TX_QUEUE_SEND("---------------------show SD card file---------------------\r\n");
+    for(uint16_t i=0;i<gFileList.count;i++)
+    {
+        sprintf(msg,"%s\r\n",gFileList.list[i]);
+        TX_QUEUE_SEND(msg);
+    }
+    TX_QUEUE_SEND("-----------------------------------------------------------\r\n");
+}
+
+void cmd_set_video_pause(char *args)
+{
+    static char msg[]="set cmd_set_video_pause";
+    AviSetPause();
+    TX_QUEUE_SEND(msg);
+}
+
+void cmd_set_video_resume(char *args)
+{
+    static char msg[]="set cmd_set_video_resume";
+    AviSetResume();
+    TX_QUEUE_SEND(msg);
+}
+
+void cmd_set_video_next(char *args)
+{
+    static char msg[]="set cmd_set_video_next";
+    AviSetNext();
+    TX_QUEUE_SEND(msg);
+}
+
+void cmd_set_video_prev(char *args)
+{
+    static char msg[]="set cmd_set_video_prev";
+    AviSetPrev();
     TX_QUEUE_SEND(msg);
 }
 
@@ -216,7 +269,7 @@ void cmd_newline(char *args)
 void cmd_help(char *args)
 {
     TX_QUEUE_SEND("Available commands:\r\n");
-    for (int i = 0; cli_commands[i].cmd != NULL; i++) {
+    for (uint16_t i = 0; cli_commands[i].cmd != NULL; i++) {
         if (strlen(cli_commands[i].cmd) == 0)
             continue;
 
