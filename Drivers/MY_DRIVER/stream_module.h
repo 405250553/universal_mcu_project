@@ -47,7 +47,7 @@ typedef struct {
 
 void AviModuleBspInit(void);
 void AviModuleTaskInit(void);
-
+void AviModuleTaskReset(void);
 
 
 typedef enum
@@ -73,6 +73,8 @@ typedef enum
 
 typedef struct
 {
+    TaskHandle_t AviPlayTask;
+    TaskHandle_t displayTask;
     AVIPlayState AviState;
     AVIPlaySpeed AviSpeed;
     uint8_t AviVolume;
