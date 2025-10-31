@@ -129,8 +129,8 @@ static void AviSystemInit()
     gAviHandle.AviSpeed = SPEEDx1;
     gAviHandle.AviVolume = SAL_VOLUME_INIT_VAL;
     gAviHandle.CurrPlayIdx = 0;
-    gAviHandle.AviPlayTask = NULL;
-    gAviHandle.displayTask = NULL;
+    gAviHandle.DisplayTask = NULL;
+    gAviHandle.SdProduceTask = NULL;
 }
 
 static void AviStateChange(AVIPlayState newstate)
@@ -393,59 +393,68 @@ normal chunk :
     data就是固定資料
     ex : 'avih' 0x00000038 [data...]
 */
-FRESULT AviPrepareFirstFrame(FIL *aviFile, uint32_t* pframeDelayUs)
+FRESULT AviPrepareFirstFrame(FIL *aviFile, avichunkavih* avih_data, avichunkstrh* strh_data)
 {
     if (!aviFile) return FR_INVALID_OBJECT;
 
     UINT br;
-    char buf[12];
+    char buf[8];
+    char ListType[5];
+    avichunkstrh* tmp_strh;
     DWORD chunkSize;
 
-    // 跳過 RIFF header ('RIFF' + size + 'AVI ')
+    // 跳過 RIFF header ('RIFF' + size + 'AVI')
     f_lseek(aviFile, 12);
 
-    while(f_read(aviFile, buf, 12, &br) == FR_OK && br == 12)
+    while(f_read(aviFile, buf, 8, &br) == FR_OK && br == 8)
     {
         memcpy(&chunkSize,buf+4, 4);
         if(memcmp(buf, "LIST", 4) == 0) {
-            DWORD listEnd = f_tell(aviFile) + chunkSize - 4;
-            //LIST hdrl data have aviheader
-            if(memcmp(buf+8, "hdrl", 4) == 0)
-            {
-                AVI_DEBUG("hdrl find\r\n");
-                if(f_read(aviFile, buf, 12, &br) == FR_OK && br == 12)
-                {
-                    if(memcmp(buf, "avih", 4) == 0)
-                    {
-                        memcpy(pframeDelayUs,buf+8, 4);
-                        AVI_DEBUG("frameDelay=%dus\r\n",*pframeDelayUs);
-                        f_lseek(aviFile, listEnd);
-                        continue;
-                    }
-                    else return FR_INT_ERR;
-                }
-                else return FR_INT_ERR;
-            }
-            //LIST movi have frame+audio data
-            else if(memcmp(buf+8, "movi", 4) == 0)
+            f_read(aviFile,ListType,4,&br);
+            //LIST movi have frame+audio data & it should be the last LIST need to parser
+            if(memcmp(ListType, "movi", 4) == 0)
             {
                 AVI_DEBUG("movi find\r\n");
-                break;
+                return FR_OK;
             }
-            else
+            else {
+                continue;
+            }
+        }
+        //chunk avih(avi header) have MicroSecPerFrame
+        else if(memcmp(buf, "avih", 4) == 0)
+        {
+            //AVI_DEBUG("avih find\r\n");
+            if(f_read(aviFile, (void*)avih_data, chunkSize, &br) == FR_OK && br == chunkSize)
             {
-                f_lseek(aviFile, listEnd);
+                AVI_DEBUG("frameDelay=%dus\r\n",avih_data->dwMicroSecPerFrame);
+                continue;
             }
+            else return FR_INT_ERR;
+        }
+        //chunk strh have SuggestedBufferSize
+        else if(memcmp(buf, "strh", 4) == 0)
+        {
+            //AVI_DEBUG("strh find\r\n");
+            if(f_read(aviFile, (void*)tmp_strh, chunkSize, &br) == FR_OK && br == chunkSize)
+            {
+                if(memcmp(tmp_strh->fccType, "auds", 4)==0)
+                {
+                    memcpy(strh_data,tmp_strh,chunkSize);
+                    AVI_DEBUG("SuggestedBufferSize=%d\r\n",strh_data->SuggestedBufferSize);
+                    continue;
+                }
+            }
+            else return FR_INT_ERR;
         }
         else
         {
-            f_lseek(aviFile, f_tell(aviFile) + chunkSize - 4);
+            f_lseek(aviFile, f_tell(aviFile) + chunkSize);
         }
     }
 
-    return FR_OK;
+    return FR_INT_ERR;
 }
-
 
 /*------------------------------------------------------------
  * AVI frame逐fps播放任務
@@ -503,7 +512,7 @@ void DisplayTask(void *param)
  * 主循環播放任務
  *-----------------------------------------------------------*/
 
-void AviPlayTask(void *param)
+void SdProducerTask(void *param)
 {
     FATFS Fs;
     FIL aviFile;
@@ -551,10 +560,11 @@ void AviPlayTask(void *param)
 
         AVI_DEBUG("<< open AVI file: %s success\r\n", gFileList.list[current]);
 
-        uint32_t frameDelayUs;
-        AviPrepareFirstFrame(&aviFile,&frameDelayUs);
+        avichunkavih avih_data;
+        avichunkstrh strh_data;
+        AviPrepareFirstFrame(&aviFile,&avih_data,&strh_data);
 
-        xTaskCreate(DisplayTask, "DisplayTask", 512,(void*)&frameDelayUs, PRIORITY_Normal, &gAviHandle.displayTask);
+        xTaskCreate(DisplayTask, "DisplayTask", 512,(void*)&(avih_data.dwMicroSecPerFrame), PRIORITY_Normal, &gAviHandle.DisplayTask);
         AviParserFunc(aviFile);
 
         // 等待 Frame/AudioReadyQueue 清空，確保所有 buffer 都播放完畢
@@ -565,7 +575,7 @@ void AviPlayTask(void *param)
         BSP_AUDIO_OUT_Pause();
         xQueueReset(AudioFreeQueue);
         for (int i = 0; i < AUDIO_BUFF_RING_SIZE; i++) xQueueSend(AudioFreeQueue, &i, 0);
-        xTaskNotifyGive(gAviHandle.displayTask);
+        xTaskNotifyGive(gAviHandle.DisplayTask);
 
         f_close(&aviFile);
         AVI_DEBUG("Playback done\r\n");
@@ -636,7 +646,7 @@ void AviModuleTaskInit(void)
     for (int i = 0; i < AUDIO_BUFF_RING_SIZE; i++)
         xQueueSend(AudioFreeQueue, &i, 0);
 
-    xTaskCreate(AviPlayTask, "AviPlayTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.AviPlayTask);
+    xTaskCreate(SdProducerTask, "SdProducerTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.SdProduceTask);
 }
 
 void AviModuleTaskReset(void)
@@ -645,13 +655,13 @@ void AviModuleTaskReset(void)
     BSP_AUDIO_OUT_Stop(CODEC_PDWN_SW);
     f_mount(NULL, "0:", 1);
     /*TODO:FILE not close correctly, so sd_diskio maybe deadlock*/
-    if(eTaskGetState(gAviHandle.AviPlayTask)!=eDeleted || eTaskGetState(gAviHandle.AviPlayTask)!=eInvalid) 
-        vTaskDelete(gAviHandle.AviPlayTask);
+    if(eTaskGetState(gAviHandle.SdProduceTask)!=eDeleted || eTaskGetState(gAviHandle.SdProduceTask)!=eInvalid)
+        vTaskDelete(gAviHandle.SdProduceTask);
     else
         return;
 
-    if(eTaskGetState(gAviHandle.displayTask)!=eDeleted || eTaskGetState(gAviHandle.displayTask)!=eInvalid) 
-        vTaskDelete(gAviHandle.displayTask);
+    if(eTaskGetState(gAviHandle.DisplayTask)!=eDeleted || eTaskGetState(gAviHandle.DisplayTask)!=eInvalid)
+        vTaskDelete(gAviHandle.DisplayTask);
     else
         return;
 
@@ -667,7 +677,7 @@ void AviModuleTaskReset(void)
     for (int i = 0; i < AUDIO_BUFF_RING_SIZE; i++)
         xQueueSend(AudioFreeQueue, &i, 0);
 
-    xTaskCreate(AviPlayTask, "AviPlayTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.AviPlayTask);
+    xTaskCreate(SdProducerTask, "SdProducerTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.SdProduceTask);
 }
 
 /*******************************************************************************

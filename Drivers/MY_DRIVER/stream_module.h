@@ -49,6 +49,40 @@ void AviModuleBspInit(void);
 void AviModuleTaskInit(void);
 void AviModuleTaskReset(void);
 
+// ------------------------ Main AVI Header (avih) ------------------------
+typedef struct {
+    uint32_t dwMicroSecPerFrame;    // 每幀所需微秒數
+    uint32_t dwMaxBytesPerSec;      // 最大資料傳輸率
+    uint32_t dwPaddingGranularity;  // 對齊填充粒度
+    uint32_t dwFlags;               // 標誌位
+    uint32_t dwTotalFrames;         // 總幀數
+    uint32_t dwInitialFrames;       // 初始幀數
+    uint32_t dwStreams;             // 流數量
+    uint32_t dwSuggestedBufferSize; // 建議緩衝區大小
+    uint32_t dwWidth;               // 視頻寬度
+    uint32_t dwHeight;              // 視頻高度
+    uint32_t dwReserved[4];         // 保留，必須設為 0
+} avichunkavih;
+
+// ------------------------ Stream Header (strh) ------------------------
+typedef struct {
+    char     fccType[4];             // 流類型，例如 "vids" 或 "auds"
+    char     fccHandler[4];          // 編碼器代碼，例如 "MJPG"
+    uint32_t Flags;                   // 標誌位
+    uint32_t Reserved1;               // 保留欄位
+    uint32_t InitialFrames;           // 初始幀數
+    uint32_t Scale;                   // 時間尺度
+    uint32_t Rate;                    // 每秒單位數 (Rate/Scale = fps)
+    uint32_t Start;                   // 流開始時間
+    uint32_t Length;                  // 流長度
+    uint32_t SuggestedBufferSize;     // 建議緩衝區大小
+    uint32_t Quality;                 // 質量
+    uint32_t SampleSize;              // 每個樣本大小
+    int16_t Left;                     // 顯示區左邊界
+    int16_t Top;                      // 顯示區上邊界
+    int16_t Right;                    // 顯示區右邊界
+    int16_t Bottom;                   // 顯示區下邊界
+} avichunkstrh;
 
 typedef enum
 {
@@ -73,8 +107,9 @@ typedef enum
 
 typedef struct
 {
-    TaskHandle_t AviPlayTask;
-    TaskHandle_t displayTask;
+    TaskHandle_t SdProduceTask;
+    TaskHandle_t DisplayTask;
+    TaskHandle_t AudioplayTask;
     AVIPlayState AviState;
     AVIPlaySpeed AviSpeed;
     uint8_t AviVolume;
