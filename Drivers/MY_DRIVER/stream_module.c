@@ -400,7 +400,7 @@ FRESULT AviPrepareFirstFrame(FIL *aviFile, avichunkavih* avih_data, avichunkstrh
     UINT br;
     char buf[8];
     char ListType[5];
-    avichunkstrh* tmp_strh;
+    avichunkstrh tmp_strh;
     DWORD chunkSize;
 
     // 跳過 RIFF header ('RIFF' + size + 'AVI')
@@ -436,11 +436,11 @@ FRESULT AviPrepareFirstFrame(FIL *aviFile, avichunkavih* avih_data, avichunkstrh
         else if(memcmp(buf, "strh", 4) == 0)
         {
             //AVI_DEBUG("strh find\r\n");
-            if(f_read(aviFile, (void*)tmp_strh, chunkSize, &br) == FR_OK && br == chunkSize)
+            if(f_read(aviFile, (void*)&tmp_strh, chunkSize, &br) == FR_OK && br == chunkSize)
             {
-                if(memcmp(tmp_strh->fccType, "auds", 4)==0)
+                if(memcmp(tmp_strh.fccType, "auds", 4)==0)
                 {
-                    memcpy(strh_data,tmp_strh,chunkSize);
+                    memcpy(strh_data,&tmp_strh,chunkSize);
                     AVI_DEBUG("SuggestedBufferSize=%d\r\n",strh_data->SuggestedBufferSize);
                     continue;
                 }
@@ -518,6 +518,8 @@ void SdProducerTask(void *param)
     FIL aviFile;
     FRESULT res;
     int current = 0;
+    avichunkavih avih_data;
+    avichunkstrh strh_data;
 
     //因為底層SD_Card IO 實做跟freertos sem有關,如果不是用task執行會deadlock
     ScanFileList();
@@ -552,7 +554,7 @@ void SdProducerTask(void *param)
             goto play_next;
         }
 
-        if(gAviHandle.AviState == VIDEO_PLAY_PREV) gAviHandle.AviState = VIDEO_PLAY;
+        if(gAviHandle.AviState == VIDEO_PLAY_PREV || gAviHandle.AviState == VIDEO_PLAY_NEXT) gAviHandle.AviState = VIDEO_PLAY;
 
         AVI_DEBUG("\r\n=== Playing %s ===\r\n", gFileList.list[current]);
 
@@ -560,8 +562,6 @@ void SdProducerTask(void *param)
 
         AVI_DEBUG("<< open AVI file: %s success\r\n", gFileList.list[current]);
 
-        avichunkavih avih_data;
-        avichunkstrh strh_data;
         AviPrepareFirstFrame(&aviFile,&avih_data,&strh_data);
 
         xTaskCreate(DisplayTask, "DisplayTask", 512,(void*)&(avih_data.dwMicroSecPerFrame), PRIORITY_Normal, &gAviHandle.DisplayTask);
@@ -600,7 +600,6 @@ play_next:
             current++;
             if (current >= gFileList.count)
                 current = 0;
-            if(gAviHandle.AviState == VIDEO_PLAY_NEXT) gAviHandle.AviState = VIDEO_PLAY;
         }
     }
 
