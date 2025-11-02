@@ -85,6 +85,7 @@ C_DEFS =  \
 	-DUSE_HAL_DRIVER \
 	-DSTM32F746xx \
 	-DWITH_FreeRTOS \
+	-DSUPPORT_TS \
 	-DLWIP_NOASSERT
 
 ## add system file-----------------------------------------
@@ -96,14 +97,17 @@ C_SOURCES += \
 	Drivers/BSP/Components/lan8742/lan8742.c \
 	Drivers/BSP/Components/ov9655/ov9655.c \
 	Drivers/BSP/Components/wm8994/wm8994.c \
+	Drivers/BSP/Components/ft5336/ft5336.c \
 	Drivers/MY_DRIVER/cli_module.c \
 	Drivers/MY_DRIVER/cli_parser.c \
 	Drivers/MY_DRIVER/stream_module.c \
+	Drivers/MY_DRIVER/stream_system.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sdram.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_lcd.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_camera.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sd.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_audio.c \
+	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_ts.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery.c
 
 ## add core file & 找出該目錄下所有 .c 檔案

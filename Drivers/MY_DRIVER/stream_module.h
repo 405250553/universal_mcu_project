@@ -84,45 +84,6 @@ typedef struct {
     int16_t Bottom;                   // 顯示區下邊界
 } avichunkstrh;
 
-typedef enum
-{
-    VIDEO_INIT=0,
-    VIDEO_PLAY,
-    VIDEO_PAUSE,
-    VIDEO_RESUME,
-    VIDEO_PLAY_NEXT,
-    VIDEO_PLAY_PREV,
-    VIDEO_VOLUME_CHANGE,
-    VIDEO_SPEED_CHANGE,
-}AVIPlayState;
-
-typedef enum
-{
-    SPEEDx1=0,
-    SPEEDx0_25,
-    SPEEDx0_5,
-    SPEEDx0_75,
-    SPEEDx1_25,
-}AVIPlaySpeed;
-
-typedef struct
-{
-    TaskHandle_t SdProduceTask;
-    TaskHandle_t DisplayTask;
-    TaskHandle_t AudioplayTask;
-    AVIPlayState AviState;
-    AVIPlaySpeed AviSpeed;
-    uint8_t AviVolume;
-    uint16_t CurrPlayIdx;
-}AviHandle;
-
-void AviSetSpeed(AVIPlaySpeed newSpeed);
-void AviSetVolume(uint8_t newVolume);
-void AviSetPause();
-void AviSetResume();
-void AviSetNext();
-void AviSetPrev();
-
 #ifdef __cplusplus
 }
 #endif

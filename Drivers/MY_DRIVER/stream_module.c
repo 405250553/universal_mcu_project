@@ -32,6 +32,7 @@ EndDependencies */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stream_module.h"
+#include "stream_system.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -42,12 +43,18 @@ static QueueHandle_t FrameReadyQueue;
 __attribute__((section(".sdram_data"))) static uint8_t audio_buff[AUDIO_BUFF_RING_SIZE][AUDIO_SIZE];
 static QueueHandle_t AudioFreeQueue;
 static QueueHandle_t AudioReadyQueue;
-__IO static uint32_t curr_audio_idx;
 static uint8_t audio_dma_buff[AUDIO_SIZE] = {0};
 
-
 __IO FileList gFileList = {0}; // 全域檔案列表
-__IO AviHandle gAviHandle  = {0};
+extern __IO AviHandle gAviHandle;
+
+typedef enum {
+  AUDIO_BUFFER_OFFSET_NONE = 0,
+  AUDIO_BUFFER_OFFSET_HALF,
+  AUDIO_BUFFER_OFFSET_FULL,
+}BUFFER_StateTypeDef;
+
+__IO BUFFER_StateTypeDef AudioDmaState;
 
 /* SAI handler declared in "stm32746g_discovery_audio.c" file */
 extern SAI_HandleTypeDef haudio_out_sai;
@@ -87,10 +94,8 @@ __weak void HAL_LTDC_ReloadEventCallback(LTDC_HandleTypeDef *hltdc)
   */
 void BSP_AUDIO_OUT_TransferComplete_CallBack(void)
 {
-    if(gAviHandle.AviState == VIDEO_PAUSE) return;
-
-    //uart_print("BSP_AUDIO_OUT_TransferComplete_CallBack\r\n");
-    memcpy(audio_dma_buff+AUDIO_SIZE/2,audio_buff[curr_audio_idx]+AUDIO_SIZE/2,AUDIO_SIZE/2);
+    if(AudioDmaState==AUDIO_BUFFER_OFFSET_NONE)
+        AudioDmaState = AUDIO_BUFFER_OFFSET_FULL;
 }
 
 /**
@@ -99,104 +104,8 @@ void BSP_AUDIO_OUT_TransferComplete_CallBack(void)
   */
 void BSP_AUDIO_OUT_HalfTransfer_CallBack(void)
 {
-    //uart_print("BSP_AUDIO_OUT_HalfTransfer_CallBack\r\n");
-    uint32_t idx;
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-
-    if(gAviHandle.AviState == VIDEO_PAUSE) return;
-
-    if(xQueueReceiveFromISR(AudioReadyQueue, &idx, &xHigherPriorityTaskWoken) == pdPASS) {
-        // 成功從 Queue 取得資料
-
-        // ISR 告訴這個 buffer 已經送完了
-        if(xQueueSendFromISR(AudioFreeQueue, &curr_audio_idx, &xHigherPriorityTaskWoken) != pdPASS) {
-            // Queue 滿了，丟棄這一幀或做其他處理
-        }
-        memcpy(audio_dma_buff,audio_buff[idx],AUDIO_SIZE/2);
-        curr_audio_idx = idx;
-    }
-    // 切換任務（如果需要）
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
-
-/*******************************************************************************
-                            AVI System Functions
-*******************************************************************************/
-
-static void AviSystemInit()
-{
-    gAviHandle.AviState = VIDEO_INIT;
-    gAviHandle.AviSpeed = SPEEDx1;
-    gAviHandle.AviVolume = SAL_VOLUME_INIT_VAL;
-    gAviHandle.CurrPlayIdx = 0;
-    gAviHandle.DisplayTask = NULL;
-    gAviHandle.SdProduceTask = NULL;
-}
-
-static void AviStateChange(AVIPlayState newstate)
-{
-    if(gAviHandle.AviState!=newstate)
-        gAviHandle.AviState = newstate;
-}
-
-void AviSetSpeed(AVIPlaySpeed newSpeed)
-{
-    if(gAviHandle.AviState!=VIDEO_INIT && gAviHandle.AviSpeed != newSpeed)
-    {
-        gAviHandle.AviSpeed = newSpeed;
-        AviStateChange(VIDEO_SPEED_CHANGE);
-    }
-}
-
-void AviSetVolume(uint8_t newVolume)
-{
-    if(gAviHandle.AviState!=VIDEO_INIT && gAviHandle.AviVolume != newVolume)
-    {
-        gAviHandle.AviVolume = newVolume;
-        AviStateChange(VIDEO_VOLUME_CHANGE);
-    }
-}
-
-void AviSetPause()
-{
-    if(gAviHandle.AviState!=VIDEO_INIT && gAviHandle.AviState != VIDEO_PAUSE)
-    {
-        BSP_AUDIO_OUT_Pause();
-        AviStateChange(VIDEO_PAUSE);
-    }
-}
-
-void AviSetResume()
-{
-    if(gAviHandle.AviState!=VIDEO_INIT && gAviHandle.AviState != VIDEO_PLAY)
-    {
-        BSP_AUDIO_OUT_Resume();
-        AviStateChange(VIDEO_PLAY);
-    }
-}
-
-void AviSetNext()
-{
-    if(gAviHandle.AviState!=VIDEO_INIT && gAviHandle.AviState != VIDEO_PLAY_NEXT)
-    {
-        if(gAviHandle.AviState == VIDEO_PAUSE)
-        {
-            xQueueReset(AudioReadyQueue);
-        }
-        AviStateChange(VIDEO_PLAY_NEXT);
-    }
-}
-
-void AviSetPrev()
-{
-    if(gAviHandle.AviState!=VIDEO_INIT && gAviHandle.AviState != VIDEO_PLAY_PREV)
-    {
-        if(gAviHandle.AviState == VIDEO_PAUSE)
-        {
-            xQueueReset(AudioReadyQueue);
-        }
-        AviStateChange(VIDEO_PLAY_PREV);
-    }
+    if(AudioDmaState==AUDIO_BUFFER_OFFSET_NONE)
+        AudioDmaState = AUDIO_BUFFER_OFFSET_HALF;
 }
 
 /*******************************************************************************
@@ -309,7 +218,7 @@ void AviParserFunc(FIL aviFile)
     uint64_t total_data=0;
     int total_time=0;
 
-    BSP_AUDIO_OUT_Resume();
+    gAviHandle.AviState = VIDEO_PLAY;
 
     while(1) {
         if(gAviHandle.AviState == VIDEO_PLAY_NEXT || gAviHandle.AviState == VIDEO_PLAY_PREV) return;
@@ -449,7 +358,10 @@ FRESULT AviPrepareFirstFrame(FIL *aviFile, avichunkavih* avih_data, avichunkstrh
         }
         else
         {
-            f_lseek(aviFile, f_tell(aviFile) + chunkSize);
+            /*
+            AVI chunk 的資料區如果長度是奇數，文件規範要求 補一個 pad byte，以保持 每個 chunk 在文件中對齊到偶數位址。
+            */
+            f_lseek(aviFile, f_tell(aviFile) + chunkSize + (chunkSize & 1));
         }
     }
 
@@ -473,6 +385,7 @@ void DisplayTask(void *param)
         if(gAviHandle.AviState == VIDEO_PAUSE)
         {
             vTaskDelay(pdMS_TO_TICKS(3));
+            lastWakeTime = xTaskGetTickCount(); // 更新基準時間
             continue;
         }
         // 等待下一張 frame 準備好
@@ -508,16 +421,100 @@ void DisplayTask(void *param)
     vTaskDelete(NULL);
 }
 
+
+/*------------------------------------------------------------
+ * AVI audio播放任務
+ *-----------------------------------------------------------*/
+void AudioplayTask(void *param)
+{
+    uint32_t SuggestedBufferSize = *(uint32_t*)param;
+    BUFFER_StateTypeDef dma_state;
+    uint32_t buf_idx;
+    uint16_t count=0;
+    uint16_t start=0;
+    uint16_t TaskDelayMs = (SuggestedBufferSize / 2)         // bytes: half of ping-pong buffer
+                        * 1000                              // convert seconds → milliseconds
+                        / (44100 * 2 * 2)                   // bytes per second: sample rate * 2 bytes/sample * 2 channels
+                        / 2;                                 // safety factor: half of這個時間，避免延遲太長
+
+    if (xQueueReceive(AudioReadyQueue, &buf_idx, portMAX_DELAY) == pdPASS)
+    {
+        memcpy(audio_dma_buff, audio_buff[buf_idx], SuggestedBufferSize);
+        AudioDmaState = AUDIO_BUFFER_OFFSET_NONE;
+        // 播放立體聲資料
+        BSP_AUDIO_OUT_Stop(CODEC_PDWN_SW); //DAC set mute & dma stop transmit (hal will flush sai fifo also)
+        BSP_AUDIO_OUT_Play((uint16_t*)audio_dma_buff, SuggestedBufferSize);
+        BSP_AUDIO_OUT_SetMute(AUDIO_MUTE_ON);
+    }
+
+    for (;;)
+    {
+        if(gAviHandle.AviState == VIDEO_PAUSE)
+        {
+            vTaskDelay(pdMS_TO_TICKS(3));
+            continue;
+        }
+        else if(gAviHandle.AviState == VIDEO_VOLUME_CHANGE)
+        {
+            BSP_AUDIO_OUT_SetVolume(gAviHandle.AviVolume);
+            gAviHandle.AviState = VIDEO_PLAY;
+        }
+
+        if(start==0 && count>2)
+        {
+            start=1;
+            BSP_AUDIO_OUT_SetMute(AUDIO_MUTE_OFF);
+        }
+
+        dma_state = AudioDmaState;
+        if (dma_state == AUDIO_BUFFER_OFFSET_HALF)
+        {
+            AudioDmaState = AUDIO_BUFFER_OFFSET_NONE;
+            // 這時才嘗試取 queue — 有可寫區才取
+            if (xQueueReceive(AudioReadyQueue, &buf_idx, pdMS_TO_TICKS(5)) == pdPASS)
+            {
+                memcpy(audio_dma_buff, audio_buff[buf_idx], SuggestedBufferSize/2);
+            }
+            else
+            {
+                // 沒資料填靜音，保持播放不中斷(不應該進入)
+                AVI_DEBUG("audio buff doesn`t have ready data!!!!!!\r\n");
+            }
+        }
+        else if (dma_state == AUDIO_BUFFER_OFFSET_FULL)
+        {
+            AudioDmaState = AUDIO_BUFFER_OFFSET_NONE;
+            memcpy(audio_dma_buff+SuggestedBufferSize/2, audio_buff[buf_idx]+SuggestedBufferSize/2, SuggestedBufferSize/2);
+            // 整段buff播放完畢, 回收 buffer
+            xQueueSend(AudioFreeQueue, &buf_idx, 0);
+
+            // 檢查結束通知
+            uint32_t notifyValue;
+            if (xTaskNotifyWait(0, 0, &notifyValue, 0) == pdPASS)
+            {
+                break;
+            }
+
+            if(count<5)count++;
+        }
+        else
+        {
+            // 沒狀態更新就不動 Queue，避免多 pop
+            vTaskDelay(pdMS_TO_TICKS(TaskDelayMs));
+        }
+    }
+    vTaskDelete(NULL);
+}
+
 /*------------------------------------------------------------
  * 主循環播放任務
  *-----------------------------------------------------------*/
 
-void SdProducerTask(void *param)
+void SdProduceTask(void *param)
 {
     FATFS Fs;
     FIL aviFile;
     FRESULT res;
-    int current = 0;
     avichunkavih avih_data;
     avichunkstrh strh_data;
 
@@ -534,15 +531,10 @@ void SdProducerTask(void *param)
         return;
     }
 
-    // 播放立體聲資料
-    BSP_AUDIO_OUT_Play((uint16_t*)audio_dma_buff, AUDIO_SIZE);
-
-    gAviHandle.AviState = VIDEO_PLAY;
-
     //循環播放while loop
     while(1)
     {
-        const char *fname = gFileList.list[current];
+        const char *fname = gFileList.list[gAviHandle.CurrPlayIdx];
         // 使用 strrchr 找最後一個 '.'，避免硬編碼索引
         const char *ext = strrchr(fname, '.');
 
@@ -556,15 +548,16 @@ void SdProducerTask(void *param)
 
         if(gAviHandle.AviState == VIDEO_PLAY_PREV || gAviHandle.AviState == VIDEO_PLAY_NEXT) gAviHandle.AviState = VIDEO_PLAY;
 
-        AVI_DEBUG("\r\n=== Playing %s ===\r\n", gFileList.list[current]);
+        AVI_DEBUG("\r\n=== Playing %s ===\r\n", gFileList.list[gAviHandle.CurrPlayIdx]);
 
-        res = f_open(&aviFile, gFileList.list[current], FA_READ);
+        res = f_open(&aviFile, gFileList.list[gAviHandle.CurrPlayIdx], FA_READ);
 
-        AVI_DEBUG("<< open AVI file: %s success\r\n", gFileList.list[current]);
+        AVI_DEBUG("<< open AVI file: %s success\r\n", gFileList.list[gAviHandle.CurrPlayIdx]);
 
         AviPrepareFirstFrame(&aviFile,&avih_data,&strh_data);
 
         xTaskCreate(DisplayTask, "DisplayTask", 512,(void*)&(avih_data.dwMicroSecPerFrame), PRIORITY_Normal, &gAviHandle.DisplayTask);
+        xTaskCreate(AudioplayTask, "AudioplayTask", 512,(void*)&(strh_data.SuggestedBufferSize), PRIORITY_Normal, &gAviHandle.AudioplayTask);
         AviParserFunc(aviFile);
 
         // 等待 Frame/AudioReadyQueue 清空，確保所有 buffer 都播放完畢
@@ -572,10 +565,9 @@ void SdProducerTask(void *param)
         {
             vTaskDelay(pdMS_TO_TICKS(1));
         }
-        BSP_AUDIO_OUT_Pause();
-        xQueueReset(AudioFreeQueue);
-        for (int i = 0; i < AUDIO_BUFF_RING_SIZE; i++) xQueueSend(AudioFreeQueue, &i, 0);
+
         xTaskNotifyGive(gAviHandle.DisplayTask);
+        xTaskNotifyGive(gAviHandle.AudioplayTask);
 
         f_close(&aviFile);
         AVI_DEBUG("Playback done\r\n");
@@ -591,15 +583,17 @@ play_next:
         // 播放下一個檔案
         if(gAviHandle.AviState == VIDEO_PLAY_PREV)
         {
-            current--;
-            if (current < 0)
-                current = gFileList.count-1;
+            //gAviHandle.CurrPlayIdx is uint16_t
+            if (gAviHandle.CurrPlayIdx == 0)
+                gAviHandle.CurrPlayIdx = gFileList.count - 1;
+            else
+                gAviHandle.CurrPlayIdx--;
         }
         else
         {
-            current++;
-            if (current >= gFileList.count)
-                current = 0;
+            gAviHandle.CurrPlayIdx++;
+            if (gAviHandle.CurrPlayIdx >= gFileList.count)
+                gAviHandle.CurrPlayIdx = 0;
         }
     }
 
@@ -628,6 +622,10 @@ void AviModuleBspInit(void)
     BSP_LCD_LayerRgb565Init(0, (uint32_t)NULL);
     BSP_LCD_SelectLayer(0);
     BSP_LCD_DisplayOn();
+#if defined(SUPPORT_TS)
+    BSP_TS_Init(RK043FN48H_WIDTH, RK043FN48H_HEIGHT);
+    BSP_TS_ITConfig();
+#endif
 }
 
 void AviModuleTaskInit(void)
@@ -645,7 +643,8 @@ void AviModuleTaskInit(void)
     for (int i = 0; i < AUDIO_BUFF_RING_SIZE; i++)
         xQueueSend(AudioFreeQueue, &i, 0);
 
-    xTaskCreate(SdProducerTask, "SdProducerTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.SdProduceTask);
+    xTaskCreate(SdProduceTask, "SdProduceTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.SdProduceTask);
+    xTaskCreate(test_gesture_task, "test_gesture_task", 256, NULL, PRIORITY_Normal, NULL);
 }
 
 void AviModuleTaskReset(void)
@@ -656,6 +655,11 @@ void AviModuleTaskReset(void)
     /*TODO:FILE not close correctly, so sd_diskio maybe deadlock*/
     if(eTaskGetState(gAviHandle.SdProduceTask)!=eDeleted || eTaskGetState(gAviHandle.SdProduceTask)!=eInvalid)
         vTaskDelete(gAviHandle.SdProduceTask);
+    else
+        return;
+
+    if(eTaskGetState(gAviHandle.DisplayTask)!=eDeleted || eTaskGetState(gAviHandle.DisplayTask)!=eInvalid)
+        vTaskDelete(gAviHandle.DisplayTask);
     else
         return;
 
@@ -676,7 +680,7 @@ void AviModuleTaskReset(void)
     for (int i = 0; i < AUDIO_BUFF_RING_SIZE; i++)
         xQueueSend(AudioFreeQueue, &i, 0);
 
-    xTaskCreate(SdProducerTask, "SdProducerTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.SdProduceTask);
+    xTaskCreate(SdProduceTask, "SdProduceTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.SdProduceTask);
 }
 
 /*******************************************************************************
