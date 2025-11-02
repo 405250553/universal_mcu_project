@@ -1,6 +1,103 @@
+/*
+cli_command_table_t 的第一個欄位是建構trie本身的cmd 如果input cmd前面有對應到trie 就會把後面都當作args
+以下是範例
+
+輸入字串:
+  set video volume 50
+
+Trie 解析流程:
+  root
+   |
+   s
+   |
+   e
+   |
+   t
+   |
+  (空格)
+   |
+   v
+   |
+   i
+   |
+   d
+   |
+   e
+   |
+   o
+   |
+  (空格)
+   |
+   v
+   |
+   o
+   |
+   l
+   |
+   u
+   |
+   m
+   |
+   e  <-- 這個節點有 handler(cmd_set_video_Volume)
+   
+剩下的字元:
+   50    <-- 這就是 args
+
+Handler 被呼叫:
+   cmd_set_video_Volume("50")
+
+
+
+輸入字串:
+  set video volume 50
+
+Trie 解析流程:
+  root
+   |
+   s
+   |
+   e
+   |
+   t
+   |
+  (空格)
+   |
+   v
+   |
+   i
+   |
+   d
+   |
+   e
+   |
+   o
+   |
+  (空格)
+   |
+   v
+   |
+   o
+   |
+   l
+   |
+   u
+   |
+   m
+   |
+   e  <-- 這個節點有 handler(cmd_set_video_Volume)
+   
+剩下的字元:
+   50    <-- 這就是 args
+
+Handler 被呼叫:
+   cmd_set_video_Volume("50")
+
+*/
+
 #include "cli_module.h"
 #include "lwip/etharp.h"
 #include "stream_module.h"
+#include "stream_system.h"
 #include "cli_parser.h"
 
 // Trie 根節點
@@ -14,6 +111,7 @@ void cmd_set_video_resume(char *args);
 void cmd_set_video_next(char *args);
 void cmd_set_video_prev(char *args);
 void cmd_set_video_reset(char *args);
+void cmd_set_video_Volume(char *args);
 void cmd_set_ip(char *args);
 void cmd_newline(char *args);
 void cmd_clear(char *args);
@@ -29,6 +127,7 @@ static const cli_command_table_t cli_commands[] = {
     {"set video next",    cmd_set_video_next  ,"set video next",        "Set Video display next file"},
     {"set video prev",    cmd_set_video_prev  ,"set video prev",        "Set Video display prev file"},
     {"set video reset",   cmd_set_video_reset, "set video reset",        "IMPORTANT!!!!! This cmd will kill & recreate video task"},
+    {"set video volume",  cmd_set_video_Volume,"set video volume <vol-val>", "set video volume"},
     {"set ip",            cmd_set_ip,         "set ip <addr> mask <mask>", "Set NIC static IP address"},
     {"clear",             cmd_clear,          "clear",                  "Clear the terminal screen"},
     {"help",              cmd_help,           "help",                   "Show available commands and usage"},
@@ -226,6 +325,35 @@ void cmd_set_video_reset(char *args)
     static char msg[]="IMPORTANT!!!!! This cmd will kill & recreate video task\r\n";
     AviModuleTaskReset();
     TX_QUEUE_SEND(msg);   
+}
+
+void cmd_set_video_Volume(char *args)
+{
+    uint8_t volume = 0;
+
+    if(args == NULL) {
+        TX_QUEUE_SEND("Error: No volume specified\r\n");
+        return;
+    }
+
+    // 將 args 轉成數字
+    int vol = atoi(args);
+
+    // 驗證範圍 1~100
+    if(vol < 1 || vol > 100) {
+        TX_QUEUE_SEND("Error: Volume must be 1~100\r\n");
+        return;
+    }
+
+    volume = (uint8_t)vol;
+
+    // 呼叫設置音量函數
+    AviSetVolume(volume);
+
+    // 回覆訊息
+    char msg[64];
+    snprintf(msg, sizeof(msg), "Volume set to %d\r\n", volume);
+    TX_QUEUE_SEND(msg);
 }
 
 void cmd_set_ip(char *args)
