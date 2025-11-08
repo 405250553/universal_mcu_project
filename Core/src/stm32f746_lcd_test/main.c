@@ -21,7 +21,6 @@
 #include "lwip.h"
 #include "cli_module.h"
 #include "stream_module.h"
-#include "image_data.h"
 #include "stm32746g_discovery_sdram.h"
 #include "stm32746g_discovery_lcd.h"
 #include "stm32746g_discovery_camera.h"
