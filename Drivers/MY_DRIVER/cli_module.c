@@ -158,10 +158,10 @@ void CliModuleTaskInit(void)
     如果設定rx idle DMA, 那就不需要 UsartRxTask,
     由rx idle DMA callback (UARTEx_RxEventCallback) 直接把buff data送給 CliParserTask 就好
     */
-    xTaskCreate(MyUsartRxTask, "UsartRxTask", 256, NULL, PRIORITY_LOW, NULL);
+    xTaskCreate(MyUsartRxTask, "UsartRxTask", 256, NULL, PRIORITY_Normal, NULL);
 #endif
-    xTaskCreate(CliParserTask, "CliParserTask", 256, NULL, PRIORITY_LOW, NULL);
-    xTaskCreate(MyUsartTxTask, "UsartTxTask", 256, NULL, PRIORITY_LOW, NULL);
+    xTaskCreate(CliParserTask, "CliParserTask", 256, NULL, PRIORITY_Normal, NULL);
+    xTaskCreate(MyUsartTxTask, "UsartTxTask", 256, NULL, PRIORITY_Normal, NULL);
 }
 
 /*******************************************************************************
