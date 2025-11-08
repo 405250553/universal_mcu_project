@@ -6,7 +6,6 @@
 #endif
 
 #include "stm32746g_discovery_ts.h"
-#include "stream_module.h"
 #include "freertos_includes.h"
 #include "fatfs.h"
 #include "ff.h"
@@ -21,6 +20,7 @@
     #define AVI_SYS(fmt, ...)   ((void)0)
 #endif
 
+#define DEFAULT_BAR_LEN 130
 
 typedef enum
 {
@@ -62,6 +62,7 @@ void AviSetNext();
 void AviSetPrev();
 void AviSystemInit();
 void test_gesture_task(void *param);
+void MY_Front_LCD_DrawBitmap(uint32_t Xpos, uint32_t Ypos, uint8_t *pbmp, uint8_t buff_idx);
 
 #ifdef __cplusplus
 }

@@ -32,11 +32,12 @@ EndDependencies */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stream_module.h"
+#include "image_data.h"
 #include "stream_system.h"
 #include <string.h>
 #include <stdio.h>
 
-__attribute__((section(".sdram_data"))) static uint8_t frame_buf[FRAME_BUFF_RING_SIZE][FRAME_SIZE]; // SD staging buffers
+__attribute__((section(".sdram_data"))) static uint8_t frame_buf[FRAME_BUFF_RING_SIZE][LAYER0_FRAME_SIZE]; // SD staging buffers
 static QueueHandle_t FrameFreeQueue;
 static QueueHandle_t FrameReadyQueue;
 
@@ -62,6 +63,10 @@ extern SAI_HandleTypeDef haudio_out_sai;
 extern SD_HandleTypeDef uSdHandle;
 /* LTDC handler declared in "stm32746g_discovery_lcd.c" file */
 extern LTDC_HandleTypeDef  hLtdcHandler;
+
+#if defined(SUPPORT_TS)
+extern uint8_t layer1_buff[2][LAYER1_FRAME_SIZE];
+#endif
 
 void BSP_DMA2D_ITConfig(void)
 {
@@ -225,7 +230,7 @@ void AviParserFunc(FIL aviFile)
         if(f_read(&aviFile, chunkID, 4, &br) != FR_OK || br!=4) break;
         if(f_read(&aviFile, &chunkSize, 4, &br) != FR_OK || br!=4) break;
 
-        if(chunkID[2]=='d' && chunkID[3]=='c' && chunkSize <= FRAME_SIZE) { //frame data
+        if(chunkID[2]=='d' && chunkID[3]=='c' && chunkSize <= LAYER0_FRAME_SIZE) { //frame data
             
             // 等待 free buffer
             xQueueReceive(FrameFreeQueue, &bufIndex, portMAX_DELAY);
@@ -392,7 +397,7 @@ void DisplayTask(void *param)
         if (xQueueReceive(FrameReadyQueue, &idx, pdMS_TO_TICKS(5)) == pdPASS)
         {
             // 顯示這一張
-            BSP_LCD_SetLayerAddress_NoReload(0, (uint32_t)&frame_buf[idx]);
+            BSP_LCD_SetLayerAddress_NoReload(0, (uint32_t)frame_buf[idx]);
             BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
 
             // 延遲固定的時間（保持 FPS）
@@ -418,6 +423,8 @@ void DisplayTask(void *param)
             break;
         }
     }
+    xQueueReset(FrameFreeQueue);
+    for (int i = 0; i < FRAME_BUFF_RING_SIZE; i++) xQueueSend(FrameFreeQueue, &i, 0);
     vTaskDelete(NULL);
 }
 
@@ -471,7 +478,7 @@ void AudioplayTask(void *param)
         {
             AudioDmaState = AUDIO_BUFFER_OFFSET_NONE;
             // 這時才嘗試取 queue — 有可寫區才取
-            if (xQueueReceive(AudioReadyQueue, &buf_idx, pdMS_TO_TICKS(5)) == pdPASS)
+            if (xQueueReceive(AudioReadyQueue, &buf_idx, portMAX_DELAY) == pdPASS)
             {
                 memcpy(audio_dma_buff, audio_buff[buf_idx], SuggestedBufferSize/2);
             }
@@ -503,6 +510,8 @@ void AudioplayTask(void *param)
             vTaskDelay(pdMS_TO_TICKS(TaskDelayMs));
         }
     }
+    xQueueReset(AudioFreeQueue);
+    for (int i = 0; i < AUDIO_BUFF_RING_SIZE; i++) xQueueSend(AudioFreeQueue, &i, 0);
     vTaskDelete(NULL);
 }
 
@@ -568,6 +577,13 @@ void SdProduceTask(void *param)
 
         xTaskNotifyGive(gAviHandle.DisplayTask);
         xTaskNotifyGive(gAviHandle.AudioplayTask);
+        
+        // 等待 AudioplayTask/DisplayTask 有確實清除自己
+        while (eTaskGetState(gAviHandle.AudioplayTask) != eDeleted ||
+            eTaskGetState(gAviHandle.DisplayTask) != eDeleted)
+        {
+            vTaskDelay(pdMS_TO_TICKS(1));
+        }
 
         f_close(&aviFile);
         AVI_DEBUG("Playback done\r\n");
@@ -619,13 +635,21 @@ void AviModuleBspInit(void)
     */
     //BSP_DMA2D_ITConfig();
     //BSP_LTDC_ITConfig();
+
+#if defined(SUPPORT_TS)
+    BSP_TS_Init(RK043FN48H_WIDTH, RK043FN48H_HEIGHT);
+    //BSP_TS_ITConfig();
+    BSP_LCD_LayerDefaultInit(1, (uint32_t)layer1_buff[1]);
+    BSP_LCD_SelectLayer(1);
+    BSP_LCD_Clear(0x00000000);
+    BSP_LCD_LayerDefaultInit(1, (uint32_t)layer1_buff[0]);
+    BSP_LCD_Clear(0x00000000);
+    MY_Front_LCD_DrawBitmap(416,71,bmp_data+((SAL_VOLUME_INIT_VAL * 20) / 100),0);
+#endif
+
     BSP_LCD_LayerRgb565Init(0, (uint32_t)NULL);
     BSP_LCD_SelectLayer(0);
     BSP_LCD_DisplayOn();
-#if defined(SUPPORT_TS)
-    BSP_TS_Init(RK043FN48H_WIDTH, RK043FN48H_HEIGHT);
-    BSP_TS_ITConfig();
-#endif
 }
 
 void AviModuleTaskInit(void)
@@ -644,7 +668,7 @@ void AviModuleTaskInit(void)
         xQueueSend(AudioFreeQueue, &i, 0);
 
     xTaskCreate(SdProduceTask, "SdProduceTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.SdProduceTask);
-    xTaskCreate(test_gesture_task, "test_gesture_task", 256, NULL, PRIORITY_Normal, NULL);
+    xTaskCreate(test_gesture_task, "test_gesture_task", 1024, NULL, PRIORITY_Normal, NULL);
 }
 
 void AviModuleTaskReset(void)
