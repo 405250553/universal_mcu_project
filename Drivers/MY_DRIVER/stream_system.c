@@ -389,7 +389,7 @@ void MY_Front_LCD_DrawBitmap(uint32_t Xpos, uint32_t Ypos, uint8_t *pbmp, uint8_
   bit_pixel = pbmp[28] + (pbmp[29] << 8);  
   
   /* Set the address */
-  address = layer1_buff[buff_idx] + (((BSP_LCD_GetXSize()*Ypos) + Xpos)*(4));
+  address = (uint32_t)layer1_buff[buff_idx] + (((BSP_LCD_GetXSize()*Ypos) + Xpos)*(4));
   
   /* Bypass the bitmap header */
   pbmp += (index + (width * (height - 1) * (bit_pixel/8)));  
