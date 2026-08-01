@@ -756,7 +756,7 @@ void AviModuleBspInit(void)
     BSP_LCD_Clear(0x00000000);
     BSP_LCD_LayerDefaultInit(1, (uint32_t)layer1_buff[0]);
     BSP_LCD_Clear(0x00000000);
-    MY_Front_LCD_DrawBitmap(416,71,bmp_data+((SAL_VOLUME_INIT_VAL * 20) / 100),0);
+    MY_Front_LCD_DrawBitmap(416,71,(uint8_t*)bmp_data[(SAL_VOLUME_INIT_VAL * 20) / 100],0);
 #endif
 
     BSP_LCD_LayerRgb565Init(0, (uint32_t)NULL);
