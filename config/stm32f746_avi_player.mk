@@ -76,12 +76,11 @@ C_INCLUDES +=  \
 	-IMiddlewares/$(PROJECT_NAME)/FatFs/src \
 	-IMiddlewares/$(PROJECT_NAME)/FatFs/Target
 
-## TraceRecoder includes-----------------------------------------
+## SEGGER_RTT includes (just the RTT transport, kept for fatal-error hooks;
+## the rest of TraceRecoder/Tracealyzer integration moved to
+## stm32f746_tracerecorder_demo) -----------------------------------------
 C_INCLUDES +=  \
-	-IMiddlewares/$(PROJECT_NAME)/TraceRecoder/streamports/jlink_RTT/config \
-	-IMiddlewares/$(PROJECT_NAME)/TraceRecoder/streamports/jlink_RTT/include \
-	-IMiddlewares/$(PROJECT_NAME)/TraceRecoder/config \
-	-IMiddlewares/$(PROJECT_NAME)/TraceRecoder/include
+	-IMiddlewares/$(PROJECT_NAME)/SEGGER_RTT
 
 ## C defines-----------------------------------------
 C_DEFS =  \
@@ -215,36 +214,7 @@ C_SOURCES += \
 	Middlewares/$(PROJECT_NAME)/FatFs/src/option/cc950.c \
 	Middlewares/$(PROJECT_NAME)/FatFs/src/option/syscall.c
 
-## add TraceRecoder driver
+## add SEGGER_RTT (just the transport, used by fatal-error hooks in main.c;
+## TraceRecoder/Tracealyzer itself moved to stm32f746_tracerecorder_demo)
 C_SOURCES += \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcAssert.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcCounter.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcDependency.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcDiagnostics.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcEntryTable.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcError.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcEvent.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcExtension.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcHardwarePort.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcHeap.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcInternalEventBuffer.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcInterval.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcISR.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcKernelPort.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcMultiCoreEventBuffer.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcObject.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcPrint.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcRunnable.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcStackMonitor.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcStateMachine.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcStaticBuffer.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcStreamingRecorder.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcString.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcTask.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcTaskMonitor.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/trcTimestamp.c
-
-## add TraceRecoder jlink_RTT driver
-C_SOURCES += \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/streamports/jlink_RTT/SEGGER_RTT.c \
-	Middlewares/$(PROJECT_NAME)/TraceRecoder/streamports/jlink_RTT/trcStreamPort.c
+	Middlewares/$(PROJECT_NAME)/SEGGER_RTT/SEGGER_RTT.c

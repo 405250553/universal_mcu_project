@@ -222,44 +222,6 @@ void udp_sender_task(void *arg)
     vTaskDelete(NULL);
 }
 
-void DebugTraceRecorderStatus(void)
-{
-    char log_buf[128];
-    
-    SEGGER_RTT_WriteString(0, "\r\n--- TraceRecorder Self-Diagnostic Start ---\r\n");
-
-    // 1. Check if the recorder core is initialized
-    if (xTraceIsRecorderInitialized()) {
-        SEGGER_RTT_WriteString(0, "[OK] TraceRecorder Core is INITIALIZED successfully.\r\n");
-    } else {
-        SEGGER_RTT_WriteString(0, "[FAIL] TraceRecorder Core is NOT INITIALIZED!\r\n");
-    }
-
-    // 2. Check if the recorder is enabled
-    if (xTraceIsRecorderEnabled() == 1) {
-        SEGGER_RTT_WriteString(0, "[OK] TraceRecorder is ENABLED (Ready to stream).\r\n");
-    } else {
-        SEGGER_RTT_WriteString(0, "[WARNING] TraceRecorder is DISABLED!\r\n");
-    }
-
-    // 3. Check the last recorder error string
-    const char* error_string = NULL;
-    xTraceErrorGetLast(&error_string); 
-    if (error_string != NULL) {
-        sprintf(log_buf, "[FATAL] Recorder Error Detected: %s\r\n", error_string);
-        SEGGER_RTT_WriteString(0, log_buf);
-    } else {
-        SEGGER_RTT_WriteString(0, "[OK] No recorder errors reported.\r\n");
-    }
-
-    // 4. Print RTT Channel 1 Memory Allocation Details
-    sprintf(log_buf, "[INFO] RTT Channel 1 Buffer Address: 0x%08X, Size: %d Bytes\r\n", 
-             (unsigned int)_SEGGER_RTT.aUp[1].pBuffer, 
-             (int)_SEGGER_RTT.aUp[1].SizeOfBuffer);
-    SEGGER_RTT_WriteString(0, log_buf);
-
-    SEGGER_RTT_WriteString(0, "-------------------------------------------\r\n\r\n");
-}
 /**
   * @brief  The application entry point.
   * @retval int
@@ -283,17 +245,7 @@ int main(void)
   AviModuleBspInit();
 
   SEGGER_RTT_WriteString(0, "\r\n====================================\r\n");
-/* --- [最關鍵] 強迫將剛剛寫好的 RTT 通道結構體刷進實體 RAM 裡！ --- */
-  SCB_CleanDCache_by_Addr((uint32_t*)&_SEGGER_RTT, sizeof(_SEGGER_RTT));
-  int check_traceenable = xTraceEnable(TRC_START);
-  if(check_traceenable==0)
-  {
-    SEGGER_RTT_WriteString(0, "STM32F746 RTT Test OK!\r\n");
-  }
-  else
-  {
-    SEGGER_RTT_WriteString(0, "STM32F746 RTT Test fail!\r\n");    
-  }
+  SEGGER_RTT_WriteString(0, "STM32F746 AVI Player starting...\r\n");
   SEGGER_RTT_WriteString(0, "====================================\r\n\r\n");
 
   //CliModuleInit();
@@ -313,7 +265,6 @@ int main(void)
   //xTaskCreate(StartSDListTask, "SDcardList", 1024, NULL, PRIORITY_LOW, NULL);
 
   //xTaskCreate(udp_sender_task, "udp_sender_task", 1024, NULL, PRIORITY_Normal, NULL);
-  DebugTraceRecorderStatus();
   // 啟動 scheduler
   vTaskStartScheduler();
 
