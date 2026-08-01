@@ -7,10 +7,12 @@
 
 __IO AviHandle gAviHandle  = {0};
 
+#if defined(SUPPORT_TS)
 __attribute__((section(".sdram_data"))) uint8_t layer1_buff[2][LAYER1_FRAME_SIZE];
 static uint8_t curr_buff=0;
 
 void MY_Front_LCD_DrawBitmap(uint32_t Xpos, uint32_t Ypos, uint8_t *pbmp, uint8_t buff_idx);
+#endif
 
 /*******************************************************************************
                             AVI System Functions
@@ -150,6 +152,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     }
 }
 
+#if defined(SUPPORT_TS)
 typedef enum
 {
     TS_STATE_NONE=0,
@@ -282,120 +285,9 @@ ts_state_restart:
         vTaskDelay(pdMS_TO_TICKS(ts_handle.delay_ms));
     }
 }
+#endif /* SUPPORT_TS */
 
-/*
-void test_gesture_task(void *pvParameters) {
-    uint8_t curr_vol = SAL_VOLUME_INIT_VAL;           // 初始音量
-    int8_t curr_idx = (curr_vol * 20) / 100;  // bitmap index 初始值
-    int new_vol=0;
-    uint8_t curr_x, curr_y;
-
-    TS_SelfHandleTypeDef ts_handle;
-    ts_handle_init(&ts_handle);
-
-    while (1) {
-        BSP_TS_GetState(&ts_handle.bsp_state);
-        curr_x=ts_handle.bsp_state.touchX[0];
-        curr_y=ts_handle.bsp_state.touchY[0];
-
-        //if (ts_handle.bsp_state.touchDetected > 0) 
-        {
-            AVI_SYS_DEBUG("x=%d,y=%d\r\n",curr_x,curr_y);
-            if (ts_handle.self_state==TS_STATE_NONE && (ts_handle.bsp_state.touchEventId[0] == TOUCH_EVENT_PRESS_DOWN
-                                                        || ts_handle.bsp_state.touchEventId[0] == TOUCH_EVENT_CONTACT)) {
-                ts_handle.old_x = curr_x;
-                ts_handle.old_y = curr_y;
-                ts_handle.startX = curr_x;
-                ts_handle.startY = curr_y;
-                ts_handle.delay_ms=25;
-                ts_handle.self_state=TS_STATE_CHECK;
-                //AVI_SYS_DEBUG("change state to TS_STATE_CHECK\r\n");
-            } 
-            else if (ts_handle.bsp_state.touchEventId[0] == TOUCH_EVENT_CONTACT) 
-            {
-                //AVI_SYS_DEBUG("in TOUCH_EVENT_CONTACT\r\n");
-                int16_t deltaX = ts_handle.startX - curr_x;  // x 向右是next, 左是prev
-                int16_t deltaY = ts_handle.startY - curr_y;  // volume向上滑正，向下滑負
-                
-                if(ts_handle.self_state==TS_STATE_CHECK)
-                {
-                    ts_handle.check_time += ts_handle.delay_ms;
-                    if(ts_handle.check_time <=500) //0~0.5s 的判定
-                    {
-                        if(abs(deltaX)>10 && abs(deltaY) < 20)
-                        {
-                            ts_handle.old_x=curr_x;
-                            ts_handle.old_y=curr_y;
-                            if(ts_handle.check_time==500)
-                            {
-                                if(deltaX<0)  AviSetNext();
-                                if(deltaX>0)  AviSetPrev();
-                                goto ts_state_restart;
-                                AVI_SYS_DEBUG("execute next/prev\r\n");
-                            }
-                        }
-
-                        //if(abs(deltaX)+abs(deltaY)>10)
-                        //    goto ts_state_restart;
-                    }
-                    else //0.5~1.0s 的判定
-                    {
-                        //if(abs(deltaX)+abs(deltaY)>10)
-                        //    goto ts_state_restart;
-                        //else
-                        {
-                            if(ts_handle.check_time==1000)
-                            {
-                                ts_handle.self_state=TS_STATE_VOLUME;
-                                BSP_LCD_SetTransparency_NoReload(1,0xff);
-                                BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
-                                AVI_SYS_DEBUG("change state to TS_STATE_VOLUME\r\n");
-                                continue;
-                            }
-                        }
-                    }
-                }
-                else if(ts_handle.self_state==TS_STATE_VOLUME)
-                {
-                    if (ts_handle.startY >= 0) {
-                        // 直接用位移計算音量，不累加 curr_vol
-                        new_vol = ((deltaY * 100) / ts_handle.bar_len) + curr_vol;
-
-                        // 限制範圍 0~100
-                        if (new_vol > 100) new_vol = 100;
-                        if (new_vol < 0) new_vol = 0;
-
-                        // 更新音量
-                        AviSetVolume(new_vol);
-
-                        // 計算 bitmap index
-                        int8_t bmp_index = (new_vol * 20) / 100;
-                        if (bmp_index != curr_idx) {
-                            curr_idx = bmp_index;
-                            curr_buff = (curr_buff+1)%2;
-                            MY_Front_LCD_DrawBitmap(416, 72, (uint8_t*)bmp_data[curr_idx], curr_buff);
-                            BSP_LCD_SetLayerAddress_NoReload(1, (uint32_t)layer1_buff[curr_buff]);
-                            BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
-                        }
-                    }
-                }
-            }
-            else
-            {
-    ts_state_restart:
-                curr_vol = new_vol;
-                ts_handle.self_state=TS_STATE_NONE;
-                ts_handle.check_time = 0;
-                ts_handle.delay_ms = 50;
-                BSP_LCD_SetTransparency_NoReload(1,0x00);
-                BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
-            }
-        }
-        vTaskDelay(pdMS_TO_TICKS(ts_handle.delay_ms));
-    }
-}
-*/
-
+#if defined(SUPPORT_TS)
 /**
   * @brief  Draws a bitmap picture loaded in the internal Flash in ARGB888 format (32 bits per pixel).
   * @param  Xpos: Bmp X position in the LCD
@@ -436,5 +328,6 @@ void MY_Front_LCD_DrawBitmap(uint32_t Xpos, uint32_t Ypos, uint8_t *pbmp, uint8_
     /* Increment the source and destination buffers */
     address+=  (BSP_LCD_GetXSize()*4);
     pbmp -= width*(bit_pixel/8);
-  } 
+  }
 }
+#endif /* SUPPORT_TS */

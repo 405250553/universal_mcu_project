@@ -61,8 +61,10 @@ void AviSetResume();
 void AviSetNext();
 void AviSetPrev();
 void AviSystemInit();
+#if defined(SUPPORT_TS)
 void test_gesture_task(void *param);
 void MY_Front_LCD_DrawBitmap(uint32_t Xpos, uint32_t Ypos, uint8_t *pbmp, uint8_t buff_idx);
+#endif
 
 #ifdef __cplusplus
 }

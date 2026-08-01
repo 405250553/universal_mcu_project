@@ -289,13 +289,6 @@ static DWORD AviChunkPaddedSize(DWORD chunkSize)
 }
 
 /* buf 是已經讀進記憶體的 chunkSize bytes,純粹做 struct 填值 + 合法性檢查 */
-static bool AviDecodeAvihChunk(const void *buf, DWORD chunkSize, avichunkavih *out)
-{
-    if (chunkSize < sizeof(avichunkavih)) return false;
-    memcpy(out, buf, sizeof(avichunkavih));
-    return true;
-}
-
 static bool AviDecodeStrhChunk(const void *buf, DWORD chunkSize, avichunkstrh *out)
 {
     if (chunkSize < sizeof(avichunkstrh)) return false;
