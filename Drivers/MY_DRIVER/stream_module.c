@@ -253,6 +253,59 @@ static void ScanFileList(void)
 }
 
 /*******************************************************************************
+                            AVI Chunk Decode (純邏輯,不碰 f_read/f_lseek/xQueue/HAL_GetTick)
+*******************************************************************************/
+
+typedef enum {
+    AVI_CHUNK_FRAME,      // "??dc"
+    AVI_CHUNK_AUDIO,      // "??wb"
+    AVI_CHUNK_RIFF_AVIX,  // "RIFF" + "AVIX"
+    AVI_CHUNK_LIST,       // "LIST"
+    AVI_CHUNK_AVIH,       // "avih"
+    AVI_CHUNK_STRH,       // "strh"
+    AVI_CHUNK_OTHER
+} AviChunkType;
+
+static AviChunkType AviClassifyChunk(const char chunkID[4])
+{
+    if (chunkID[2] == 'd' && chunkID[3] == 'c') return AVI_CHUNK_FRAME;
+    if (chunkID[2] == 'w' && chunkID[3] == 'b') return AVI_CHUNK_AUDIO;
+    if (memcmp(chunkID, "RIFF", 4) == 0)        return AVI_CHUNK_RIFF_AVIX;
+    if (memcmp(chunkID, "LIST", 4) == 0)        return AVI_CHUNK_LIST;
+    if (memcmp(chunkID, "avih", 4) == 0)        return AVI_CHUNK_AVIH;
+    if (memcmp(chunkID, "strh", 4) == 0)        return AVI_CHUNK_STRH;
+    return AVI_CHUNK_OTHER;
+}
+
+static bool AviIsMoviList(const char listType[4])
+{
+    return memcmp(listType, "movi", 4) == 0;
+}
+
+/* chunk payload 長度是奇數時,規範要求補 1 byte 對齊偶數位址 */
+static DWORD AviChunkPaddedSize(DWORD chunkSize)
+{
+    return chunkSize + (chunkSize & 1);
+}
+
+/* buf 是已經讀進記憶體的 chunkSize bytes,純粹做 struct 填值 + 合法性檢查 */
+static bool AviDecodeAvihChunk(const void *buf, DWORD chunkSize, avichunkavih *out)
+{
+    if (chunkSize < sizeof(avichunkavih)) return false;
+    memcpy(out, buf, sizeof(avichunkavih));
+    return true;
+}
+
+static bool AviDecodeStrhChunk(const void *buf, DWORD chunkSize, avichunkstrh *out)
+{
+    if (chunkSize < sizeof(avichunkstrh)) return false;
+    const avichunkstrh *tmp = (const avichunkstrh *)buf;
+    if (memcmp(tmp->fccType, "auds", 4) != 0) return false; // 只要 audio stream header
+    memcpy(out, tmp, sizeof(avichunkstrh));
+    return true;
+}
+
+/*******************************************************************************
                             AVI Parser Functions
 *******************************************************************************/
 
@@ -294,16 +347,18 @@ FRESULT AviPrepareFirstFrame(FIL *aviFile, avichunkavih* avih_data, avichunkstrh
     while(f_read(aviFile, buf, 8, &br) == FR_OK && br == 8)
     {
         memcpy(&chunkSize,buf+4, 4);
-        if(memcmp(buf, "LIST", 4) == 0) {
+        AviChunkType type = AviClassifyChunk(buf);
+
+        if(type == AVI_CHUNK_LIST) {
             f_read(aviFile,ListType,4,&br);
             //LIST movi have frame+audio data & it should be the last LIST need to parser
             if(br!=4)
             {
                 AVI_DEBUG("LIST parser fail\r\n");
-                return FR_INT_ERR;                
+                return FR_INT_ERR;
             }
 
-            if(memcmp(ListType, "movi", 4) == 0)
+            if(AviIsMoviList(ListType))
             {
                 AVI_DEBUG("movi find\r\n");
                 return FR_OK;
@@ -312,10 +367,9 @@ FRESULT AviPrepareFirstFrame(FIL *aviFile, avichunkavih* avih_data, avichunkstrh
                 continue;
             }
         }
-        //chunk avih(avi header) have MicroSecPerFrame
-        else if(memcmp(buf, "avih", 4) == 0)
+        //chunk avih(avi header) have MicroSecPerFrame -- 直接讀進輸出結構,沒有額外解碼邏輯
+        else if(type == AVI_CHUNK_AVIH)
         {
-            //AVI_DEBUG("avih find\r\n");
             if(f_read(aviFile, (void*)avih_data, chunkSize, &br) == FR_OK && br == chunkSize)
             {
                 AVI_DEBUG("frameDelay=%dus\r\n",avih_data->dwMicroSecPerFrame);
@@ -324,14 +378,12 @@ FRESULT AviPrepareFirstFrame(FIL *aviFile, avichunkavih* avih_data, avichunkstrh
             else return FR_INT_ERR;
         }
         //chunk strh have SuggestedBufferSize
-        else if(memcmp(buf, "strh", 4) == 0)
+        else if(type == AVI_CHUNK_STRH)
         {
-            //AVI_DEBUG("strh find\r\n");
             if(f_read(aviFile, (void*)&tmp_strh, chunkSize, &br) == FR_OK && br == chunkSize)
             {
-                if(memcmp(tmp_strh.fccType, "auds", 4)==0)
+                if(AviDecodeStrhChunk(&tmp_strh, chunkSize, strh_data))
                 {
-                    memcpy(strh_data,&tmp_strh,chunkSize);
                     AVI_DEBUG("SuggestedBufferSize=%d\r\n",strh_data->SuggestedBufferSize);
                     continue;
                 }
@@ -343,7 +395,7 @@ FRESULT AviPrepareFirstFrame(FIL *aviFile, avichunkavih* avih_data, avichunkstrh
             /*
             AVI chunk 的資料區如果長度是奇數，文件規範要求 補一個 pad byte，以保持 每個 chunk 在文件中對齊到偶數位址。
             */
-            f_lseek(aviFile, f_tell(aviFile) + chunkSize + (chunkSize & 1));
+            f_lseek(aviFile, f_tell(aviFile) + AviChunkPaddedSize(chunkSize));
         }
     }
 
@@ -377,8 +429,9 @@ void AviParserFunc(FIL aviFile)
         if(gAviHandle.AviState == VIDEO_PLAY_NEXT || gAviHandle.AviState == VIDEO_PLAY_PREV) return;
         if(f_read(&aviFile, chunkID, 4, &br) != FR_OK || br!=4) break;
         if(f_read(&aviFile, &chunkSize, 4, &br) != FR_OK || br!=4) break;
+        AviChunkType type = AviClassifyChunk(chunkID);
 
-        if(chunkID[2]=='d' && chunkID[3]=='c' && chunkSize <= LAYER0_FRAME_SIZE) { //frame data
+        if(type == AVI_CHUNK_FRAME && chunkSize <= LAYER0_FRAME_SIZE) { //frame data
             
             // 等待 free buffer
             xQueueReceive(FrameFreeQueue, &bufIndex, portMAX_DELAY);
@@ -399,7 +452,7 @@ void AviParserFunc(FIL aviFile)
 
             xQueueSend(FrameReadyQueue, &bufIndex, portMAX_DELAY);
         }
-        else if(chunkID[2]=='w' && chunkID[3]=='b')
+        else if(type == AVI_CHUNK_AUDIO)
         {
             // 等待 free buffer
             xQueueReceive(AudioFreeQueue, &bufIndex, portMAX_DELAY);
@@ -421,7 +474,7 @@ void AviParserFunc(FIL aviFile)
             xQueueSend(AudioReadyQueue, &bufIndex, portMAX_DELAY);
         }
         // RIFF chunk (可能是 AVIX)
-        else if(memcmp(chunkID, "RIFF", 4) == 0)
+        else if(type == AVI_CHUNK_RIFF_AVIX)
         {
             char riffType[4];
             if(f_read(&aviFile, riffType, 4, &br) != FR_OK || br != 4) break;
@@ -438,10 +491,10 @@ void AviParserFunc(FIL aviFile)
                     if(f_read(&aviFile, tmpID, 4, &br) != FR_OK || br!=4) break;
                     if(f_read(&aviFile, &tmpSize, 4, &br) != FR_OK || br!=4) break;
 
-                    if(memcmp(tmpID, "LIST", 4)==0)
+                    if(AviClassifyChunk(tmpID) == AVI_CHUNK_LIST)
                     {
                         if(f_read(&aviFile,ListType, 4, &br) != FR_OK || br !=4) break;
-                        if(memcmp(ListType,"movi",4)==0)
+                        if(AviIsMoviList(ListType))
                         {
                             AVI_DEBUG("Found LIST 'movi' in AVIX\n");
                             // 移動檔案指標到 movi data 開始
@@ -454,14 +507,14 @@ void AviParserFunc(FIL aviFile)
                     }
                     else
                     {
-                        f_lseek(&aviFile, f_tell(&aviFile) + tmpSize + (tmpSize & 1));
+                        f_lseek(&aviFile, f_tell(&aviFile) + AviChunkPaddedSize(tmpSize));
                     }
                 }
             }
         }
         else {
             AVI_DEBUG("skip chunkID %s, size= %lu bytes\n",chunkID,  chunkSize);
-            f_lseek(&aviFile, f_tell(&aviFile) + chunkSize + (chunkSize & 1));
+            f_lseek(&aviFile, f_tell(&aviFile) + AviChunkPaddedSize(chunkSize));
         }
 
         //AVI_DEBUG("%d: offset=0x%x\n", stream_count,f_tell(&aviFile));
