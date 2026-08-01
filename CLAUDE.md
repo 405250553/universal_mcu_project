@@ -20,7 +20,7 @@ make flash                                     # J-Link flash of build/stm32f746
 
 There is no test suite — this is firmware; validation is build success + on-hardware behavior.
 
-Current targets (from `config/*.mk`): `stm32f4_blinky`, `stm32f746_eth_test`, `stm32f746_avi_player`, `stm32f746_lwip_porting`, `stm32f746_lwip_withos_porting`.
+Current targets (from `config/*.mk`): `stm32f4_blinky`, `stm32f746_eth_test`, `stm32f746_avi_player`, `stm32f746_lwip_porting`, `stm32f746_lwip_withos_porting`, `stm32f746_tracerecorder_demo`.
 
 Debugging: see `stm32_gdb_用法.md` for the OpenOCD + GDB workflow (`target remote localhost:3333`, `monitor reset init`, `load`, `break main`). Flashing via ST-Link is also documented in `ubuntu_stm32_cmd` (`st-flash write firmware.bin 0x8000000`).
 
@@ -48,7 +48,7 @@ The root `Makefile` is generic and target-agnostic: it does not list any sources
 
 ## stm32f746_avi_player (main active project)
 
-Currently the primary development target (formerly named `stm32f746_lcd_test` — renamed because the LCD-test scope grew into a full video player). On boot, `Drivers/MY_DRIVER/stream_system.c` + `stream_module.c` drive looping playback of raw RGB565 frames read off a FAT32 SD card (FatFs) and pushed to the LTDC display. Video files are pre-converted to raw RGB565 offline and stored on the SD card — there is no on-device video/JPEG decode (LibJPEG was pulled out of this target; it's unused). Also links FreeRTOS, lwIP, and TraceRecorder middleware for this target, per `config/stm32f746_avi_player.mk`.
+Currently the primary development target (formerly named `stm32f746_lcd_test` — renamed because the LCD-test scope grew into a full video player). On boot, `Drivers/MY_DRIVER/stream_system.c` + `stream_module.c` drive looping playback of raw RGB565 frames read off a FAT32 SD card (FatFs) and pushed to the LTDC display. Video files are pre-converted to raw RGB565 offline and stored on the SD card — there is no on-device video/JPEG decode (LibJPEG was pulled out of this target; it's unused). Also links FreeRTOS and lwIP middleware for this target, per `config/stm32f746_avi_player.mk`. TraceRecoder/Tracealyzer used to live here too but was extracted into its own `stm32f746_tracerecorder_demo` target; avi_player keeps only the bare SEGGER_RTT transport for its FreeRTOS fatal-error hooks.
 
 ## Current focus / roadmap
 
