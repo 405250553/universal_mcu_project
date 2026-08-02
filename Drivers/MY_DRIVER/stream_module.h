@@ -50,6 +50,8 @@ typedef struct {
 void AviModuleBspInit(void);
 void AviModuleTaskInit(void);
 void AviModuleTaskReset(void);
+uint16_t AviGetFileCount(void);
+const char *AviGetFileName(uint16_t idx);
 
 // ------------------------ Main AVI Header (avih) ------------------------
 typedef struct {

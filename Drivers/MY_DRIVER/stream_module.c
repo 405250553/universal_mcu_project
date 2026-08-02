@@ -53,7 +53,7 @@ typedef enum {
 } audio_evt_t;
 QueueHandle_t AudioEvtQ;
 
-__IO FileList gFileList = {0}; // 全域檔案列表
+static __IO FileList gFileList = {0}; // 全域檔案列表,只在此檔案內部使用,外部一律透過 AviGetFileCount/AviGetFileName 存取
 
 EventGroupHandle_t xConsumerGroup;
 
@@ -250,6 +250,17 @@ static void ScanFileList(void)
     gFileList.InitFlag=1;
     f_mount(NULL, "0:", 1);
     AVI_DEBUG("Total files found: %d\r\n", gFileList.count);
+}
+
+uint16_t AviGetFileCount(void)
+{
+    return gFileList.count;
+}
+
+const char *AviGetFileName(uint16_t idx)
+{
+    if (idx >= gFileList.count) return NULL;
+    return (const char *)gFileList.list[idx];
 }
 
 /*******************************************************************************

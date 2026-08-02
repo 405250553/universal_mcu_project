@@ -136,8 +136,6 @@ static const cli_command_table_t cli_commands[] = {
 };
 
 extern struct netif gnetif;
-extern __IO AviHandle gAviHandle;
-extern __IO FileList gFileList;
 
 // 註冊命令到 Trie
 static void cli_register_command(const char *cmd, cli_cmd_handler_t handler)
@@ -284,9 +282,9 @@ void cmd_get_sd_file(char *args)
 {
     char msg[TX_ITEM_LEN];
     TX_QUEUE_SEND("---------------------show SD card file---------------------\r\n");
-    for(uint16_t i=0;i<gFileList.count;i++)
+    for(uint16_t i=0;i<AviGetFileCount();i++)
     {
-        sprintf(msg,"%s\r\n",gFileList.list[i]);
+        sprintf(msg,"%s\r\n",AviGetFileName(i));
         TX_QUEUE_SEND(msg);
     }
     TX_QUEUE_SEND("-----------------------------------------------------------\r\n");
