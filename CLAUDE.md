@@ -53,3 +53,17 @@ Currently the primary development target (formerly named `stm32f746_lcd_test` �
 ## Current focus / roadmap
 
 Active work is on STM32F746 Discovery: FreeRTOS + lwIP NIC porting (DMA/cache/ring descriptors/interrupts), then replacing lwIP's protocol layer (ARP/ICMP) by hand, then DCMI camera + LTDC display. End goal (`stm32f746_lwip_withos_porting` / future target) is a small network camera: DCMI capture → DMA2D format convert → optional LTDC preview → software JPEG encode → send over lwIP to a remote client. Full breakdown and the ASCII architecture diagram are in `README.md`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues/PRDs live as GitHub issues on `405250553/universal_mcu_project`, via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default 5-role vocabulary (`needs-triage`/`needs-info`/`ready-for-agent`/`ready-for-human`/`wontfix`), unchanged. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain.md`.
