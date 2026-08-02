@@ -27,7 +27,7 @@ else
 endif
 
 # list, clean 不需要 TARGET
-ifneq (,$(filter $(MAKECMDGOALS),list clean))
+ifneq (,$(filter $(MAKECMDGOALS),list clean flash))
   SKIP_TARGET_CHECK := 1
 endif
 
@@ -165,5 +165,14 @@ list:
 		bn=$$(basename $$f .mk); \
 		echo "  $$bn"; \
 	done
+
+flash: build/stm32f746_avi_player.elf
+	@echo "r" > flash.jlink
+	@echo "loadfile build/stm32f746_avi_player.elf" >> flash.jlink
+	@echo "r" >> flash.jlink
+	@echo "g" >> flash.jlink
+	@echo "q" >> flash.jlink
+	"/c/Program Files/SEGGER/JLink_V944/JLink.exe" -device STM32F746NG -if SWD -speed 4000 -autoconnect 1 -CommanderScript flash.jlink
+	@rm -f flash.jlink
 
 # *** EOF ***

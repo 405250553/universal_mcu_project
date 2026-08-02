@@ -2,7 +2,7 @@ import serial
 import threading
 
 # === 修改成你的 UART 參數 ===
-PORT = "/dev/ttyACM1"   # 你的 UART 裝置
+PORT = "COM11"   # 你的 UART 裝置
 BAUD = 115200            # 波特率
 
 # 開啟 Serial
