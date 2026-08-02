@@ -1,0 +1,19 @@
+{
+    "files.associations": {
+        "cli_module.h": "c",
+        "stm32f7xx_hal_uart.h": "c",
+        "string.h": "c",
+        "freertos_includes.h": "c",
+        "stm32f7xx_hal.h": "c",
+        "arch.h": "c",
+        "ff.h": "c",
+        "freertos.h": "c",
+        "fatfs.h": "c",
+        "stm32746g_discovery_sdram.h": "c",
+        "stm32746g_discovery_camera.h": "c",
+        "sockets.h": "c",
+        "stream_module.h": "c",
+        "xutility": "c",
+        "inet.h": "c"
+    }
+}
