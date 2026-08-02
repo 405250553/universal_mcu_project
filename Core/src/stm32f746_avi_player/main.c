@@ -21,31 +21,12 @@
 #include "SEGGER_RTT.h"
 
 #include "freertos_includes.h"
-#include "lwip.h"
-#include "lwip/sockets.h"
-#include "lwip/inet.h"
-#include "lwip/ip_addr.h"
 #include "cli_module.h"
 #include "stream_module.h"
-#include "stm32746g_discovery_sdram.h"
-#include "stm32746g_discovery_lcd.h"
-#include "stm32746g_discovery_camera.h"
-#include "stm32746g_discovery_sd.h"
-#include "fatfs.h"
-#include "ff.h"
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
 
-#define printf uart_print
-
-/* Private variables ---------------------------------------------------------*/
-extern UART_HandleTypeDef huart1;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
-static void MX_GPIO_Init(void);
-static void SdCardThroughtputThread(void const *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
@@ -91,137 +72,6 @@ void vApplicationMallocFailedHook(void)
     }
 }
 
-void BlinkTask(void *argument)
-{
-  for(;;)
-  {
-    HAL_GPIO_TogglePin(GPIOI, GPIO_PIN_1);
-    vTaskDelay(pdMS_TO_TICKS(500));
-  }
-}
-
-void StartLWIPInitTask(void *argument)
-{
-  /* init code for LWIP */
-  MX_LWIP_Init();
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    vTaskDelete(NULL); // NULL 表示刪除自己
-  }
-}
-
-void StartCameraTask(void *argument)
-{
-  BSP_CAMERA_Init(CAMERA_R480x272);
-  //BSP_CAMERA_ContinuousStart((uint8_t *)(LCD_FB_START_ADDRESS+SDRAM_DEVICE_SIZE/2));
-  BSP_CAMERA_ContinuousStart((uint8_t *)(LCD_FB_START_ADDRESS));
-  vTaskDelete(NULL); // NULL 表示刪除自己
-}
-
-/* 遞迴列出目錄內容 */
-void ListFiles(const char *path)
-{
-    FILINFO fno;
-    DIR dir;
-    FRESULT res;
-    char fullPath[512];
-
-    res = f_opendir(&dir, path);
-    if (res != FR_OK) {
-        uart_print("Failed to open dir: %s (err=%d)\r\n", path, res);
-        return;
-    }
-
-    for (;;) {
-        res = f_readdir(&dir, &fno);
-        if (res != FR_OK || fno.fname[0] == 0) break;
-
-        char *fname = fno.fname;  // Cube 版本長檔名直接在 fname
-
-        if (fno.fattrib & AM_DIR) {
-            uart_print("[DIR]  %s/%s\r\n", path, fname);
-            snprintf(fullPath, sizeof(fullPath), "%s/%s", path, fname);
-            ListFiles(fullPath);
-        } else {
-            uart_print("  FILE %s/%s (%lu bytes)\r\n", path, fname, fno.fsize);
-        }
-    }
-    f_closedir(&dir);
-}
-
-// FreeRTOS Task: 掛載 SD 並列出檔案
-void StartSDListTask(void *argument)
-{
-  FATFS fs;
-  (void)argument;
-
-  while(BSP_SD_GetCardState() != SD_TRANSFER_OK) {
-      vTaskDelay(pdMS_TO_TICKS(10));
-  }
-
-  // 掛載 SD 卡
-  if (f_mount(&fs, "0:", 1) == FR_OK) {
-      printf("SD mounted!\r\n");
-      ListFiles("0:/"); // 列出根目錄
-  } else {
-      printf("Failed to mount SD!\r\n");
-  }
-
-  // 任務結束前卸載 SD
-  f_mount(NULL, "0:", 1);  // 卸載
-  printf("SD unmounted.\r\n");
-
-  // 任務結束，自刪除
-  vTaskDelete(NULL);
-}
-
-extern struct netif gnetif;  // STM32CubeMX 自帶 netif
-void udp_sender_task(void *arg)
-{
-    int sock;
-    struct sockaddr_in to;
-
-    static uint8_t payload[1472];  // MTU1500 - IP20 - UDP8 = 1472
-    memset(payload, 'A', sizeof(payload));
-
-    uart_print("Waiting for netif...\r\n");
-    while (!netif_is_up(&gnetif)) {
-        vTaskDelay(pdMS_TO_TICKS(10));
-    }
-
-    uart_print("Creating UDP socket...\r\n");
-
-    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (sock < 0) {
-        uart_print("socket failed: errno=%d\r\n", errno);
-        vTaskDelete(NULL);
-    }
-
-    // optional: increase send buffer
-    int sndbuf = 64 * 1024;
-    lwip_setsockopt(sock, SOL_SOCKET, SO_SNDBUF, &sndbuf, sizeof(sndbuf));
-
-    memset(&to, 0, sizeof(to));
-    to.sin_family = AF_INET;
-    to.sin_port   = htons(12345);
-    inet_aton("192.168.0.100", &to.sin_addr); // 改成你的 PC IP
-
-    uart_print("Start UDP flood...\r\n");
-
-    uint32_t last = xTaskGetTickCount();
-    uint32_t counter = 0;
-
-    while (1) {
-        sendto(sock, payload, sizeof(payload), 0,
-               (struct sockaddr*)&to, sizeof(to));
-    }
-
-    closesocket(sock);
-    vTaskDelete(NULL);
-}
-
 /**
   * @brief  The application entry point.
   * @retval int
@@ -238,10 +88,9 @@ int main(void)
   /* Configure the peripherals common clocks */
   PeriphCommonClock_Config();
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-
-  //TODO:check why AviModuleBspInit & CliModuleInit seq can not change
+  // TODO: CliModuleInit()/CliModuleTaskInit() 跟 AviModuleBspInit() 的初始化順序目前不能隨意調換
+  // (根因還沒查出來),所以先不啟用 CLI —— cli_module.c/cli_parser.c 仍完整編譯進此 target,
+  // 之後查清楚順序限制後再打開。
   AviModuleBspInit();
 
   SEGGER_RTT_WriteString(0, "\r\n====================================\r\n");
@@ -252,19 +101,6 @@ int main(void)
   //CliModuleTaskInit();
   AviModuleTaskInit();
 
-
-  // 建立 LWIP 初始化 task
-  //xTaskCreate(StartLWIPInitTask, "LWIP_Init", 2048, NULL, PRIORITY_Normal, NULL);
-
-  //xTaskCreate(SdCardThroughtputThread, "SdCardThroughtput", 1024, NULL, PRIORITY_LOW, NULL);
-  // 建立 Blink task
-  //xTaskCreate(BlinkTask, "Blink", 128, NULL, PRIORITY_IDLE, NULL);
-
-  //xTaskCreate(StartCameraTask, "camera", 128, NULL, PRIORITY_LOW, NULL);
-
-  //xTaskCreate(StartSDListTask, "SDcardList", 1024, NULL, PRIORITY_LOW, NULL);
-
-  //xTaskCreate(udp_sender_task, "udp_sender_task", 1024, NULL, PRIORITY_Normal, NULL);
   // 啟動 scheduler
   vTaskStartScheduler();
 
@@ -430,25 +266,6 @@ void PeriphCommonClock_Config(void)
 }
 
 /**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOI_CLK_ENABLE();
-
-  GPIO_InitStruct.Pin=GPIO_PIN_1;
-  GPIO_InitStruct.Mode=GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull=GPIO_NOPULL;
-  GPIO_InitStruct.Speed=GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOI,&GPIO_InitStruct);
-}
-
-/**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM6 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
@@ -500,103 +317,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-static void SdCardThroughtputThread(void const *argument)
-{
-   FATFS SDFatFs;
-    char SDPath[4];
-
-    FRESULT res;
-    FIL file;
-    UINT bytes_rw;
-    DWORD start, end;
-    uint32_t total;
-    uint32_t i;
-
-    const char *test_file_name = "speed.bin";
-    const uint32_t test_file_size = 16UL * 1024 * 1024; // 16 MB
-    const uint32_t buf_size = 32 * 1024;                // 32 KB buffer
-
-    // buffer 可改放 SRAM 或 SDRAM
-    static uint8_t buffer[32 * 1024] __attribute__((section(".sram"))); // SRAM
-    // static uint8_t buffer[32 * 1024] __attribute__((section(".sdram_data"))); // SDRAM
-
-    FATFS_UnLinkDriver(SDPath);
-    FATFS_LinkDriver(&SD_Driver, SDPath);
-
-    if (f_mount(&SDFatFs, SDPath, 1) != FR_OK) {
-        uart_print("Mount failed\r\n");
-        return;
-    }
-
-    // 填充 buffer 測試資料
-    for (i = 0; i < buf_size; i++) buffer[i] = (uint8_t)(i & 0xFF);
-
-    uart_print("SdCard SRAM Throughtput Start.\r\n");
-
-    // === Write Test ===
-    res = f_open(&file, test_file_name, FA_CREATE_ALWAYS | FA_WRITE);
-    if (res != FR_OK) {
-        uart_print("Open for write failed\r\n");
-        return;
-    }
-
-    total = 0;
-    start = HAL_GetTick();
-    while (total < test_file_size) {
-        uint32_t remaining = test_file_size - total;
-        uint32_t chunk = (remaining < buf_size) ? remaining : buf_size;
-
-        res = f_write(&file, buffer, chunk, &bytes_rw);
-        if (res != FR_OK || bytes_rw != chunk) {
-            uart_print("Write error @%lu bytes\n", (unsigned long)total);
-            break;
-        }
-        total += bytes_rw;
-    }
-    f_close(&file);
-    end = HAL_GetTick();
-
-    {
-        uint32_t elapsed = end - start;
-        uint32_t speed_kb = (uint32_t)(((uint64_t)test_file_size * 1000) / elapsed / 1024);
-        float speed_mb = (float)speed_kb / 1024.0f;
-        float file_mb = (float)test_file_size / (1024.0f * 1024.0f);
-        uart_print("Write: %lu KB/s (%.2f MB/s), File size: %.2f MB, Time: %lu ms\n",
-                   (unsigned long)speed_kb, speed_mb, file_mb, (unsigned long)elapsed);
-    }
-
-    // === Read Test ===
-    res = f_open(&file, test_file_name, FA_READ);
-    if (res != FR_OK) {
-        uart_print("Open for read failed\r\n");
-        return;
-    }
-
-    total = 0;
-    start = HAL_GetTick();
-    while (total < test_file_size) {
-        uint32_t remaining = test_file_size - total;
-        uint32_t chunk = (remaining < buf_size) ? remaining : buf_size;
-
-        res = f_read(&file, buffer, chunk, &bytes_rw);
-        if (res != FR_OK || bytes_rw == 0) {
-            uart_print("Read error @%lu bytes\n", (unsigned long)total);
-            break;
-        }
-        total += bytes_rw;
-    }
-    f_close(&file);
-    end = HAL_GetTick();
-
-    {
-        uint32_t elapsed = end - start;
-        uint32_t speed_kb = (uint32_t)(((uint64_t)test_file_size * 1000) / elapsed / 1024);
-        float speed_mb = (float)speed_kb / 1024.0f;
-        float file_mb = (float)test_file_size / (1024.0f * 1024.0f);
-        uart_print("Read : %lu KB/s (%.2f MB/s), File size: %.2f MB, Time: %lu ms\n",
-                   (unsigned long)speed_kb, speed_mb, file_mb, (unsigned long)elapsed);
-    }
-
-    uart_print("Throughput test done.\r\n");
-}
