@@ -34,6 +34,7 @@ EndDependencies */
 #include "stream_module.h"
 #include "image_data.h"
 #include "stream_system.h"
+#include "stream_sync.h"
 #include <string.h>
 #include <stdio.h>
 #include <limits.h>
@@ -54,14 +55,6 @@ typedef enum {
 QueueHandle_t AudioEvtQ;
 
 static __IO FileList gFileList = {0}; // 全域檔案列表,只在此檔案內部使用,外部一律透過 AviGetFileCount/AviGetFileName 存取
-
-EventGroupHandle_t xConsumerGroup;
-
-#define DISPLAY_READY_BIT      (1<<0)
-#define AUDIO_READY_BIT        (1<<1)
-#define FILE_READ_FINISH_BIT   (1<<2)
-#define DISPLAY_EXIT_BIT  (1<<3)
-#define AUDIO_EXIT_BIT    (1<<4)
 
 __IO uint32_t AudioHalfUs=0;
 
@@ -557,17 +550,12 @@ void DisplayTask(void *param)
     }
 
     // 等待 AudioplayTask 初始化完成
-    xEventGroupSetBits(xConsumerGroup, DISPLAY_READY_BIT);
-    xEventGroupWaitBits(xConsumerGroup, 
-                        AUDIO_READY_BIT, 
-                        pdTRUE, /* BIT_0 & BIT_4 should be cleared before returning.*/
-                        pdTRUE, /* 不是等待所有都要置位，只要有一个满足条件就好 */ 
-                        portMAX_DELAY);
+    SyncDisplayReady();
 
     for (;;)
     {
         // 檢查 producer 是否結束 & frame queue 是否空
-        if ((xEventGroupGetBits(xConsumerGroup) & FILE_READ_FINISH_BIT) &&
+        if (SyncIsProducerFinished() &&
             uxQueueMessagesWaiting(FrameReadyQueue) == 0)
         {
             break;
@@ -646,7 +634,7 @@ void DisplayTask(void *param)
     for (uint16_t i = 0; i < FRAME_BUFF_RING_SIZE; i++)
         xQueueSend(FrameFreeQueue, &i, 0);
 
-    xEventGroupSetBits(xConsumerGroup, DISPLAY_EXIT_BIT);
+    SyncDisplayExited();
     vTaskDelete(NULL);
 }
 
@@ -670,8 +658,7 @@ void AudioplayTask(void *param)
     }
 
     //等待displaytask init完成
-    xEventGroupSetBits(xConsumerGroup, AUDIO_READY_BIT);
-    xEventGroupWaitBits(xConsumerGroup, DISPLAY_READY_BIT, pdTRUE, pdTRUE, portMAX_DELAY);
+    SyncAudioReady();
 
     BSP_AUDIO_OUT_Play((uint16_t*)audio_dma_buff, SuggestedBufferSize);
     BSP_AUDIO_OUT_SetMute(AUDIO_MUTE_OFF);
@@ -679,7 +666,7 @@ void AudioplayTask(void *param)
     for (;;)
     {
         //non-blocking by check producer send kill task msg
-        if ((xEventGroupGetBits(xConsumerGroup) & FILE_READ_FINISH_BIT) &&
+        if (SyncIsProducerFinished() &&
             uxQueueMessagesWaiting(AudioReadyQueue) == 0 )
         {
             BSP_AUDIO_OUT_SetMute(AUDIO_MUTE_ON);
@@ -737,7 +724,7 @@ void AudioplayTask(void *param)
     xQueueReset(AudioFreeQueue);
     for (uint16_t i = 0; i < AUDIO_BUFF_RING_SIZE; i++)
         xQueueSend(AudioFreeQueue, &i, 0);
-    xEventGroupSetBits(xConsumerGroup, AUDIO_EXIT_BIT);
+    SyncAudioExited();
     vTaskDelete(NULL);
 }
 
@@ -803,14 +790,10 @@ void SdProduceTask(void *param)
         f_close(&aviFile);
 
         //send file read finish to consumer task
-        xEventGroupSetBits(xConsumerGroup, FILE_READ_FINISH_BIT);
-        
-        // blocking by AudioplayTask/DisplayTask delete their self
-        xEventGroupWaitBits(xConsumerGroup, DISPLAY_EXIT_BIT | AUDIO_EXIT_BIT, pdTRUE, pdTRUE, portMAX_DELAY);
+        SyncProducerFileFinished();
 
-        //reset group all bits
-        xEventGroupClearBits(xConsumerGroup, DISPLAY_READY_BIT | AUDIO_READY_BIT | AUDIO_READY_BIT | FILE_READ_FINISH_BIT 
-                                            | DISPLAY_EXIT_BIT | AUDIO_EXIT_BIT);
+        // blocking by AudioplayTask/DisplayTask delete their self, then reset group all bits
+        SyncProducerAwaitBothExited();
 
         AVI_DEBUG("Playback done\r\n");
         AVI_DEBUG("SdProduceTask min free stack: %lu words\r\n",uxTaskGetStackHighWaterMark(gAviHandle.SdProduceTask));
@@ -887,7 +870,7 @@ void AviModuleTaskInit(void)
     for (uint16_t i = 0; i < AUDIO_BUFF_RING_SIZE; i++)
         xQueueSend(AudioFreeQueue, &i, 0);
 
-    xConsumerGroup = xEventGroupCreate();
+    SyncInit();
     AudioEvtQ = xQueueCreate(32, sizeof(audio_evt_t));
 
     xTaskCreate(SdProduceTask, "SdProduceTask", 2048, NULL, PRIORITY_Normal, &gAviHandle.SdProduceTask);

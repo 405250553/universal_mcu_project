@@ -103,6 +103,7 @@ C_SOURCES += \
 	Drivers/MY_DRIVER/cli_parser.c \
 	Drivers/MY_DRIVER/stream_module.c \
 	Drivers/MY_DRIVER/stream_system.c \
+	Drivers/MY_DRIVER/stream_sync.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_sdram.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_lcd.c \
 	Drivers/BSP/stm32f746gdiscovery-bsp/stm32746g_discovery_camera.c \
