@@ -579,6 +579,11 @@ void DisplayTask(void *param)
         }
     }
 
+    // 清理前，先確保沒有懸而未決的 ISR 回收（HAL_LTDC_ReloadEventCallback 尚未觸發）
+    while (PendingFreeBufferIdx != INVALID_IDX) {
+        vTaskDelay(pdMS_TO_TICKS(1));
+    }
+
     // 清理
     xQueueReset(FrameFreeQueue);
     for (uint16_t i = 0; i < FRAME_BUFF_RING_SIZE; i++)
