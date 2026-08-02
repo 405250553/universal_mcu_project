@@ -167,52 +167,83 @@ typedef struct
     uint8_t old_y;
     uint8_t startX;
     uint8_t startY;
-    uint8_t check_time;
+    TickType_t start_tick;
 }TS_SelfHandleTypeDef;
 
 
 void ts_handle_init(TS_SelfHandleTypeDef *ts_handle)
 {
     ts_handle->self_state = TS_STATE_NONE;
-    ts_handle->delay_ms = 50;
+    ts_handle->delay_ms = 100;
     ts_handle->bar_len = DEFAULT_BAR_LEN;
     ts_handle->old_x = 0;
     ts_handle->old_y = 0;
     ts_handle->startX = 0;
     ts_handle->startY = 0;
-    ts_handle->check_time = 0;
+    ts_handle->start_tick = 0;
 }
 
 
 void test_gesture_task(void *pvParameters) {
-    static int16_t startY = -1;      // 手指按下的起點
-    const int barLen = 130;          // 對應整個音量條長度
-    TS_StateTypeDef gTS_State;
     uint8_t curr_vol = SAL_VOLUME_INIT_VAL;           // 初始音量
     int8_t curr_idx = (curr_vol * 20) / 100;  // bitmap index 初始值
-    uint8_t delay_ms=100;
     int new_vol=0;
+    uint8_t curr_x, curr_y;
+
+    TS_SelfHandleTypeDef ts_handle;
+    ts_handle_init(&ts_handle);
 
     for (;;) {
-        BSP_TS_GetState(&gTS_State);
+        BSP_TS_GetState(&ts_handle.bsp_state);
+        curr_x=ts_handle.bsp_state.touchX[0];
+        curr_y=ts_handle.bsp_state.touchY[0];
 
-        if (gTS_State.touchDetected > 0) 
+        if (ts_handle.bsp_state.touchDetected > 0) 
         {
-            AVI_SYS_DEBUG("x=%d,y=%d\r\n",gTS_State.touchX[0],gTS_State.touchY[0]);
-            int16_t y = gTS_State.touchY[0];
+            int16_t deltaX = ts_handle.startX - curr_x;  // x 向右是next, 左是prev
+            int16_t deltaY = ts_handle.startY - curr_y;  // volume向上滑正，向下滑負
+            //AVI_SYS_DEBUG("x=%d,y=%d\r\n",curr_x,curr_y);
 
-            if (gTS_State.touchEventId[0] == TOUCH_EVENT_PRESS_DOWN) {
-                startY = y;  // 記錄起點
-                delay_ms=25;
-            } 
-            else if (gTS_State.touchEventId[0] == TOUCH_EVENT_CONTACT) 
+            if (ts_handle.self_state==TS_STATE_NONE && (ts_handle.bsp_state.touchEventId[0] == TOUCH_EVENT_PRESS_DOWN
+                                                        || ts_handle.bsp_state.touchEventId[0] == TOUCH_EVENT_CONTACT)) {
+                ts_handle.old_x = curr_x;
+                ts_handle.old_y = curr_y;
+                ts_handle.startX = curr_x;
+                ts_handle.startY = curr_y;
+                ts_handle.delay_ms=25;
+                ts_handle.self_state=TS_STATE_CHECK;
+                ts_handle.start_tick = xTaskGetTickCount();
+                AVI_SYS_DEBUG("change state to TS_STATE_CHECK\r\n");
+            }
+            else if(ts_handle.self_state==TS_STATE_CHECK && ts_handle.bsp_state.touchEventId[0] == TOUCH_EVENT_CONTACT)
             {
-                BSP_LCD_SetTransparency_NoReload(1,0xff);
-                BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
-                if (startY >= 0) {
+                TickType_t diff = xTaskGetTickCount() - ts_handle.start_tick;
+                //if(diff >= pdMS_TO_TICKS(1000))
+                {
+                    if(diff >= pdMS_TO_TICKS(400))
+                    {
+                        if((abs(deltaX)+abs(deltaY))<10)
+                        {
+                            ts_handle.self_state=TS_STATE_VOLUME;
+                            BSP_LCD_SetTransparency_NoReload(1,0xff);
+                            BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
+                            ts_handle.delay_ms=25;
+                            AVI_SYS_DEBUG("change state to TS_STATE_VOLUME\r\n");
+                        }
+                        else
+                        {
+                            AVI_SYS_DEBUG("change state to error 1\r\n");
+                            goto ts_state_restart;                    
+                        }
+                    }
+                }
+            }
+            else if (ts_handle.self_state==TS_STATE_VOLUME && ts_handle.bsp_state.touchEventId[0] == TOUCH_EVENT_CONTACT) 
+            {   
+                if(abs(deltaX)<20)
+                {
                     // 直接用位移計算音量，不累加 curr_vol
-                    int16_t deltaY = startY - y;  // 向上滑正，向下滑負
-                    new_vol = ((deltaY * 100) / barLen) + curr_vol;
+                    new_vol = ((deltaY * 100) / ts_handle.bar_len) + curr_vol;
 
                     // 限制範圍 0~100
                     if (new_vol > 100) new_vol = 100;
@@ -231,23 +262,24 @@ void test_gesture_task(void *pvParameters) {
                         BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
                     }
                 }
-                delay_ms=25;
             }
-            // 如果手指放開，更新 curr_vol 作為下一次基準
-            else{
-                curr_vol = new_vol;
-                BSP_LCD_SetTransparency_NoReload(1,0x00);
-                BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);   
-                startY = -1;  // 重置起點
-                delay_ms = 100;
+            else
+            {
+                AVI_SYS_DEBUG("change state to error 2\r\n");
+                goto ts_state_restart;
             }
         }
         else
         {
-                BSP_LCD_SetTransparency_NoReload(1,0x00);
-                BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);   
+ts_state_restart:
+            if(ts_handle.self_state==TS_STATE_VOLUME) curr_vol = new_vol;
+            ts_handle.self_state=TS_STATE_NONE;
+            ts_handle.start_tick = 0;
+            ts_handle.delay_ms =100;
+            BSP_LCD_SetTransparency_NoReload(1,0x00);
+            BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
         }
-        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+        vTaskDelay(pdMS_TO_TICKS(ts_handle.delay_ms));
     }
 }
 
