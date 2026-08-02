@@ -37,6 +37,7 @@ EndDependencies */
 #include <string.h>
 #include <stdio.h>
 #include <limits.h>
+#include <stdbool.h>
 
 __attribute__((section(".sdram_data"))) static uint8_t frame_buf[FRAME_BUFF_RING_SIZE][LAYER0_FRAME_SIZE]; // SD staging buffers
 static QueueHandle_t FrameFreeQueue;
@@ -63,6 +64,9 @@ EventGroupHandle_t xConsumerGroup;
 #define AUDIO_EXIT_BIT    (1<<4)
 
 __IO uint32_t AudioHalfUs=0;
+
+#define INVALID_IDX 0xFFFF
+volatile uint16_t PendingFreeBufferIdx = INVALID_IDX;
 
 /* extern global ------------------------------------------------------------------*/
 
@@ -100,8 +104,18 @@ __weak void Dma2DXferCpltCallback(DMA2D_HandleTypeDef *hdma2d)
 {
 }
 
-__weak void HAL_LTDC_ReloadEventCallback(LTDC_HandleTypeDef *hltdc)
+void HAL_LTDC_ReloadEventCallback(LTDC_HandleTypeDef *hltdc) 
 {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    
+    // 既然進到這裡，代表新的 frame_buf 已經正式在顯示了
+    // 因此，上一張等待回收的 Buffer 現在絕對安全了！
+    if (PendingFreeBufferIdx != INVALID_IDX) {
+        xQueueSendFromISR(FrameFreeQueue, &PendingFreeBufferIdx, &xHigherPriorityTaskWoken);
+        PendingFreeBufferIdx = INVALID_IDX; // 標記已回收
+    }
+    
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 /**
@@ -231,8 +245,8 @@ static void ScanFileList(void)
         return;
     }
 
-    FreeFileList(&gFileList);
-    ScanFileRecursive(&gFileList, "0:/");
+    FreeFileList((FileList *)&gFileList);
+    ScanFileRecursive((FileList *)&gFileList, "0:/");
     gFileList.InitFlag=1;
     f_mount(NULL, "0:", 1);
     AVI_DEBUG("Total files found: %d\r\n", gFileList.count);
@@ -487,7 +501,11 @@ void DisplayTask(void *param)
 
     // 等待 AudioplayTask 初始化完成
     xEventGroupSetBits(xConsumerGroup, DISPLAY_READY_BIT);
-    xEventGroupWaitBits(xConsumerGroup, AUDIO_READY_BIT, pdTRUE, pdTRUE, portMAX_DELAY);
+    xEventGroupWaitBits(xConsumerGroup, 
+                        AUDIO_READY_BIT, 
+                        pdTRUE, /* BIT_0 & BIT_4 should be cleared before returning.*/
+                        pdTRUE, /* 不是等待所有都要置位，只要有一个满足条件就好 */ 
+                        portMAX_DELAY);
 
     for (;;)
     {
@@ -511,25 +529,53 @@ void DisplayTask(void *param)
 
         // 是否有 frame ready
         if (uxQueueMessagesWaiting(FrameReadyQueue) == 0) {
-            vTaskDelay(pdMS_TO_TICKS(1));
-            continue; // 等待下一個 frame
+            vTaskDelay(pdMS_TO_TICKS(1));  // 不要卡死，可以稍等
+            continue; 
         }
-
-        // 累積時間達到 frame interval 才顯示
-        while (accumulatedUs >= frameIntervalUs)
+        // 只有累積時間達到才處理
+        if (accumulatedUs >= frameIntervalUs)
         {
-            if (xQueueReceive(FrameReadyQueue, &idx, 0) != pdPASS)
-                break;
-
-            // 顯示 frame
-            BSP_LCD_SetLayerAddress_NoReload(0, (uint32_t)frame_buf[idx]);
-            BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
-
-            // 回收前一張 buffer
-            xQueueSend(FrameFreeQueue, &prevIdx, 0);
-
-            prevIdx = idx;
-            accumulatedUs -= frameIntervalUs;
+            uint16_t latest_idx = prevIdx; // 預設用上一張
+            bool has_new_frame = false;
+            // 1. 迴圈內只負責：消耗時間、抓出最新的一張圖、途中多餘的直接回收
+            while (accumulatedUs >= frameIntervalUs)
+            {
+                if (xQueueReceive(FrameReadyQueue, &idx, 0) == pdPASS) {
+                    // 如果我們剛剛手上有抓了一張但這是一次「連續追幀」，
+                    // 那剛剛抓的那張就成了「廢幀」，可以直接還回去，不需要送給 LCD！
+                    if (has_new_frame) {
+                        xQueueSend(FrameFreeQueue, &latest_idx, 0);
+                    }
+                    latest_idx = idx; // 更新最新的一張
+                    has_new_frame = true;
+                } else {
+                    // 雖然時間超前了，但已經沒有新 Frame 可以抓了，提早跳出
+                    break;
+                }
+                
+                accumulatedUs -= frameIntervalUs;
+            }
+            // 2. 迴圈結束後，我們手上只有「真正要送出」的最後一張圖 
+            if (has_new_frame)
+            {
+                // --------- 中斷安全回收法 ---------
+                // 如果您打算實作我們上一篇講的 HAL_LTDC_ReloadEventCallback
+                // 這裡就設定最新指標，舊指標存起來等中斷回收
+                BSP_LCD_SetLayerAddress_NoReload(0, (uint32_t)frame_buf[latest_idx]);
+                BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
+                
+                PendingFreeBufferIdx = prevIdx; // 交由中斷的 VSync 發生時再 push 回 FrameFreeQueue
+                // ---------------------------------
+                
+                /*
+                // 或者如果您仍想用原本的「危險」直接回收法（至少解決了連環蓋圖的問題）
+                BSP_LCD_SetLayerAddress_NoReload(0, (uint32_t)frame_buf[latest_idx]);
+                BSP_LCD_Reload(LCD_RELOAD_VERTICAL_BLANKING);
+                xQueueSend(FrameFreeQueue, &prevIdx, 0);
+                */
+                
+                prevIdx = latest_idx;
+            }
         }
     }
 
@@ -746,7 +792,7 @@ void AviModuleBspInit(void)
     如果dma2d 用 it mode就需要設定nvic
     */
     //BSP_DMA2D_ITConfig();
-    //BSP_LTDC_ITConfig();
+    BSP_LTDC_ITConfig();
 
 #if defined(SUPPORT_TS)
     BSP_TS_Init(RK043FN48H_WIDTH, RK043FN48H_HEIGHT);
@@ -822,12 +868,10 @@ void DMA2D_IRQHandler(void)
 }
 */
 
-/*
 void LTDC_IRQHandler(void)
 {
     HAL_LTDC_IRQHandler(&hLtdcHandler);
 }
-*/
 
 /*
 it mode 和 dma mode都需要設定ireq handler 才能把reg復位
